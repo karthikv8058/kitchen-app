@@ -1,0 +1,244 @@
+{
+    "lang": "en",
+    "task-overview": {
+        "task-cannot-finish": "Task cannot be finished",
+        "task-cannot-assign": " Task cannot be assigned",
+        "task-cannot-unassign": " Task cannot be un-assigned",
+        "assign-to-me": " Assign to me",
+        "last-read": "lastRead",
+        "did-focus": "didFocus",
+        "chef-name": "Chef Name: ",
+        "yes": "Yes",
+        "no": "No",
+        "change-assigned": "Change assigned task?",
+    },
+    "order-details": {
+        "recipe-task": "Recipe/ Task ",
+        "started-at": "Started at",
+        "completed-at": "Completed at",
+        "assigned-to": "Assigned to",
+        "transport": "(Transport )"
+    },
+    "order-overview": {
+        "view-order":"You don't have the permission to view orders",
+        "view-inventory":"You don't have the permission to view inventory",
+        "new-table-order":"You don't have the permission to create table order",
+        "new-inventory-order":"You don't have the permission to create inventory order",
+        "manage-inventory":"You don't have the permission to manage inventory",
+        "permission-delete":"You don't have the permission to delete order",
+        "manage-order":"You don't have the permission to manage order",
+        "edit": "Edit",
+        "delete": "Delete",
+        "store-to-analyze": "Store to analyze",
+        "choose-option": " Please choose an option",
+        "stored": "Message is stored",
+        "table": "Table :",
+        "deleivered-at": "Delivered at :",
+        "to-be-delivered-at": "To be delivered at :",
+        "timing": "Timing :",
+        "actual-delivery-time": "Actual delivery time :",
+        "the-order-cannot-edited": "The Order cannot be edited",
+        "order": "ORDER",
+        "printer": "PRINTER",
+        "onCall": "On call",
+        "Details": "Details"
+    },
+    "menu-component": {
+        "order-over-view": "Order Overview",
+        "station-view": "All tasks",
+        "station-list": "Station List",
+        "work-station": "My stations",
+        "recipe-lookup": "Recipes",
+        "open-order": "Open orders",
+        "completed-order": "Completed orders",
+        "new-order": "New order",
+        "logout": "Logout",
+        "inventory": "Inventory",
+        "my-tasks": "My tasks",
+        "restuarant-settings": "Restaurant settings",
+        "completed-order-view": "Order Completed View",
+        "are-you-sure-you-want-to-logout": "Are you sure you want to logout?"
+    },
+    "server-settingslogin": {
+        "remember-connection-settings": "Remember connection settings",
+        "engage": "Engage",
+        "start-server": "Start Server",
+        "ip": "IP:",
+        "connect-to-server": "Connect to Server",
+        "auto-discover": "Auto discover",
+        "manual-discover": "Manual discover",
+        "auto-discover-value": "autodiscover",
+        "manual-discover-value": "manualdiscover"
+    },
+    "start-server": {
+        "username": "Username",
+        "remember-username": "Remember username",
+        "password": "Password",
+        "start-server": "Start Server"
+    },
+    "server-settings": {
+        "engage-smartoni": "Engage smartTONi",
+        "advanced-startup": "Advanced startup",
+        "entered-invalid-ip": "You have entered an invalid Ip",
+        "server-not-reachable": "Server not reachable",
+        "enter-the-ip": "Enter the Ip"
+    },
+    "station-list": {
+        "login-status": "loginStatus",
+        "login-value": "1",
+        "navigation-path": "navigationPath",
+        "work-station":"! Please choose your work stations",
+        "no-station":"! there is no station available",
+        "hi":"Hi "
+
+    },
+    "connect-to-server": {
+        "server-not-reachable": "Server not reachable",
+        "cannot-proceed-without-storage-permission": "Cannot proceed without storage permission",
+        "no-server-found": "No server found",
+        "invalid-ip": "You have entered an invalid IP",
+        "enter-ip": "Please enter IP"
+    },
+    "connect-to-server-manual": {
+        "validation": "Please fill the fields",
+        "wrong-data": "wrong credentials",
+        "user-name": "userName",
+        "login": "login"
+    },
+    "app-background": {
+        "logout": "Are you sure you want to logout Server?",
+        "go-back": "Are you sure you want to leave the screen?",
+        "place-order": "Place Order",
+        "place-web-order": "Schedule Web Order",
+        "cancel": "Cancel",
+        "yes": "Yes"
+    },
+    "inventory": {
+        "validation": "Please enter the valid quantity",
+        "validorder":"Please choose a valid order",
+        "updateorder":"Update order quantity",
+        "updateinventory":"Update inventory quantity",
+        "adjust-inventory":"Adjust inventory",
+        "place-order":"Place order"
+    },
+    "advanced-startup-page": {
+        "connection-settings": "connectionSettings"
+    },
+    "pos": {
+        "prevent-previous-time": "Previous Time Cannot be Choosen",
+        "cannot-add-more-than-one": "Cannot add more than one meal for inventory",
+        "table-number-invalid": "Table number is invalid",
+        "no-meal-added": "No meal is added",
+        "inventory-more-than-one-meal": "Inventory order cannot have more than one meal",
+        "empty-meal": "Some meals are empty",
+        "cannot-open-timepicker": "Cannot open time picker ",
+        "inventory-validation": "An inventory order cannot be changed to  order",
+        "order-caannot-changed-inventory": "An order cannot be changed to inventory order",
+        "cannot-make-inventory-with-morethan-one-meal": "Cannot make inventory order with more than one meal",
+        "delivering-to": "Delivering to:",
+        "delivery-at": "Delivering at:",
+        "non-inventory-web-order": "Only inventory order can schedule to web",
+        "nav-back": "Previous page",
+        "nav-home": "Back to first page",
+        "order-type-table": "Table",
+        "order-type-inventory": "Inventory"
+    },
+    "passwordScreen": {
+        "password-validation": "Please enter the password",
+        "station-validation": "Cannot login as no station is present",
+        "login-validation": "Login failed, Please check the credentials",
+        "login-sucess": "Login Sucesss",
+        "likely-hood-limit": "LikelyHoodLimit",
+        "spassword": "password",
+        "session-expired": "Your session has been expired. Please login again!"
+    },
+    "checkin-task": {
+        "enter-valid-timein-minute": "Please Enter a Valid Time in Minutes"
+    },
+    "completedOrder": {
+        "finished": "FINISHED",
+        "not_finished": "NOT_FINISHED",
+        "REMOVED": "REMOVED",
+        "completed": "COMPLETED",
+        "not_completed": "NOT COMPLETED",
+        "deleted": "DELETED",
+        "deleivered-at": "Delivered at :",
+        "to-be-delivered-at": "To be delivered at :",
+        "order": "ORDER",
+        "printer": "PRINTER",
+        "table": "Table :"
+    },
+    "connecttoServer": {
+        "manual-settings": "manualSettings",
+        "connection-settings": "connectionSettings",
+        "login-userlist-page": "LoginUserListPage"
+    },
+    "login-user-list-page": {
+        "serverip-not-found": "ServerIp not found",
+        "server-not-reachable": "Server not reachable",
+        "connection-settings": "connectionSettings",
+        "login-status": "loginStatus",
+        "user-id": "userId",
+        "networ-error": "Network Error !",
+        "cannot-connect-ip": "Cannot connect to this IP",
+        "go-back": "go Back"
+    },
+    "startupPage": {
+        "connection-settings": "connectionSettings",
+        "serverip": "serverIP",
+        "hardware-back-press": "hardwareBackPress"
+    },
+    "StationData": {
+        "user-should-assigned-atleast-one": "User should be assigned to atleast one station"
+    },
+    "PosPage": {
+        "order-id": "orderId"
+    },
+    "restraunt-list": {
+        "is-server-running": "isServerRunning",
+        "restuarant-list-": "restuarantlist",
+        "synching": "  Please wait, server is starting....."
+    },
+    "TaskDetails": {
+        "landscape": "LANDSCAPE",
+        "portrait": "PORTRAIT",
+        "ingredients": "Ingredients",
+        "no-engine": "no_engine",
+        "initialized": "initialized",
+        "step-by-step": "STEP BY STEP",
+        "C-ingredients": "INGREDIENTS",
+        "read-ingredients": "READ INGREDIENTS",
+        "show-tasks": "SHOW TASKS",
+        "read-task": "READ TASK",
+        "details": "DETAIL",
+        "show-details": "SHOW DETAILS",
+        "previous": "PREVIOUS",
+        "next": "NEXT",
+        "done": "DONE",
+        "snap-to": "snap to :",
+        "started": "started",
+        "finished": "finished",
+        "cancelled": "cancelled",
+        "tts-start": "tts-start",
+        "tts-finish": "tts-finish",
+        "tts-cancel": "tts-cancel",
+        "completed": "COMPLETED",
+        "assign-first-task": "ASSIGN FIRST TASK",
+        "initiliazing": "initiliazing",
+        "taskid": "taskId",
+        "assignment-id": "assignmentid",
+        "recipe-id": "recipeId",
+        "user-id": "userId"
+    },
+    "checking-task": {
+        "remind": "Remind me after",
+        "minutes": " Minutes"
+    },
+    "restuarant-settings": {
+        "operation-mode": "   Operation mode"
+    },
+    "detected-restaurant": {
+        "open-restaurant": " Open new restaurant",
+        "advanced": " Advanced Connection"
+    }
+}

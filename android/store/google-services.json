@@ -1,0 +1,127 @@
+{
+  "project_info": {
+    "project_number": "199007758941",
+    "firebase_url": "https://smarttoni-39c94.firebaseio.com",
+    "project_id": "smarttoni-39c94",
+    "storage_bucket": "smarttoni-39c94.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199007758941:android:3188c25806bc4c53303bb4",
+        "android_client_info": {
+          "package_name": "com.smarttoni"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlgGopAB_i_1l2fOwby4qkeYaQ85uldsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199007758941:android:6be57194217c8d87303bb4",
+        "android_client_info": {
+          "package_name": "com.smarttoni.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlgGopAB_i_1l2fOwby4qkeYaQ85uldsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199007758941:android:abace77486781e47303bb4",
+        "android_client_info": {
+          "package_name": "com.smarttoni.store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlgGopAB_i_1l2fOwby4qkeYaQ85uldsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199007758941:android:ccc1ce4077d78d58303bb4",
+        "android_client_info": {
+          "package_name": "com.smarttoni.uat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlgGopAB_i_1l2fOwby4qkeYaQ85uldsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "199007758941-4b7pnt4k6hvclpovnh7p2oqrtu2f7kqh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

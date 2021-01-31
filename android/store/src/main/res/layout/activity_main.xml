@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="progressVal"
+            type="java.lang.Integer" />
+
+        <variable
+            name="downloadAvailable"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="isUpdate"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="installing"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="releaseNotes"
+            type="java.lang.String" />
+
+        <variable
+            name="currentVersion"
+            type="java.lang.String" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/store"
+            android:onClick="enableDeveloperMode"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:padding="0dp"
+                android:progress="@{progressVal,default = 40}" />
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="right"
+                android:text="@{currentVersion}" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@{(downloadAvailable &amp; !installing) ? @color/colorPrimaryDark : @color/disabled}"
+                android:enabled="@{downloadAvailable &amp; !installing}"
+                android:onClick="install"
+                android:text="@{installing ? `Installing` : isUpdate ? `Update` : `Install`}"
+                android:textColor="#fff" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="@{releaseNotes}"
+                android:textColor="#000"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

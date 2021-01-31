@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">smartTONi manager</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="tab_text_1">Live</string>
+    <string name="tab_text_2">UAT</string>
+    <string name="tab_text_3">Development</string>
+
+</resources>

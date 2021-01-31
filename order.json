@@ -1,0 +1,210 @@
+
+|Name | Type |
+------
+
+
+
+# Range
+
+#### Definition
+
+```json
+{
+	"key" : "saltiness",
+	"locales": [
+		{
+			"name":"Saltiness English",
+			"locale":"en-gb"
+		},
+	],
+	"meta":{
+		"type":1,
+		"from":1,
+		"to":10
+	},
+	"score":1
+}
+```
+#### Association
+
+```json
+{
+	"recipe":"recipe_uuid",
+	"tag":"tag_uuid",
+	"meta":{
+		"from":4,
+		"to":8,
+		"default":5
+	}
+}
+```
+---
+
+# Boolean
+
+#### Definition
+
+```json
+{
+	"key" : "allergence-crab",
+	"locales": [
+		{
+			"name":"Allergence/Crab",
+			"locale":"en-gb"
+		},
+	],
+	"meta":{
+		"type":2
+	},
+	"score":-1000
+}
+```
+#### Association
+
+```json
+{
+	"recipe":"recipe_uuid",
+	"tag":"tag_uuid",
+	"meta": {
+		"default": true
+	}
+}
+```
+
+---
+
+# Text
+
+#### Definition
+
+```json
+{
+	"key" : "cooking wellness",
+	"locales": [
+		{
+			"name":"wellness",
+			"locale":"en-gb"
+		},
+	],
+	"meta":{
+		"type":3
+	},
+	"score":500
+}
+```
+#### Association
+
+```json
+{
+	"recipe":"recipe_uuid",
+	"tag":"tag_uuid",
+	"meta": {
+        "values":["Rare","Medium Rare", "Welldone"],
+		"default": "Rare"
+	}
+}
+```
+
+================================================
+Tag type Range
+
+Definition
+{
+	"key" : "saltiness",
+	"locales": [
+		{
+			"name":"Saltiness English",
+			"locale":"en-gb"
+		},
+	],
+	"meta":{
+		"type":1,
+		"from":1,
+		"to":10
+	},
+	"score":1
+}
+------------------------------------------------
+Association
+{
+	"recipe":"recipe_uuid",
+	"tag":"tag_uuid",
+	"meta":{
+		"from":4,
+		"to":8,
+		"default":5
+	}
+}
+
+================================================
+Tag type Constant // No needed
+Definition
+
+{
+	"key" : "allergence-crab",
+	"locales": [
+		{
+			"name":"Allergence/Crab",
+			"locale":"en-gb"
+		},
+	],
+	"meta":{
+		"type":2
+	},
+	"score":-1000
+}
+------------------------------------------------
+Association
+{
+	"recipe":"recipe_uuid",
+	"tag":"tag_uuid",
+	"meta": {
+		"default": true
+	}
+}
+
+================================================
+
+Tag type Text
+Definition
+
+{
+	"key" : "cooking wellness",
+	"locales": [
+		{
+			"name":"wellness",
+			"locale":"en-gb"
+		},
+	],
+	"meta":{
+		"type":2
+	},
+	"score":500
+}
+------------------------------------------------
+Association
+{
+	"recipe":"recipe_uuid",
+	"tag":"tag_uuid",
+	"meta": {
+        "values":["Rare","Medium Rare", "Welldone"],
+		"default": "Rare"
+	}
+}
+
+
+
+========????
+{
+	"key" : "cooking-wishes",
+	"locales": [
+		{
+			"name":"Cooking Wishes",
+			"locale":"en-gb"
+		},
+	],
+	"meta":{
+		"type":3
+	}
+	
+}

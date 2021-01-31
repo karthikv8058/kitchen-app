@@ -1,0 +1,2 @@
+export const ACCESS_POS = 'ACCESS_POS';
+export const ACCESS_INVENTORY = 'ACCESS_INVENTORY';

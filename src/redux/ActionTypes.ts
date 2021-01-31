@@ -1,0 +1,18 @@
+export const SET_IP = 'SET_IP';
+export const SET_USER_ID = 'SET_USER_ID';
+export const SWITCH_VR = 'SWITCH_VR';
+export const SWITCH_TTS = 'SWITCH_TTS';
+export const READ_TASK_ON_ASSIGN = 'READ_TASK_ON_ASSIGN';
+export const READ_DESCRIPTION_IN_DETAIL = 'READ_DESCRIPTION_IN_DETAIL';
+export const READ_DESCRIPTION_IN_STEPS = 'READ_DESCRIPTION_IN_STEPS';
+export const READ_INGREDIENT_IN_DETAILS = 'READ_INGREDIENT_IN_DETAILS';
+export const READ_INGREDIENT_IN_STEPS = 'READ_INGREDIENT_IN_STEPS';
+export const AUTO_ASSIGN = 'AUTO_ASSIGN';
+export const TASK_AUTO_OPEN = 'TASK_AUTO_OPEN';
+export const STEP_AUTO_OPEN = 'STEP_AUTO_OPEN';
+export const UPDATE_ACL = 'UPDATE_ACL';
+export const AUTH_TOKEN = 'AUTH_TOKEN';
+export const POS_LOADING = 'POS_LOADING';
+
+// HighPriorityTaskCount
+export const SET_HP_TASK_COUNT = 'SET_HP_TASK_COUNT';

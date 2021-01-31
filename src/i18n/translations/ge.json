@@ -1,0 +1,244 @@
+{
+    "lang": "ge",
+    "task-overview": {
+        "task-cannot-finish": "Aufgabe kann nicht beendet werden",
+        "task-cannot-assign": " Aufgabe kann nicht zugewiesen werden",
+        "task-cannot-unassign": " Die Aufgabe kann nicht aufgehoben werden",
+        "assign-to-me": " Weisen Sie mir zu",
+        "last-read": "zuletzt gelesen",
+        "did-focus": "tatFokus",
+        "chef-name": "Koch Name: ",
+        "yes": "Ja",
+        "no": "Nein",
+        "change-assigned": "Zugeordnete Aufgabe ändern?"
+    },
+    "order-details": {
+        "recipe-task": "Rezept/Aufgabe ",
+        "started-at": "Fing an bei",
+        "completed-at": "Abgeschlossen bei",
+        "assigned-to": "Zugewiesen an",
+        "transport": "(Transport )"
+    },
+    "order-overview": {
+        "view-order":"Sie haben keine Berechtigung zum Anzeigen von Bestellungen",
+        "view-inventory":"Sie haben keine Berechtigung zum Anzeigen des Inventars",
+        "new-table-order":"Sie haben keine Berechtigung zum Erstellen einer Tabellenreihenfolge",
+        "new-inventory-order":"Sie haben keine Berechtigung zum Erstellen eines Bestandsauftrags",
+        "manage-inventory":"Sie haben keine Berechtigung zum Verwalten des Inventars",
+        "permission-delete":"Sie haben nicht die Berechtigung, eine Bestellung zu löschen",
+        "manage-order":"Sie haben nicht die Berechtigung, die Bestellung zu verwalten",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "store-to-analyze": "Speichern, um zu analysieren",
+        "choose-option": " Bitte wähle eine Option",
+        "stored": "Nachricht wird gespeichert",
+        "table": "Tabelle :",
+        "deleivered-at": "Zugestellt bei :",
+        "to-be-delivered-at": "Zu liefern bei :",
+        "timing": "Zeitliche Koordinierung :",
+        "actual-delivery-time": "Tatsächliche Lieferzeit :",
+        "the-order-cannot-edited": "Die Bestellung kann nicht bearbeitet werden",
+        "order": "AUFTRAG",
+        "printer": "DRUCKERIN",
+        "onCall": "Bei Anruf",
+        "Details": "Einzelheiten"
+    },
+    "menu-component": {
+        "order-over-view": "Auftragsübersicht",
+        "station-view": "Alle Aufgaben",
+        "station-list": "Stationsliste",
+        "work-station": "Meine Stationen",
+        "recipe-lookup": "Rezepturen",
+        "open-order": "Offene Bestellungen",
+        "completed-order": "Abgeschlossene Bestellungen",
+        "new-order": "Neue Ordnung",
+        "logout": "Ausloggen",
+        "inventory": "Inventar",
+        "my-tasks": "Meine Aufgaben",
+        "restuarant-settings": "Restauranteinstellungen",
+        "completed-order-view": "Bestellung abgeschlossen",
+        "are-you-sure-you-want-to-logout": "Sind Sie sicher, dass Sie sich abmelden möchten??"
+    },
+    "server-settingslogin": {
+        "remember-connection-settings": "Merken Sie sich die Verbindungseinstellungen",
+        "engage": "Engagieren",
+        "start-server": "Starten Sie den Server",
+        "ip": "IP:",
+        "connect-to-server": "Verbinden zum Server",
+        "auto-discover": "Automatische Erkennung",
+        "manual-discover": "Manuelle Entdeckung",
+        "auto-discover-value": "automatische Erkennung",
+        "manual-discover-value": "manuell entdecken"
+    },
+    "start-server": {
+        "username": "Nutzername :",
+        "remember-username": "Benutzernamen merken",
+        "password": "Passwort :",
+        "start-server": "Server starten"
+    },
+    "server-settings": {
+        "engage-smartoni": "Schalten Sie smartTONi ein",
+        "advanced-startup": "Fortgeschrittenes Start-up",
+        "entered-invalid-ip": "Sie haben eine ungültige IP eingegeben",
+        "server-not-reachable": "Server nicht erreichbar",
+        "enter-the-ip": "Geben Sie die IP ein"
+    },
+    "station-list": {
+        "login-status": "loginStatus",
+        "login-value": "1",
+        "navigation-path": "navigationPath",
+        "work-station":"! Bitte wählen Sie Ihre Arbeitsplätze",
+        "no-station":"! Es ist keine Station verfügbar",
+        "hi":"Hallo "
+
+    },
+    "connect-to-server": {
+        "server-not-reachable": " Server nicht erreichbar",
+        "cannot-proceed-without-storage-permission": "Ohne Speichererlaubnis kann nicht fortgefahren werden",
+        "no-server-found": "Kein Server gefunden",
+        "invalid-ip": "Sie haben eine ungültige IP eingegeben",
+        "enter-ip": "Bitte geben Sie IP ein"
+    },
+    "connect-to-server-manual": {
+        "validation": "Bitte füllen Sie die Felder aus",
+        "wrong-data": "falsche Anmeldeinformationen",
+        "user-name": "Nutzername",
+        "login": "Anmeldung"
+    },
+    "app-background": {
+        "logout": "Möchten Sie den Server wirklich abmelden??",
+        "go-back": "Sind Sie sicher, dass Sie den Bildschirm verlassen möchten??",
+        "place-order": "Bestellung aufgeben",
+        "place-web-order": "Webbestellung planen",
+        "cancel": "Stornieren",
+        "yes": "Ja"
+    },
+    "inventory": {
+        "validation": "Bitte geben Sie die gültige Menge ein",
+        "validorder":"Bitte wählen Sie eine gültige Bestellung",
+        "updateorder":"Bestellmenge aktualisieren",
+        "updateinventory":"Inventarmenge aktualisieren",
+        "adjust-inventory":"Inventar anpassen",
+        "place-order":"Gehört gehört"
+    },
+    "advanced-startup-page": {
+        "connection-settings": "Verbindungseinstellungen"
+    },
+    "pos": {
+        "prevent-previous-time": "Vorherige Zeit kann nicht ausgewählt werden",
+        "cannot-add-more-than-one": "Es kann nicht mehr als eine Mahlzeit für das Inventar hinzugefügt werden",
+        "table-number-invalid": "Die Tabellennummer ist ungültig",
+        "no-meal-added": "Es wird keine Mahlzeit hinzugefügt",
+        "inventory-more-than-one-meal": "Inventarbestellung kann nicht mehr als eine Mahlzeit haben",
+        "empty-meal": "Einige Mahlzeiten sind leer",
+        "cannot-open-timepicker": "Zeitauswahl kann nicht geöffnet werden ",
+        "inventory-validation": "Eine Inventarbestellung kann nicht in Bestellung geändert werden",
+        "order-caannot-changed-inventory": "Eine Bestellung kann nicht in eine Bestandsbestellung geändert werden",
+        "cannot-make-inventory-with-morethan-one-meal": "Inventar kann nicht mit mehr als einer Mahlzeit bestellt werden",
+        "delivering-to": "Lieferung an:",
+        "delivery-at": "Lieferung um:",
+        "non-inventory-web-order": "Nur Inventaraufträge können im Web geplant werden",
+        "nav-back": "Vorherige Seite",
+        "nav-home": "Zurück zur ersten Seite",
+        "order-type-table": "Tabelle",
+        "order-type-inventory": "Inventar"
+    },
+    "passwordScreen": {
+        "password-validation": "Bitte geben Sie das Passwort ein",
+        "station-validation": "Anmeldung nicht möglich, da keine Station vorhanden ist",
+        "login-validation": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie die Anmeldeinformationen",
+        "login-sucess": "Einloggen erfolgreich",
+        "likely-hood-limit": "LikelyHoodLimit",
+        "spassword": "Passwort",
+        "session-expired": "Ihre Session ist abgelaufen. Bitte melden Sie sich erneut an!"
+    },
+    "checkin-task": {
+        "enter-valid-timein-minute": "Bitte geben Sie eine gültige Zeit in Minuten ein"
+    },
+    "completedOrder": {
+        "finished": "FERTIG",
+        "not_finished": "NICHT BEENDET",
+        "REMOVED": "ENTFERNT",
+        "completed": "ABGESCHLOSSEN",
+        "not_completed": "NICHT VOLLSTÄNDIG",
+        "deleted": "DELETED",
+        "deleivered-at": "Zugestellt bei :",
+        "to-be-delivered-at": "Zu liefern bei :",
+        "order": "AUFTRAG",
+        "printer": "DRUCKER",
+        "table": "Tabelle :"
+    },
+    "connecttoServer": {
+        "manual-settings": "Manuelle Einstellungen",
+        "connection-settings": "Verbindungseinstellungen",
+        "login-userlist-page": "LoginUserListPage"
+    },
+    "login-user-list-page": {
+        "serverip-not-found": "ServerIp nicht gefunden",
+        "server-not-reachable": "Server nicht erreichbar",
+        "connection-settings": "Verbindungseinstellungen",
+        "login-status": "loginStatus",
+        "user-id": "Benutzeridentifikation",
+        "networ-error": "Netzwerkfehler !",
+        "cannot-connect-ip": "Es kann keine Verbindung zu dieser IP hergestellt werden",
+        "go-back": "geh zurück"
+    },
+    "startupPage": {
+        "connection-settings": "Verbindungseinstellungen",
+        "serverip": "serverIP",
+        "hardware-back-press": "hardwareBackPress"
+    },
+    "StationData": {
+        "user-should-assigned-atleast-one": "Der Benutzer sollte mindestens einer Station zugeordnet sein"
+    },
+    "PosPage": {
+        "order-id": "Auftragsnummer"
+    },
+    "restraunt-list": {
+        "is-server-running": "isServerRunning",
+        "restuarant-list-": "Restuarantlist",
+        "synching": "  Bitte warten Sie, der Server startet....."
+    },
+    "TaskDetails": {
+        "landscape": "LANDSCHAFT",
+        "portrait": "PORTRÄT",
+        "ingredients": "Zutaten",
+        "no-engine": "no_engine",
+        "initialized": "initialisiert",
+        "step-by-step": "SCHRITT FÜR SCHRITT",
+        "C-ingredients": "ZUTATEN",
+        "read-ingredients": "LESEN SIE ZUTATEN",
+        "show-tasks": "AUFGABEN ANZEIGEN",
+        "read-task": "AUFGABE LESEN",
+        "details": "DETAIL",
+        "show-details": "ZEIGE DETAILS",
+        "previous": "BISHERIGE",
+        "next": "NÄCHSTER",
+        "done": "GETAN",
+        "snap-to": "einrasten :",
+        "started": "gestartet",
+        "finished": "fertig",
+        "cancelled": "abgesagt",
+        "tts-start": "tts-start",
+        "tts-finish": "tts-finish",
+        "tts-cancel": "tts-cancel",
+        "completed": "ABGESCHLOSSEN",
+        "assign-first-task": "ERSTE AUFGABE ZUWEISEN",
+        "initiliazing": "Initialisierung",
+        "taskid": "taskId",
+        "assignment-id": "Zuweisungs-ID",
+        "recipe-id": "Rezept-ID",
+        "user-id": "Benutzeridentifikation"
+    },
+    "checking-task": {
+        "remind": "Erinnere mich danach",
+        "minutes": " Protokoll"
+    },
+    "restuarant-settings": {
+        "operation-mode": "   Betriebsmodus"
+    },
+    "detected-restaurant": {
+        "open-restaurant": " Neues Restaurant eröffnen",
+        "advanced": " Erweiterte Verbindung"
+    }
+}
