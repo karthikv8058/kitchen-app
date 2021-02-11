@@ -30,7 +30,6 @@ class RecipeSyncAdapter : AbstractSyncAdapter {
         }
         HttpClient(context).httpClient.syncRecipes(restaurantId, lastCreatedAt).enqueue(object : Callback<SyncWarpper> {
             override fun onResponse(call: Call<SyncWarpper>, response: Response<SyncWarpper>) {
-
                 val data = response.body() ?: return
                 Thread(Runnable {
                     synchRecipes(data, daoAdapter, context)
@@ -261,6 +260,7 @@ class RecipeSyncAdapter : AbstractSyncAdapter {
                 interventionsTask.parent = task.interventionParent
                 interventionsTask.interventionPosition = task.interventionPosition
                 interventionsTask.time = task.interventionTime
+                interventionsTask.printLabel=task.printLabel
                 interventionsTask.name = task.name
                 interventionsTask.description = task.description
                 interventionsTask.previous = task.parentTasks

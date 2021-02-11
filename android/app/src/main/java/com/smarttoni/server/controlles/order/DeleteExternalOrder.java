@@ -57,25 +57,20 @@ public class DeleteExternalOrder extends HttpSecurityRequest {
                 order.setUpdatedAt(System.currentTimeMillis());
                 order.setModification(Order.MODIFICATION_DELETED);
                 order.setStatus(Order.ORDER_DELETED);
-//                List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(orderId);
-//                for (OrderLine orderLine : orderLines) {
-//                    InventoryRequest inventoryRequest = new InventoryRequest();
-//                    inventoryRequest.setOrderId(order.getParentOrderId());
-//                    inventoryRequest.setRecipeId(orderLine.getRecipeId());
-//                    inventoryRequest.setQty(orderLine.getQty());
-//                    daoAdapter.saveInventoryRequest(inventoryRequest);
-//                }
-//                daoAdapter.updateOrder(order);
 
-                List<ExternalOrderRequest> list = daoAdapter.listExternalOrderRequestFor(orderId);
+                daoAdapter.updateOrder(order);
+                List<ExternalOrderRequest> list = daoAdapter.listExternalOrderRequestForExternalOrder(orderId);
                 for(ExternalOrderRequest eor: list){
                     InventoryRequest inventoryRequest = new InventoryRequest();
-                    inventoryRequest.setOrderId(eor.getRequestedOrder());
+                    inventoryRequest.setOrderId(eor.getParentOrder());
                     inventoryRequest.setRecipeId(eor.getRecipe());
-                    inventoryRequest.setQty(eor.getQty());
+                    inventoryRequest.setQty(eor.getQuantity());
                     daoAdapter.saveInventoryRequest(inventoryRequest);
                 }
+                daoAdapter.deleteExternalOrderRequestForExternalOrder(orderId);
+                daoAdapter.deleteExternalAvailableQuantityForExternalOrder(orderId);
             }
+
             Gson gson = GSONBuilder.createGSON();
             Type type = new TypeToken<Boolean>() {
             }.getType();

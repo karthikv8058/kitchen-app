@@ -8,6 +8,8 @@ import com.smarttoni.assignment.Queue;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.assignment.transport.TransportHelper;
 import com.smarttoni.assignment.util.RecipeHelper;
+import com.smarttoni.entities.ExternalAvailableQuantity;
+import com.smarttoni.entities.ExternalOrderRequest;
 import com.smarttoni.utils.Strings;
 import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.entities.Course;
@@ -34,7 +36,7 @@ public class TaskTreeBuilder {
 
     private static final TaskTreeBuilder INSTANCE = new TaskTreeBuilder();
 
-    private TaskTreeBuilder(){
+    private TaskTreeBuilder() {
 
     }
 
@@ -77,15 +79,39 @@ public class TaskTreeBuilder {
         } else {
             Map<String, List<OrderLine>> supplierOrderMap = new HashMap<>();
             //Group By Supplier & create Orders
+
+            Order o = new Order();
+            o.setId(UUID.randomUUID().toString());
+
+
+            outLoop:
             for (String recipeId : qty.keySet()) {
 
-                if(qty.get(recipeId) == null){
+                Quantity q = qty.get(recipeId);
+                if (q == null) {
                     continue;
                 }
 
-                int quantity = qty.get(recipeId).numberOfUnits;
+
+                List<ExternalAvailableQuantity> listExternalAvailableQuantityForRecipe = daoAdapter.listExternalAvailableQuantityForRecipe(recipeId);
+                for (ExternalAvailableQuantity eaq : listExternalAvailableQuantityForRecipe) {
+                    if (eaq.getQuantity() >= q.required) {
+                        daoAdapter.addExternalOrderRequest(order.getId(), eaq.getOrder(), recipeId, q.required);
+                        float available = eaq.getQuantity() - q.required;
+                        eaq.setQuantity(available);
+                        daoAdapter.updateExternalAvailableQuantity(eaq);
+                        continue outLoop;
+                    }
+                }
+
 
                 Recipe r = daoAdapter.getRecipeById(recipeId);
+
+                int quantity = 0;
+                if (r.getOutputQuantity() > 0) {
+                    quantity = (int) Math.ceil(q.required / r.getOutputQuantity());
+                }
+
                 String supplier = r.getSupplier();
 
                 List<OrderLine> orderLines = supplierOrderMap.get(supplier);
@@ -103,10 +129,21 @@ public class TaskTreeBuilder {
 
                 orderLines.add(orderLine);
 
+                daoAdapter.addExternalOrderRequest(order.getId(), o.getId(), orderLine.getRecipeId(), q.required);
+
+                float total = r.getOutputQuantity() * orderLine.getQty();
+                float available = total - q.required;
+
+                if (available > 0) {
+                    daoAdapter.addExternalAvailableQuantity(o.getId(), orderLine.getRecipeId(), available);
+                }
+
             }
+
+
             for (String supplier : supplierOrderMap.keySet()) {
 
-                OrderBuilder orderBuilder = new OrderBuilder();
+//                OrderBuilder orderBuilder = new OrderBuilder();
 
 
 //                orderBuilder
@@ -119,16 +156,12 @@ public class TaskTreeBuilder {
 //                        .saveCourse()
 //                        .build();
 
-
                 List<OrderLine> orderLines = supplierOrderMap.get(supplier);
                 if (orderLines == null || orderLines.isEmpty()) {
                     continue;
                 }
-                Order o = new Order();
-                o.setId(UUID.randomUUID().toString());
 
-                daoAdapter.addChildOrder(order.getId(), o.getId());
-
+                o.setType(Order.TYPE_EXTERNAL);
                 o.setIsUpdated(true);
                 long createAt = new Date().getTime();
                 o.setUpdatedAt(createAt);
@@ -165,7 +198,7 @@ public class TaskTreeBuilder {
     private static CreateExternalOrder checkForExternalOrder(DaoAdapter daoAdapter,
                                                              String orderId,
                                                              Recipe recipe,
-                                                             float required,
+                                                             float requiredQuantity,
                                                              boolean reserveInventory,
                                                              boolean isInventoryOrder) {
 
@@ -183,13 +216,13 @@ public class TaskTreeBuilder {
 //            }
             Inventory inventory = InventoryManagement.checkInInventory(recipe.getId(), "", daoAdapter);
             if (inventory != null) {
-                float _required = required * recipe.getOutputQuantity();
+                float _required = requiredQuantity;
                 float inventoryQty = inventory.getQuantity();
                 if (inventoryQty > 0) {
                     if (_required <= inventoryQty) {
                         if (reserveInventory) {
                             //Take from inventory
-                            InventoryManagement.takeFromInventory(orderId, inventory, required * recipe.getOutputQuantity(), daoAdapter);
+                            InventoryManagement.takeFromInventory(orderId, inventory, requiredQuantity, daoAdapter);
                             InventoryReservation ir = new InventoryReservation();
                             ir.setOrderId(orderId);
                             ir.setRecipeId(recipe.getId());
@@ -221,12 +254,10 @@ public class TaskTreeBuilder {
         //        recipe.getInventoryType() == Recipe.INVENTORY_NO_STOCK ? CreateExternalOrder.CREATE_EXTERNAL_ORDER : CreateExternalOrder.NO_EXTERNAL_ORDER;
     }
 
-    private boolean recursivelyCreateExternalOrder(DaoAdapter daoAdapter, String orderId, Recipe recipe, Map<String, Quantity> qty, float required, boolean isInventoryOrder) {
-        CreateExternalOrder cre = checkForExternalOrder(daoAdapter, orderId, recipe, required, true, isInventoryOrder);
-        if (Strings.isNotEmpty(recipe.getId()) && cre != CreateExternalOrder.NO_EXTERNAL_ORDER) {
-            if (cre == CreateExternalOrder.CREATE_EXTERNAL_ORDER) {
-                return true;
-            }
+    private boolean recursivelyCreateExternalOrder(DaoAdapter daoAdapter, String orderId, Recipe recipe, Map<String, Quantity> qty, float required, float actualQuantity, boolean isInventoryOrder) {
+        CreateExternalOrder cre = checkForExternalOrder(daoAdapter, orderId, recipe, actualQuantity, true, isInventoryOrder);
+        if (Strings.isNotEmpty(recipe.getId()) && cre == CreateExternalOrder.CREATE_EXTERNAL_ORDER) {
+            return true;
         }
         List<Task> tasks = daoAdapter.loadTasks(recipe.getId());
         for (Task task : tasks) {
@@ -236,15 +267,15 @@ public class TaskTreeBuilder {
                     Recipe r = daoAdapter.getRecipeById(taskIngredient.getRecipeId());
                     int actualQty = UnitHelper.getRecipeQty(r.getOutputUnitId(), r, taskIngredient.getQuantity());
 
-                    if (recursivelyCreateExternalOrder(daoAdapter, orderId, r, qty, required * actualQty, false)) {
+                    if (recursivelyCreateExternalOrder(daoAdapter, orderId, r, qty, required * actualQty, required * taskIngredient.getQuantity(), false)) {
                         Quantity currentQty = qty.get(r.getId());
                         if (currentQty == null) {
                             currentQty = new Quantity();
-                            currentQty.numberOfUnits = 0;
                             currentQty.required = 0;
+                            qty.put(r.getId(), currentQty);
                         }
-//                        currentQty.required =  (required * actualQty) + currentQty;
-//                        currentQty.numberOfUnits =  (required * actualQty) + currentQty;
+                        currentQty.required = (required * taskIngredient.getQuantity()) + currentQty.required;
+                        //currentQty.numberOfUnits =  actualQty ;//(required * actualQty) + currentQty.numberOfUnits;
 //                        if (currentQty != null) {
 //                            qty.put(r.getId(), (required * actualQty) + currentQty);
 //                        } else {
@@ -258,7 +289,7 @@ public class TaskTreeBuilder {
         return false;
     }
 
-    public  boolean parseAndCheckExternalOrders(Order order) {
+    public boolean parseAndCheckExternalOrders(Order order) {
 
         DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
 
@@ -268,7 +299,16 @@ public class TaskTreeBuilder {
 
         for (OrderLine orderLine : orderLines) {
             Recipe recipe = orderLine.getRecipe();
-            recursivelyCreateExternalOrder(daoAdapter, order.getId(), recipe, qty, orderLine.getQty(), order.getIsInventory());
+            //TODO redundant code
+            if(recursivelyCreateExternalOrder(daoAdapter, order.getId(), recipe, qty, orderLine.getQty(), orderLine.getQty() * recipe.getOutputQuantity(), order.getIsInventory())){
+                Quantity currentQty = qty.get(recipe.getId());
+                if (currentQty == null) {
+                    currentQty = new Quantity();
+                    currentQty.required = 0;
+                    qty.put(recipe.getId(), currentQty);
+                }
+                currentQty.required = (orderLine.getQty() * recipe.getOutputQuantity()) + currentQty.required;
+            }
         }
 
         if (qty.isEmpty()) {
@@ -498,6 +538,6 @@ public class TaskTreeBuilder {
 
     public class Quantity {
         float required;
-        int numberOfUnits;
+        //int numberOfUnits;
     }
 }

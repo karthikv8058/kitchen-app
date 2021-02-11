@@ -86,7 +86,7 @@ public class Recipe extends RealmObject {
     private int version;
 
     @Property(nameInDb = "productBarcode")
-    @SerializedName("product_barcode")
+    @SerializedName("productBarcode")
     private String productBarcode;
 
     @Property(nameInDb = "recipeLabels")

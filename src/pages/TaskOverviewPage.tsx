@@ -338,6 +338,12 @@ class TaskOverviewPage extends AbstractComponent<Props, State> {
 
     finishTask = (work: Work) => {
         return this.taskService.finishTask(work).then((isCompleted: boolean) => {
+            this.navigationService.push('PrinterDetailPage', {
+                task: work.task,
+                station:this.stations
+                
+            });
+
             this.getTasks();
             return isCompleted;
         });
@@ -451,7 +457,7 @@ class TaskOverviewPage extends AbstractComponent<Props, State> {
                         onApplyFilter={this.onApplyFilter}
                         stations={this.stations}
                         close={this.close} />
-                        
+
                     <Splitter>
                         {this.renderChefTasks()}
                         {this.renderMachineTasks()}
@@ -464,7 +470,7 @@ class TaskOverviewPage extends AbstractComponent<Props, State> {
 }
 
 const styles = StyleSheet.create({
-    
+
     headerContainer: {
         marginLeft: 10,
         marginRight: 10,

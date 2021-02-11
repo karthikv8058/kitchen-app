@@ -131,7 +131,7 @@ export default class PosRecipeBook extends AbstractComponent<Props, State> {
     generatePageContent = () => {
 
         let stack = this.state.stack;
-        let label: string;
+        let label: any;
         if (stack) {
             label = stack[stack.length - 1];
         }
@@ -142,13 +142,8 @@ export default class PosRecipeBook extends AbstractComponent<Props, State> {
             pageContent = pageContent.concat(this.getRootLabels(label));
         } else {
             let stack = this.state.stack[0]
-            let recipes: any = []
-            stack.recipes.forEach((r: Recipe) => {
-                recipes.push(this.props.recipes.filter(r1 => r1.uuid === r.recipe_uuid)[0])
-            });
-            recipes = recipes.filter((recipe: Recipe, index: number) => (recipe != undefined) && recipes.indexOf(recipe) === index)
             pageContent = pageContent.concat(this.props.labels.filter(l => this.checkLabel(label, l)));
-            pageContent = pageContent.concat(recipes.filter((r: Recipe) => this.checkRecipes(label, r,)));
+            pageContent = pageContent.concat(this.getRootRecipes(stack, label));
         }
         if (pageContent.length % 2 !== 0) {
             pageContent.push({ uuid: '', isLabel: true });
@@ -157,43 +152,40 @@ export default class PosRecipeBook extends AbstractComponent<Props, State> {
         return pageContent;
     }
 
-    checkRecipes = (source: string, target: RecipeLabel | Recipe) => {
-        target.isLabel = false;
-        let label = this.props.labels.filter(l => l.uuid === source)
-        let labelList = !!label.length && label[0].childLabels.split(',');
-        labelList.push(source)
-        return this.traverseRecipeTree(labelList, target);
-
-    }
-    traverseRecipeTree(labels: any, target: any) {
-        let reciperLabels = target.recipeLabels && target.recipeLabels.split(',')
-        let present = false;
-        for (var i = 0; i < labels.length; i++) {
-            if (labels[i] && labels[i].indexOf(reciperLabels) !== -1) {
-                present = true
-            } else {
-                let label = this.props.labels.filter(l => l.uuid === labels[i])
-                let labelList = !!label.length && label[0].childLabels.split(',');
-                this.traverseRecipeTree(labelList, target)
+    findRootLabels = (labelId: any, filterdLabels: any) => {
+        let l: any = this.props.labels.find(r => r.uuid === labelId)
+        if (!l.parentLabel) {
+            l.isLabel = true
+            filterdLabels.push(l)
+        } else {
+            let l2 = !!l.parentLabel ? l.parentLabel.split(',') : !!l.parentLabel ? (l.parentLabel.split(',')) : []
+            if (!!l2) {
+                l2.forEach((labels: any) => {
+                    filterdLabels = this.findRootLabels(labels, filterdLabels)
+                });
             }
 
         }
-        return present
-    }
 
-    getChildRecipe = (labelList: RecipeLabel[], recipeLabels: String) => {
-        let isPresent = false
-        labelList.forEach((label: any) => {
-            let labels = recipeLabels && recipeLabels.split(',');
-            if (!isPresent && labels && labels.indexOf(label) !== -1) {
-                isPresent = true;
+        return filterdLabels
+    }
+    
+    getChildRecipe(labelId: any, element: any, filteredRecipes: any) {
+        let label: any = this.props.labels.find(r => r.uuid === labelId)
+        let reciperLabels = element.recipeLabels && element.recipeLabels.split(',');
+        let labelList = !!label && !!label.length && label[0].childLabels.split(',');
+        if (!!reciperLabels && reciperLabels.includes(labelId)) {
+            filteredRecipes.push(element)
+        } else {
+            if (!!labelList) {
+                labelList.forEach((labelId: any) => {
+                    filteredRecipes.push(this.getChildRecipe(labelId, element, filteredRecipes))
+                });
             }
-        });
-        return isPresent
+        }
+        return filteredRecipes;
     }
-
-    getRootLabels(source: any) {
-        let rootLabels: any = [];
+    getRootRecipes(source: any, label: any) {
         let data: any = [];
         this.props.recipes.forEach(element => {
             source.recipes.forEach((elem: any) => {
@@ -202,35 +194,63 @@ export default class PosRecipeBook extends AbstractComponent<Props, State> {
                 }
             });
         });
+        let rootRecipes: any = [];
+        data.forEach((element: any) => {
+            let reciperLabels = element.recipeLabels && element.recipeLabels.split(',');
 
+            if (!!reciperLabels && reciperLabels.includes(label)) {
+                let data = [];
+                data.push(element)
+                rootRecipes.push(data)
+            } else {
+                let labels = this.props.labels.filter(l => l.uuid === label)
+                let labelList = !!labels && !!labels.length && labels[0].childLabels.split(',');
+                if (!!labelList) {
+                    labelList.forEach((labelId: any) => {
+                        rootRecipes.push(this.getChildRecipe(labelId, element, []))
+                    });
+                }
+            }
+
+        });
+        let filteredList = []
+        rootRecipes.forEach(element => {
+            if (!!element && !!element[0]) {
+                filteredList.push(element[0])
+            }
+        });
+        return filteredList
+    }
+    getRootLabels(source: any) {
+        let data: any = [];
+
+        this.props.recipes.forEach(element => {
+            source.recipes.forEach((elem: any) => {
+                if (element.uuid == elem.recipe_uuid) {
+                    data.push(element)
+                }
+            });
+        });
+
+        let rootLabels: any = [];
         data.forEach((element: any) => {
             let labels = element.recipeLabels && element.recipeLabels.split(',');
-            if(!!labels){
+            if (!!labels) {
                 labels.forEach((labelId: any) => {
-                    rootLabels = this.findRootLabels(labelId, [])
+                    rootLabels.push(this.findRootLabels(labelId, [])[0])
                 });
             }
-            
-        });
-        return rootLabels.concat(data)
-    }
-    findRootLabels = (labelId: any, filterdLabels: any) => {
-        let l: any = this.props.labels.find(r => r.uuid === labelId)
-        if (!l.parentLabel) {
-            l.isLabel = true
-            filterdLabels.push(l)
-        } else {
-            let l2 = l.length > 0 && !!l.parentLabel ? l.parentLabel.split(',') : !!l.parentLabel ? (l.parentLabel.split(',')) : []
-           if(!!l2){
-            l2.forEach((labels: any) => {
-                filterdLabels = this.findRootLabels(labels, filterdLabels)
-            });
-           }
-            
-        }
 
-        return filterdLabels
+        });
+
+        let uniqueChars = rootLabels.filter((c, index) => {
+            return rootLabels.indexOf(c) === index;
+        });
+
+        return uniqueChars.concat(data)
     }
+
+
 
     checkLabel = (source: string, target: RecipeLabel | Recipe, isLabel: boolean = true, isServiceSet: boolean = false) => {
         target.isServiceSet = isServiceSet

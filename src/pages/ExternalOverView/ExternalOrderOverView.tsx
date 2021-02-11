@@ -35,7 +35,7 @@ interface State {
 export default class ExternalOrderOverView extends AbstractComponent<Props, State> {
     private orderService: OrderService = Bind('orderService');
     private permissionService: PermissionService = Bind('permissionService');
-    private orderDeleteAcess = false;
+    private orderDeleteAcess = true;
     private tooblarItems: any[] = [];
     private eventEmitterService: EventEmitterService = ioc.ServiceFactory.getServiceBy('eventEmitterService');
     pushListener = { type: 1, callback: (data: string) => { this.loadOrders(); } };
@@ -108,9 +108,15 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
                         ToastAndroid.show("Can't delete this external order", ToastAndroid.SHORT)
                     }
                 }
+                this.setState({
+                    activeOrderId: ''
+                });
             });
         } else {
             ToastAndroid.show(t('order-overview.permission-delete'), ToastAndroid.SHORT);
+            this.setState({
+                activeOrderId: ''
+            });
         }
     }
 
@@ -161,7 +167,7 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
             if (responseChecker(response, this.props.navigation)) {
                 if (!!response) {
                     this.orderService.loadArchivedOrder(1).then((archivedOrder: any) => {
-                        let orderList: any =  this.state.order
+                        let orderList: any = this.state.order
                         archivedOrder.orders.forEach((element: any) => {
                             let isExist: boolean = false;
                             this.state.order.forEach((order: IOrder) => {
@@ -210,25 +216,6 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
         });
     }
 
-    renderDeleteOrderAlert() {
-        return (
-            <Modal
-                transparent={true}
-                visible={this.state.activeOrderId != ''}
-                onRequestClose={() => { this.toggleModal('') }}>
-                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
-                    <View style={styles.modalContainer}>
-                        <Text style={{ textAlign: 'center', color: colors.black, marginTop: 10 }}>{t('order-overview.choose-option')}</Text>
-                        <Text style={styles.modalTextHeader}
-                            onPress={() => this.deleteOrder()}>
-                            {'Cancel'}</Text>
-                    </View>
-                </View>
-            </Modal>
-        );
-    }
-
-
     renderOrder = (order: { item: IOrder }) => {
         return (
             <Order
@@ -247,6 +234,19 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
                 index={OPEN_ORDER}
                 category={menuCategory.orderCategory}
                 toolbarMenu={this.tooblarItems} >
+                <Modal
+                    transparent={true}
+                    visible={this.state.activeOrderId != ''}
+                    onRequestClose={() => { this.toggleModal('') }}>
+                    <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
+                        <View style={styles.modalContainer}>
+                            <Text style={{ textAlign: 'center', color: colors.black, marginTop: 10 }}>{t('order-overview.choose-option')}</Text>
+                            <Text style={styles.modalTextHeader}
+                                onPress={() => this.deleteOrder()}>
+                                {'Cancel'}</Text>
+                        </View>
+                    </View>
+                </Modal>
                 <View style={styles.viewContainer}>
                     <View style={styles.container}>
                         <View style={styles.overviewHolder}>

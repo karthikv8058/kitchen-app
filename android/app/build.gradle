@@ -205,13 +205,13 @@ android {
             buildConfigField "String", "WEB_URL", "\"http://demo.mypits.org:15037/\""
             targetSdkVersion rootProject.ext.targetSdkVersion
         }
-        prelive {
-            minSdkVersion rootProject.ext.minSdkVersion
-            applicationId 'com.smarttoni.dev'
-            buildConfigField "String", "BASE_URL", "\"http://demo.mypits.org:15036/prelive.php/\""
-            buildConfigField "String", "WEB_URL", "\"http://demo.mypits.org:15037/\""
-            targetSdkVersion rootProject.ext.targetSdkVersion
-        }
+//        prelive {
+//            minSdkVersion rootProject.ext.minSdkVersion
+//            applicationId 'com.smarttoni.dev'
+//            buildConfigField "String", "BASE_URL", "\"http://demo.mypits.org:15036/prelive.php/\""
+//            buildConfigField "String", "WEB_URL", "\"http://demo.mypits.org:15037/\""
+//            targetSdkVersion rootProject.ext.targetSdkVersion
+//        }
 
         forTesting{
             minSdkVersion rootProject.ext.minSdkVersion
@@ -220,20 +220,20 @@ android {
             buildConfigField "String", "WEB_URL", "\"http:demo.mypits.org:15039/\""
             targetSdkVersion rootProject.ext.targetSdkVersion
         }
-        uat {
-            minSdkVersion rootProject.ext.minSdkVersion
-            applicationId 'com.smarttoni'
-            buildConfigField "String", "BASE_URL", "\"https://api.uat.smarttoni.com/\""
-            buildConfigField "String", "WEB_URL", "\"http://briefing.uat.smarttoni.com/\""
-            targetSdkVersion rootProject.ext.targetSdkVersion
-        }
-        live {
-            minSdkVersion rootProject.ext.minSdkVersion
-            applicationId 'com.smarttoni'
-            buildConfigField "String", "BASE_URL", "\"http://api.smarttoni.com/\""
-            buildConfigField "String", "WEB_URL", "\"http://briefing.smarttoni.com/\""
-            targetSdkVersion rootProject.ext.targetSdkVersion
-        }
+//        uat {
+//            minSdkVersion rootProject.ext.minSdkVersion
+//            applicationId 'com.smarttoni'
+//            buildConfigField "String", "BASE_URL", "\"https://api.uat.smarttoni.com/\""
+//            buildConfigField "String", "WEB_URL", "\"http://briefing.uat.smarttoni.com/\""
+//            targetSdkVersion rootProject.ext.targetSdkVersion
+//        }
+//        live {
+//            minSdkVersion rootProject.ext.minSdkVersion
+//            applicationId 'com.smarttoni'
+//            buildConfigField "String", "BASE_URL", "\"http://api.smarttoni.com/\""
+//            buildConfigField "String", "WEB_URL", "\"http://briefing.smarttoni.com/\""
+//            targetSdkVersion rootProject.ext.targetSdkVersion
+//        }
     }
     lintOptions {
         checkReleaseBuilds false

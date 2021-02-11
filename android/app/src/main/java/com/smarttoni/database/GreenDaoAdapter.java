@@ -17,14 +17,13 @@ import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalAvailableQuantityDao;
 import com.smarttoni.entities.ExternalOrderRequest;
 import com.smarttoni.entities.ExternalOrderRequestDao;
-import com.smarttoni.entities.ExternalOrderReservation;
-import com.smarttoni.entities.ExternalOrderReservationDao;
 import com.smarttoni.entities.Intervention;
 import com.smarttoni.entities.InterventionDao;
 import com.smarttoni.entities.InterventionJob;
 import com.smarttoni.entities.InterventionJobDao;
 import com.smarttoni.entities.Inventory;
 import com.smarttoni.entities.InventoryDao;
+import com.smarttoni.entities.InventoryMovement;
 import com.smarttoni.entities.InventoryRequest;
 import com.smarttoni.entities.InventoryReservation;
 import com.smarttoni.entities.Label;
@@ -95,7 +94,9 @@ import com.smarttoni.sync.orders.SyncOrder;
 import com.smarttoni.sync.orders.SyncOrderLine;
 import com.smarttoni.utils.Strings;
 
+import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.query.QueryBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -120,22 +121,32 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void clear() {
-        deleteAllRecipe();
+
+        for (AbstractDao abstractDao : getDaoSession().getAllDaos()){
+            abstractDao.deleteAll();
+        }
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.deleteAll();
+        realm.commitTransaction();
+
+        //deleteAllRecipe();
         // getDaoSession().getRecipeDao().deleteAll();
-        getDaoSession().getStationDao().deleteAll();
-        getDaoSession().getUserStationAssignmentDao().deleteAll();
-        getDaoSession().getOrderDao().deleteAll();
-        getDaoSession().getTaskDao().deleteAll();
-        getDaoSession().getTaskStepDao().deleteAll();
-        getDaoSession().getOrderLineDao().deleteAll();
-        getDaoSession().getStepIngrediantDao().deleteAll();
-        getDaoSession().getWorkDao().deleteAll();
-        getDaoSession().getInterventionJobDao().deleteAll();
-        getDaoSession().getUserDao().deleteAll();
-        getDaoSession().getOptionsDao().deleteAll();
-        getDaoSession().getLabelDao().deleteAll();
-        getDaoSession().getOrderLineDao().deleteAll();
-        getDaoSession().getInventoryDao().deleteAll();
+//        getDaoSession().getStationDao().deleteAll();
+//        getDaoSession().getUserStationAssignmentDao().deleteAll();
+//        getDaoSession().getOrderDao().deleteAll();
+//        getDaoSession().getTaskDao().deleteAll();
+//        getDaoSession().getTaskStepDao().deleteAll();
+//        getDaoSession().getOrderLineDao().deleteAll();
+//        getDaoSession().getStepIngrediantDao().deleteAll();
+//        getDaoSession().getWorkDao().deleteAll();
+//        getDaoSession().getInterventionJobDao().deleteAll();
+//        getDaoSession().getUserDao().deleteAll();
+//        getDaoSession().getOptionsDao().deleteAll();
+//        getDaoSession().getLabelDao().deleteAll();
+//        getDaoSession().getOrderLineDao().deleteAll();
+//        getDaoSession().getInventoryDao().deleteAll();
     }
 
     @Override
@@ -329,30 +340,34 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public List<Order> loadChildOrders(String parentOrderId) {
-        List<ExternalOrderReservation> list =  getDaoSession().getExternalOrderReservationDao().queryBuilder()
-                .where(ExternalOrderReservationDao.Properties.ParentOrder.eq(parentOrderId))
+        List<ExternalOrderRequest> list = getDaoSession()
+                .getExternalOrderRequestDao()
+                .queryBuilder()
+                .where(ExternalOrderRequestDao.Properties.ParentOrder.eq(parentOrderId))
                 .list();
 
         List<Order> orders = new ArrayList<>();
-        for(ExternalOrderReservation eor : list){
+        for (ExternalOrderRequest eor : list) {
             Order order = getOrderById(eor.getExternalOrder());
             orders.add(order);
         }
-        return  orders;
+        return orders;
     }
 
     @Override
     public List<Order> loadParentOrders(String childOrderId) {
-        List<ExternalOrderReservation> list =  getDaoSession().getExternalOrderReservationDao().queryBuilder()
-                .where(ExternalOrderReservationDao.Properties.ExternalOrder.eq(childOrderId))
+        List<ExternalOrderRequest> list = getDaoSession()
+                .getExternalOrderRequestDao()
+                .queryBuilder()
+                .where(ExternalOrderRequestDao.Properties.ExternalOrder.eq(childOrderId))
                 .list();
 
         List<Order> orders = new ArrayList<>();
-        for(ExternalOrderReservation eor : list){
+        for (ExternalOrderRequest eor : list) {
             Order order = getOrderById(eor.getParentOrder());
             orders.add(order);
         }
-        return  orders;
+        return orders;
     }
 
     @Override
@@ -419,21 +434,26 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(UnitConversionDao.Properties.From.eq(fromUnitId))
                 .list();
     }
-    public void deleteServiceSetRecipes(String id) {
-        getDaoSession()
-                .getServiceSetRecipesDao()
-                .queryBuilder()
-                .where(ServiceSetRecipesDao.Properties.Id.eq(id))
-                .buildDelete().executeDeleteWithoutDetachingEntities();
-    }
-    @Override
-    public void deleteServiceSetTimings(String id) {
-        getDaoSession()
-                .getServiceSetTimingsDao()
-                .queryBuilder()
-                .where(ServiceSetTimingsDao.Properties.Id.eq(id))
-                .buildDelete().executeDeleteWithoutDetachingEntities();
-    }
+
+//    @Override
+//    public void deleteServiceSetRecipes(String id) {
+//
+//        getDaoSession()
+//                .getServiceSetRecipesDao()
+//                .queryBuilder()
+//                .where(ServiceSetRecipesDao.Properties.Id.eq(id))
+//                .buildDelete().executeDeleteWithoutDetachingEntities();
+//
+//    }
+//
+//    @Override
+//    public void deleteServiceSetTimings(String id) {
+//        getDaoSession()
+//                .getServiceSetTimingsDao()
+//                .queryBuilder()
+//                .where(ServiceSetTimingsDao.Properties.Id.eq(id))
+//                .buildDelete().executeDeleteWithoutDetachingEntities();
+//    }
 
 //    @Override
 //    public List<Order> loadIncompleteChildOrders(String parentOrderId) {
@@ -453,7 +473,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public void deleteInventoryRequests(InventoryRequest inventoryRequest){
+    public void deleteInventoryRequests(InventoryRequest inventoryRequest) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.where(InventoryRequest.class)
@@ -473,7 +493,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public void saveInventoryRequest(InventoryRequest inventoryRequest){
+    public void saveInventoryRequest(InventoryRequest inventoryRequest) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealm(inventoryRequest);
@@ -481,28 +501,24 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public void addChildOrder(String parentOrderId, String childOrderId) {
-        ExternalOrderReservation eor = new ExternalOrderReservation();
+    public void addExternalOrderRequest(String parentOrderId, String externalOrderId, String recipeId, float qty) {
+        ExternalOrderRequest eor = new ExternalOrderRequest();
         eor.setId(UUID.randomUUID().toString());
-        eor.setExternalOrder(childOrderId);
         eor.setParentOrder(parentOrderId);
-
-        getDaoSession()
-                .getExternalOrderReservationDao()
-                .insert(eor);
-
-
-        int a = 10;
-
+        eor.setExternalOrder(externalOrderId);
+        eor.setRecipe(recipeId);
+        eor.setQuantity(qty);
+        getDaoSession().getExternalOrderRequestDao().insert(eor);
     }
 
     @Override
-    public List<ExternalOrderRequest> listExternalOrderRequestFor(String externalOrderId) {
-        return getDaoSession()
-                .getExternalOrderRequestDao()
-                .queryBuilder()
-                .where(ExternalOrderRequestDao.Properties.WaitingExternalOrder.eq(externalOrderId))
-                .list();
+    public void addExternalAvailableQuantity(String externalOrderId, String recipeId, float qty) {
+        ExternalAvailableQuantity eaq = new ExternalAvailableQuantity();
+        eaq.setId(UUID.randomUUID().toString());
+        eaq.setOrder(externalOrderId);
+        eaq.setRecipe(recipeId);
+        eaq.setQuantity(qty);
+        getDaoSession().getExternalAvailableQuantityDao().insert(eaq);
     }
 
     @Override
@@ -539,7 +555,6 @@ public class GreenDaoAdapter implements DaoAdapter {
         getDaoSession().getOrderDao().delete(o);
 
 
-
         if (order.courses == null) {
             return true;
         }
@@ -554,7 +569,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 continue;
             }
 
-            for(Course c:courses) {
+            for (Course c : courses) {
                 getDaoSession().getCourseDao().delete(c);
 
                 for (SyncMeal meal : course.meals) {
@@ -583,14 +598,14 @@ public class GreenDaoAdapter implements DaoAdapter {
         }
         return true;
     }
+
     @Override
     public List<ArchivedOrders> loadArchivedOrders() {
-        return  getDaoSession().getArchivedOrdersDao().loadAll();
+        return getDaoSession().getArchivedOrdersDao().loadAll();
     }
 
     @Override
-    public List<Order> loadnonArchivedOrders()
-    {
+    public List<Order> loadnonArchivedOrders() {
         return getDaoSession()
                 .getOrderDao()
                 .queryBuilder()
@@ -622,7 +637,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         if (course.getActualDeliveryTime() == 0) {
             course.setActualDeliveryTime(System.currentTimeMillis());
         }
-          getDaoSession().getCourseDao().insert(course);
+        getDaoSession().getCourseDao().insert(course);
     }
 
     @Override
@@ -651,6 +666,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(CourseDao.Properties.OrderId.eq(orderId))
                 .list();
     }
+
     @Override
     public List<PrinterData> loadUnUpdatedPrinterData() {
         return getDaoSession().
@@ -659,6 +675,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(PrinterDataDao.Properties.IsUpdated.notEq("1"))
                 .list();
     }
+
     @Override
     public List<Inventory> loadUnUpdatedInventory() {
         return getDaoSession().
@@ -667,6 +684,12 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(InventoryDao.Properties.IsUpdated.notEq("1"))
                 .list();
     }
+
+    @Override
+    public List<Printer> getPrinterList() {
+        return  getDaoSession().getPrinterDao().loadAll();
+    }
+
     @Override
     public List<ChefActivityLog> loadUnUpdatedChefActivity() {
         return getDaoSession().
@@ -675,6 +698,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(ChefActivityLogDao.Properties.IsUpdated.notEq("1"))
                 .list();
     }
+
     @Override
     public List<UserStationAssignment> loadUnUpdatedUserStation() {
         return getDaoSession().
@@ -683,6 +707,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(UserStationAssignmentDao.Properties.IsUpdated.notEq("1"))
                 .list();
     }
+
     @Override
     public List<Work> loadUnUpdatedWorks() {
         return getDaoSession().
@@ -1320,6 +1345,26 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(ServiceSetDao.Properties.Id.in(ids))
                 .buildDelete()
                 .executeDeleteWithoutDetachingEntities();
+
+
+        for(String id : ids){
+            getDaoSession()
+                    .getServiceSetRecipesDao()
+                    .queryBuilder()
+                    .where(ServiceSetRecipesDao.Properties.ServiceSetId.eq(id))
+                    .buildDelete().executeDeleteWithoutDetachingEntities();
+
+            getDaoSession()
+                    .getServiceSetTimingsDao()
+                    .queryBuilder()
+                    .where(ServiceSetTimingsDao.Properties.ServiceSetId.eq(id))
+                    .buildDelete().executeDeleteWithoutDetachingEntities();
+
+        }
+
+
+
+
     }
 
     @Override
@@ -1357,12 +1402,14 @@ public class GreenDaoAdapter implements DaoAdapter {
         List<Recipe> recipes = realm.copyFromRealm(realm.where(Recipe.class).sort("name", Sort.ASCENDING).findAll());
         return recipes;
     }
+
     @Override
     public List<Supplier> loadSuppliers() {
         Realm realm = Realm.getDefaultInstance();
         List<Supplier> Supplier = realm.copyFromRealm(realm.where(Supplier.class).sort("name", Sort.ASCENDING).findAll());
         return Supplier;
     }
+
     @Override
     public void deleteRecipeIngredient(List<String> ids) {
         getDaoSession()
@@ -1409,7 +1456,6 @@ public class GreenDaoAdapter implements DaoAdapter {
     @Override
     public void saveServiceSetRecipes(ServiceSetRecipes serviceSetRecipes) {
         getDaoSession().getServiceSetRecipesDao().insertInTx(serviceSetRecipes);
-
     }
 
     @Override
@@ -1533,6 +1579,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     public List<Label> loadLabels() {
         return getDaoSession().getLabelDao().loadAll();
     }
+
     @Override
     public List<ServiceSet> loadServiceSets() {
         return getDaoSession().getServiceSetDao().loadAll();
@@ -1542,7 +1589,6 @@ public class GreenDaoAdapter implements DaoAdapter {
     public List<Printer> getPrinterData() {
         return getDaoSession().getPrinterDao().loadAll();
     }
-
 
 
     @Override
@@ -1584,6 +1630,11 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
+    public Label loadLabelById(String id) {
+        return getDaoSession().getLabelDao().load(id);
+    }
+
+    @Override
     public void saveUnit(List<Units> unit) {
         getDaoSession().getUnitsDao().insertInTx(unit);
     }
@@ -1598,11 +1649,13 @@ public class GreenDaoAdapter implements DaoAdapter {
         return getDaoSession().getOrderDao().queryBuilder()
                 .where(OrderDao.Properties.Id.eq(uuid)).list();
     }
+
     @Override
     public List<ArchivedOrders> loadArchivedOrderById(String uuid) {
         return getDaoSession().getArchivedOrdersDao().queryBuilder()
                 .where(ArchivedOrdersDao.Properties.Id.eq(uuid)).list();
     }
+
     @Override
     public void deletArchivedOrder(ArchivedOrders archivedOrders) {
         getDaoSession().getArchivedOrdersDao().delete(archivedOrders);
@@ -1642,7 +1695,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public List<Order> getOrderByStatus() {
+    public List<Order> listOrdersWithOpenStatus() {
         return getDaoSession().getOrderDao().queryBuilder()
                 .where(OrderDao.Properties.Status.eq(Order.ORDER_OPEN)).build().list();
     }
@@ -1666,17 +1719,156 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public String getSupplierNameByOrderId(String orderId) {
-        List<OrderLine> orderLines=  getDaoSession().getOrderLineDao().queryBuilder().where(OrderLineDao.Properties.OrderId.eq(orderId)).limit(1).list();
-        if(orderLines != null && orderLines.size() > 0){
-            String supplierId =  orderLines.get(0).getRecipe().getSupplier();
-            if(Strings.isNotEmpty(supplierId)){
+        List<OrderLine> orderLines = getDaoSession().getOrderLineDao().queryBuilder().where(OrderLineDao.Properties.OrderId.eq(orderId)).limit(1).list();
+        if (orderLines != null && orderLines.size() > 0) {
+            String supplierId = orderLines.get(0).getRecipe().getSupplier();
+            if (Strings.isNotEmpty(supplierId)) {
                 Supplier s = getSupplierById(supplierId);
-                if(s != null){
+                if (s != null) {
                     return s.getName();
                 }
             }
         }
         return "";
+    }
+
+    @Override
+    public List<ExternalAvailableQuantity> listExternalAvailableQuantityForRecipe(String recipeId) {
+        return getDaoSession()
+                .getExternalAvailableQuantityDao()
+                .queryBuilder()
+                .where(ExternalAvailableQuantityDao.Properties.Recipe.eq(recipeId))
+                .list();
+    }
+
+    @Override
+    public void updateExternalAvailableQuantity(ExternalAvailableQuantity eaq) {
+        getDaoSession()
+                .getExternalAvailableQuantityDao()
+                .update(eaq);
+    }
+
+    @Override
+    public List<ExternalOrderRequest> listExternalOrderRequestForExternalOrder(String externalOrderId) {
+        return getDaoSession()
+                .getExternalOrderRequestDao()
+                .queryBuilder()
+                .where(ExternalOrderRequestDao.Properties.ExternalOrder.eq(externalOrderId))
+                .list();
+    }
+
+    @Override
+    public List<ExternalOrderRequest> listExternalOrderRequestForOrder(String id) {
+        return getDaoSession()
+                .getExternalOrderRequestDao()
+                .queryBuilder()
+                .where(ExternalOrderRequestDao.Properties.ParentOrder.eq(id))
+                .list();
+    }
+
+    @Override
+    public void deleteExternalOrderRequestForExternalOrder(String externalOrderId) {
+        getDaoSession()
+                .getExternalOrderRequestDao()
+                .queryBuilder()
+                .where(ExternalOrderRequestDao.Properties.ExternalOrder.eq(externalOrderId))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+    }
+
+    @Override
+    public List<ExternalAvailableQuantity> listExternalAvailableQuantityForOrder(String id) {
+        return getDaoSession()
+                .getExternalAvailableQuantityDao()
+                .queryBuilder()
+                .where(ExternalAvailableQuantityDao.Properties.Order.eq(id))
+                .list();
+    }
+
+    @Override
+    public void deleteExternalAvailableQuantityForExternalOrder(String id) {
+        getDaoSession()
+                .getExternalAvailableQuantityDao()
+                .queryBuilder()
+                .where(ExternalAvailableQuantityDao.Properties.Order.eq(id))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+    }
+
+    @Override
+    public void deleteExternalOrderRequestForParentOrder(String id) {
+        getDaoSession()
+                .getExternalOrderRequestDao()
+                .queryBuilder()
+                .where(ExternalOrderRequestDao.Properties.ParentOrder.eq(id))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+    }
+
+    @Override
+    public List<ExternalAvailableQuantity> listExternalAvailableQuantity(String externalOrder, String recipe) {
+        return getDaoSession()
+                .getExternalAvailableQuantityDao()
+                .queryBuilder()
+                .where(ExternalAvailableQuantityDao.Properties.Recipe.eq(recipe))
+                .where(ExternalAvailableQuantityDao.Properties.Order.eq(externalOrder))
+                .list();
+    }
+
+    @Override
+    public List<InventoryMovement> listInventoryMovement() {
+        return getDaoSession()
+                .getInventoryMovementDao()
+                .loadAll();
+    }
+
+    @Override
+    public void deleteInventoryMovements(@NotNull List<InventoryMovement> orders) {
+        getDaoSession()
+                .getInventoryMovementDao()
+                .deleteInTx(orders);
+    }
+
+    @Override
+    public void insertInventoryMovement(InventoryMovement im) {
+        getDaoSession()
+                .getInventoryMovementDao()
+                .insert(im);
+    }
+
+    @Override
+    public List<ExternalAvailableQuantity> listExternalAvailableQuantity() {
+            return getDaoSession()
+                    .getExternalAvailableQuantityDao()
+                    .loadAll();
+
+    }
+
+    @Override
+    public List<ExternalOrderRequest> listExternalOrderRequest() {
+        return getDaoSession()
+                .getExternalOrderRequestDao()
+                .loadAll();
+    }
+
+    @Override
+    public List<InventoryReservation> listInventoryReservationsForRecipe(String id) {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(InventoryReservation.class)
+                .equalTo("recipeId", id)
+                .findAll();
+    }
+
+    @Override
+    public void insertAllExternalAvailableQuantity(List<ExternalAvailableQuantity> eaq) {
+        getDaoSession().getExternalAvailableQuantityDao().deleteAll();
+        getDaoSession().getExternalAvailableQuantityDao().insertInTx(eaq);
+    }
+
+    @Override
+    public void insertAllExternalOrderRequest(List<ExternalOrderRequest> eoq) {
+        getDaoSession().getExternalOrderRequestDao().deleteAll();
+        getDaoSession().getExternalOrderRequestDao().insertInTx(eoq);
     }
 
     @Override
@@ -1927,6 +2119,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         printerData.setUpdatedAt(System.currentTimeMillis());
         getDaoSession().getPrinterDataDao().update(printerData);
     }
+
     @Override
     public void updateChefActivityDao(ChefActivityLog chefActivityLog) {
         getDaoSession().getChefActivityLogDao().update(chefActivityLog);
@@ -2098,7 +2291,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public  void saveSuppliers(List<Supplier> suppliers){
+    public void saveSuppliers(List<Supplier> suppliers) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealm(suppliers);
@@ -2123,8 +2316,8 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.commitTransaction();
     }
 
-    public Printer  getPrinterDataById(String printerUuid) {
-      return   getDaoSession().getPrinterDao().queryBuilder()
+    public Printer getPrinterDataById(String printerUuid) {
+        return getDaoSession().getPrinterDao().queryBuilder()
                 .where(PrinterDao.Properties.UuId.eq(printerUuid)).unique();
     }
 }

@@ -1,5 +1,7 @@
 import AdvancedStartupPage from '@pages/AdvancedStartupPage';
+import PrinterDetailPage from '@pages/DetailPage/PrinterDetailPage';
 import TaskDetail from '@pages/DetailPage/DetailPage';
+
 import DetectedRestuarants from '@pages/DetectedRestuarants';
 import InterventionTaskPage from '@pages/InterventionTaskPage';
 import InventoryManagementPage from '@pages/InventoryPage';
@@ -176,6 +178,12 @@ export const navigator = {
     gesturesEnabled: false,
     navigationOptions: getNavigationOptions({ gesturesEnabled: false })
   },
+  PrinterDetailPage: {
+    screen: TaskDetail,
+    animationEnabled: false,
+    gesturesEnabled: false,
+    navigationOptions: getNavigationOptions({ gesturesEnabled: false })
+  },
   OrderOverView: {
     screen: OrderOverView,
     navigationOptions: {
@@ -212,6 +220,7 @@ export const navigator = {
       header: null
     }
   },
+  
   InterventionTaskPage: {
     screen: InterventionTaskPage,
     navigationOptions: {

@@ -17,22 +17,22 @@ public class ExternalOrderRequest {
     @Id
     private String id;
 
-    private String requestedOrder;
+    private String parentOrder;
 
-    private String waitingExternalOrder;
+    private String externalOrder;
 
     private String recipe;
 
-    private float qty;
+    private float quantity;
 
-    @Generated(hash = 370315805)
-    public ExternalOrderRequest(@NotNull String id, String requestedOrder,
-            String waitingExternalOrder, String recipe, float qty) {
+    @Generated(hash = 483152173)
+    public ExternalOrderRequest(@NotNull String id, String parentOrder,
+            String externalOrder, String recipe, float quantity) {
         this.id = id;
-        this.requestedOrder = requestedOrder;
-        this.waitingExternalOrder = waitingExternalOrder;
+        this.parentOrder = parentOrder;
+        this.externalOrder = externalOrder;
         this.recipe = recipe;
-        this.qty = qty;
+        this.quantity = quantity;
     }
 
     @Generated(hash = 753142193)
@@ -47,22 +47,6 @@ public class ExternalOrderRequest {
         this.id = id;
     }
 
-    public String getRequestedOrder() {
-        return this.requestedOrder;
-    }
-
-    public void setRequestedOrder(String requestedOrder) {
-        this.requestedOrder = requestedOrder;
-    }
-
-    public String getWaitingExternalOrder() {
-        return this.waitingExternalOrder;
-    }
-
-    public void setWaitingExternalOrder(String waitingExternalOrder) {
-        this.waitingExternalOrder = waitingExternalOrder;
-    }
-
     public String getRecipe() {
         return this.recipe;
     }
@@ -71,11 +55,27 @@ public class ExternalOrderRequest {
         this.recipe = recipe;
     }
 
-    public float getQty() {
-        return this.qty;
+    public float getQuantity() {
+        return this.quantity;
     }
 
-    public void setQty(float qty) {
-        this.qty = qty;
+    public void setQuantity(float quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getParentOrder() {
+        return this.parentOrder;
+    }
+
+    public void setParentOrder(String parentOrder) {
+        this.parentOrder = parentOrder;
+    }
+
+    public String getExternalOrder() {
+        return this.externalOrder;
+    }
+
+    public void setExternalOrder(String externalOrder) {
+        this.externalOrder = externalOrder;
     }
 }

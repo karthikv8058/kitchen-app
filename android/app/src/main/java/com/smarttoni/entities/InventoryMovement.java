@@ -27,23 +27,24 @@ public class InventoryMovement {
 
     private String inventory;
 
-    private float qty;
+    private float quantity;
 
-    private String date;
+    private String inventoryCreatedAt;
 
-    @Generated(hash = 2007683310)
+
+    @Generated(hash = 1029004905)
+    public InventoryMovement() {
+    }
+
+    @Generated(hash = 10979455)
     public InventoryMovement(@NotNull String id, int type, String order,
-            String inventory, float qty, String date) {
+            String inventory, float quantity, String inventoryCreatedAt) {
         this.id = id;
         this.type = type;
         this.order = order;
         this.inventory = inventory;
-        this.qty = qty;
-        this.date = date;
-    }
-
-    @Generated(hash = 1029004905)
-    public InventoryMovement() {
+        this.quantity = quantity;
+        this.inventoryCreatedAt = inventoryCreatedAt;
     }
 
     public String getId() {
@@ -78,20 +79,22 @@ public class InventoryMovement {
         this.inventory = inventory;
     }
 
-    public float getQty() {
-        return this.qty;
+    public float getQuantity() {
+        return this.quantity;
     }
 
-    public void setQty(float qty) {
-        this.qty = qty;
+    public void setQuantity(float quantity) {
+        this.quantity = quantity;
     }
 
-    public String getDate() {
-        return this.date;
+    public String getInventoryCreatedAt() {
+        return this.inventoryCreatedAt;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setInventoryCreatedAt(String inventoryCreatedAt) {
+        this.inventoryCreatedAt = inventoryCreatedAt;
     }
+
+
 
 }

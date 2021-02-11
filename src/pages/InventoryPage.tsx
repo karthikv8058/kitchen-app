@@ -403,15 +403,15 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
     ExpandedItems = (inventory: Recipe) => {
         return (
             <View style={{ height: !!inventory.isExpanded ? null : 0, overflow: 'hidden', }}>
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ flex: .8, color: colors.white, fontSize: 15, marginLeft: 10, marginTop: 5 }}> Expected delivery:</Text>
-                    <View style={{ flex: 1.2, }}>
+                <View >
+                    <Text style={{  color: colors.white, fontSize: 15, marginLeft: 10, marginTop: 5 }}> Expected delivery</Text>
+                    <View >
                         {this.getOpenOrders(inventory.externalOrderWrappers)}
                     </View>
                 </View>
                 <View>
-                    <Text style={{ flex: .8, color: colors.white, fontSize: 15, marginLeft: 10, marginTop: 5 }}> Expected consumption:</Text>
-                    <View style={{ flex: 1.2, }}>
+                    <Text style={{color: colors.white, fontSize: 15, marginLeft: 10, marginTop: 5 }}> Expected consumption</Text>
+                    <View>
                         {this.getOpenOrders(inventory.openOrderWrappers)}
                     </View>
                 </View>
@@ -523,7 +523,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
             <>
                 <TouchableOpacity
                     activeOpacity={0.8}
-                    onPress={() => this.setState({ isBarcodeOpened: true })} style={{ minHeight: 40, zIndex: 999, height: 20, width: 40, }}>
+                    onPress={() => this.setState({ isBarcodeOpened: true,source:'' })} style={{ minHeight: 40, zIndex: 999, height: 20, width: 40, }}>
                     <AntDesign name='scan1' size={30} color={colors.white} />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -533,8 +533,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 </TouchableOpacity>
                 {!this.state.orderPlace && this.permissionService.hasPermission(Action.CREATE_INVENTORY) ? <TouchableOpacity
                     activeOpacity={0.8}
-                    onPress={this.toggleOrder} style={{ height: 40, width: 40,}}>
-                    <Icons  name='circle-with-plus' size={30} color={colors.white} />
+                    onPress={this.toggleOrder} style={{ height: 40, width: 40, }}>
+                    <Icons name='circle-with-plus' size={30} color={colors.white} />
                 </TouchableOpacity> : null}
             </>
         );
@@ -547,18 +547,18 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         });
         this.tooblarList.push(
             <>
-             
+
                 <TouchableOpacity
                     onPress={this.closeOrder}
                     activeOpacity={0.8}
-                    style={{ height: 40, width: 40,  }}>
+                    style={{ height: 40, width: 40, }}>
                     <Icon name='x' size={40} color={colors.white} />
                 </TouchableOpacity>
                 {!this.state.orderPlace ?
                     <TouchableOpacity
                         onPress={this.toggleOrderType.bind(this)}
                         activeOpacity={0.8}
-                        style={{ height: 40, width: 40,}}>
+                        style={{ height: 40, width: 40, }}>
                         <Icon name='check' size={40} color={colors.white} />
                     </TouchableOpacity> : null}
             </>
@@ -828,7 +828,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         }).then((image) => {
             this.setState({
                 isLoaderVisible: true
-            });
+            });            
             NetInfo.fetch().then(state => {
                 if (state.isConnected) {
                     RNFetchBlob.fetch('POST', this.webUrl + 'api/1.0/assets/upload', {
@@ -846,7 +846,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                             source: JSON.parse(resp.data).data.images[0].permalink
                         })
 
-                    }).catch((error: Error) => {
+                    }).catch((error: Error) => {                        
                         ToastAndroid.show('Something went wrong..', ToastAndroid.SHORT);
                         this.setState({
                             isLoaderVisible: false
@@ -878,10 +878,17 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         } else {
             this.orderService.addNewIngredient(this.addedImageId, this.state.selectedUnit, this.state.recipeName, this.state.inventoryType, this.state.barcodeData).then(response => {
                 if (responseChecker(response, this.props.navigation)) {
-                    ToastAndroid.show("Ingredient added successfully", ToastAndroid.SHORT)
-                    this.componentDidMount()
-                    // this.loadInventoryList();
-                    this.closeRecipeModal();
+                    if (!!response) {
+                        ToastAndroid.show("Ingredient added successfully", ToastAndroid.SHORT)
+                        this.componentDidMount()
+                        this.closeRecipeModal();
+                        this.loadInventoryList();
+
+                    } else {
+                        ToastAndroid.show("Something went wrong, Please check the barcode", ToastAndroid.SHORT)
+                        this.componentDidMount()
+                    }
+
 
                 }
             }).catch(error => {
@@ -893,26 +900,27 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
     closeRecipeModal = () => {
         this.addedImageId = '';
         this.setState({
+            source: '',
             newRecipeModalOpen: false,
-            selectedUnit: this.state.units.length>0?this.state.units[0].uuid:'',
+            selectedUnit: this.state.units.length > 0 ? this.state.units[0].uuid : '',
             recipeName: '',
             inventoryType: 1
         })
     }
 
-    getUnits=()=>{
-        let filterdUnits:any=[];
-        this.state.units.forEach(element => {            
-            if(!element.recipe_uuid){
+    getUnits = () => {
+        let filterdUnits: any = [];
+        this.state.units.forEach(element => {
+            if (!element.recipe_uuid) {
                 filterdUnits.push(element)
             }
         });
         return filterdUnits
     }
-    
+
     addNewRecipe = () => {
         let image = !!this.state.source ? { uri: this.state.source } : placeHolder;
-        let units=this.getUnits()
+        let units = this.getUnits()
         return (
             <Modal
                 transparent={true}
@@ -960,7 +968,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                             </View>
                             <View style={{
                                 flex: .75, height: 40, margin: 8, alignItems: 'center',
-                                backgroundColor: colors.white, borderRadius: 8, borderWidth: 1, 
+                                backgroundColor: colors.white, borderRadius: 8, borderWidth: 1,
                             }}>
                                 <TextInput
                                     value={this.state.recipeName}
@@ -994,8 +1002,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                                         this.setState({ isOpen: false, selectedUnit: unitId })
                                     }}>
                                     {units.map((unitConversion) => {
-                                        let label= unitConversion.name + ' ( ' + unitConversion.symbol + ' ) ';
-                                        if(label){
+                                        let label = unitConversion.name + ' ( ' + unitConversion.symbol + ' ) ';
+                                        if (label) {
                                             return <Picker.Item label={label} value={unitConversion.uuid} />
                                         }
                                     })}
@@ -1004,13 +1012,13 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                             </View>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10 }}>
-                                <TouchableOpacity onPress={() =>  this.closeRecipeModal()}>
-                                    <Icon name='x' size={30} color={colors.white} />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.saveNewRecipe()}>
-                                    <Icon name='check' size={30} color={colors.white} />
-                                </TouchableOpacity>
-                            </View>
+                            <TouchableOpacity onPress={() => this.closeRecipeModal()}>
+                                <Icon name='x' size={30} color={colors.white} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.saveNewRecipe()}>
+                                <Icon name='check' size={30} color={colors.white} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                 </View>
@@ -1260,7 +1268,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         this.addedImageId = '';
         this.setState({
             newRecipeModalOpen: true,
-            selectedUnit: this.state.units.length>0?this.state.units[0].uuid:'',
+            selectedUnit: this.state.units.length > 0 ? this.state.units[0].uuid : '',
             recipeName: '',
             inventoryType: 1
         })
@@ -1274,7 +1282,6 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 recipeItem = recipe
             }
         });
-
         if (!!found) {
             this.toggle(recipeItem)
         } else {
@@ -1295,7 +1302,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
     }
     barcodeRecognized = ({ barcodes }) => {
         barcodes.forEach(barcode => {
-            if (barcode.type != 'UNKNOWN_FORMAT') {                
+            if (barcode.type != 'UNKNOWN_FORMAT') {
                 this.setState({
                     isBarcodeOpened: false,
                     barcodeData: barcode.data

@@ -51,6 +51,8 @@ import com.smarttoni.server.controlles.station.TestStationPrinter;
 import com.smarttoni.server.controlles.task.CheckDetailsToOpen;
 import com.smarttoni.server.controlles.task.GetTask;
 import com.smarttoni.server.controlles.task.ImageUpload;
+import com.smarttoni.server.controlles.task.PingIp;
+import com.smarttoni.server.controlles.task.getPrinters;
 import com.smarttoni.server.controlles.user.AddStationUser;
 import com.smarttoni.server.controlles.user.GetAllUsers;
 import com.smarttoni.server.controlles.user.GetStationUsers;
@@ -112,6 +114,9 @@ public class HttpRoute {
         mHttpServer.post("/get-all-recipes", new GetAllRecipes(context));
         mHttpServer.post("/add-new-ingredient", new AddNewIngredient(context));
         mHttpServer.post("/test=station-printer", new TestStationPrinter(context));
+        mHttpServer.post("/ping-ip", new PingIp(context));
+        mHttpServer.post("/get-printers", new getPrinters(context));
+
         //Devv
         mHttpServer.get("/dev-stations", new DevStationList(context));
         mHttpServer.get("/dev-users", new DevUserList(context));

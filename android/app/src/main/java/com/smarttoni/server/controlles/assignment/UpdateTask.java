@@ -31,6 +31,7 @@ import com.smarttoni.utils.Strings;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 
 
 public class UpdateTask extends HttpSecurityRequest {
@@ -51,14 +52,20 @@ public class UpdateTask extends HttpSecurityRequest {
             String time = jsonObject.getString("time");
 
             TaskManger workHelper = ((SmarttoniContext) ServiceLocator.getInstance().getService(ServiceLocator.SMARTTONI_CONTEXT)).getTaskManger();
-            workHelper.queueUpdateTask(getUser().getId(), Long.valueOf(queueId), Integer.parseInt(status), Integer.parseInt(time), TaskManger.CHEF_CLOSED);
 
-            Work work = ServiceLocator.getInstance().getDatabaseAdapter().getWorkById(Long.valueOf(queueId));
 
-            if(work.getStatus() == Work.COMPLETED){
+            Long workId = Long.valueOf(queueId);
+            Work work = workHelper.getQueue().getTask(workId);
+            workHelper.queueUpdateTask(getUser().getId(), workId , Integer.parseInt(status), Integer.parseInt(time), TaskManger.CHEF_CLOSED);
+
+            Task task = ServiceLocator.getInstance().getDatabaseAdapter().getTaskById(work.getTaskId());
+
+            if(work.getStatus() == Work.COMPLETED && task.getPrintLabel()){
                 try {
-                    PrinterManager.getInstance().printTask(work);
-                } catch (Exception e) {}
+                    PrinterManager.getInstance().printTask(work,"",task);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             
             Gson gson = GSONBuilder.createGSON();

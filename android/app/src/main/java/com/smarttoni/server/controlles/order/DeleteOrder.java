@@ -41,11 +41,11 @@ public class DeleteOrder extends HttpSecurityRequest {
             order.setModification(Order.MODIFICATION_DELETED);
             daoAdapter.updateOrder(order);
             OrderManager orderManager = ((SmarttoniContext) ServiceLocator.getInstance().getService(ServiceLocator.SMARTTONI_CONTEXT)).getOrderManager();
-            orderManager.removeOrder(context, orderId);
+            boolean isDeleted = orderManager.removeOrder(orderId);
             Gson gson = GSONBuilder.createGSON();
             Type type = new TypeToken<Boolean>() {
             }.getType();
-            response.send(gson.toJson(true, type));
+            response.send(gson.toJson(isDeleted, type));
         } catch (JSONException e) {
             e.printStackTrace();
         }

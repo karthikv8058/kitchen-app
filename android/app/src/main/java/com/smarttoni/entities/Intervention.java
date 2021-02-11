@@ -64,6 +64,10 @@ public class Intervention {
     @Property(nameInDb = "intervention_position")
     private int interventionPosition;
 
+    @Property(nameInDb = "printLabel")
+    @SerializedName("printLabel")
+    private boolean printLabel;
+
     @SerializedName("ingredients")
     @ToMany(referencedJoinProperty = "taskId")
     private List<TaskIngredient> taskIngredients;
@@ -102,10 +106,10 @@ public class Intervention {
     public Intervention() {
     }
 
-    @Generated(hash = 1673800824)
+    @Generated(hash = 1758931475)
     public Intervention(@NotNull String id, String taskId, String name, String description,
-                        String checkInCriteria, String parent, boolean isDelayable, long time, String imageUrl,
-                        int interventionPosition, String stationColor, String previous) {
+            String checkInCriteria, String parent, boolean isDelayable, long time, String imageUrl,
+            int interventionPosition, boolean printLabel, String stationColor, String previous) {
         this.id = id;
         this.taskId = taskId;
         this.name = name;
@@ -116,6 +120,7 @@ public class Intervention {
         this.time = time;
         this.imageUrl = imageUrl;
         this.interventionPosition = interventionPosition;
+        this.printLabel = printLabel;
         this.stationColor = stationColor;
         this.previous = previous;
     }
@@ -386,6 +391,14 @@ public class Intervention {
 
     public void setIsDelayable(boolean isDelayable) {
         this.isDelayable = isDelayable;
+    }
+
+    public boolean getPrintLabel() {
+        return this.printLabel;
+    }
+
+    public void setPrintLabel(boolean printLabel) {
+        this.printLabel = printLabel;
     }
 
     /** called by internal mechanisms, do not call yourself. */

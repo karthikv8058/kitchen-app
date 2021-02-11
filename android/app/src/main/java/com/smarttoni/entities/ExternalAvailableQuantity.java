@@ -21,15 +21,15 @@ public class ExternalAvailableQuantity {
 
     private String recipe;
 
-    private float qty;
+    private float quantity;
 
-    @Generated(hash = 226156430)
+    @Generated(hash = 2091027824)
     public ExternalAvailableQuantity(@NotNull String id, String order,
-            String recipe, float qty) {
+            String recipe, float quantity) {
         this.id = id;
         this.order = order;
         this.recipe = recipe;
-        this.qty = qty;
+        this.quantity = quantity;
     }
 
     @Generated(hash = 517333499)
@@ -60,11 +60,11 @@ public class ExternalAvailableQuantity {
         this.recipe = recipe;
     }
 
-    public float getQty() {
-        return this.qty;
+    public float getQuantity() {
+        return this.quantity;
     }
 
-    public void setQty(float qty) {
-        this.qty = qty;
+    public void setQuantity(float quantity) {
+        this.quantity = quantity;
     }
 }

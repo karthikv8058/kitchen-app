@@ -23,13 +23,15 @@ public class SyncOrders {
             o.uuid = order.getId();
             o.updatedAt = DateUtil.formatStandardDate(new Date(order.getUpdatedAt()));
             o.createdAt = DateUtil.formatStandardDate(new Date(order.getCreatedAt()));
-            if(Strings.isEmpty(o.parentOrderUuid)){
-                o.status = order.getStatus() == Order.ORDER_OPEN && order.getIsStarted() ? Order.ORDER_STARTED : order.getStatus();
-            }else{
-                o.status = order.getStatus();
-            }
+//            if(Strings.isEmpty(o.parentOrderUuid)){
+//                o.status = order.getStatus() == Order.ORDER_OPEN && order.getIsStarted() ? Order.ORDER_STARTED : order.getStatus();
+//            }else{
+//                o.status = order.getStatus();
+//            }
+            o.status = order.getStatus();
             o.inventoryOrder = order.getIsInventory();
             o.childOrderStatus = order.getChildOrderStatus();
+            o.type = order.getType();
             if (order.getIsUpdated()) {
                 o.table = order.getTableNo();
                 o.courses = new ArrayList<>();

@@ -16,6 +16,7 @@ import com.smarttoni.entities.InterventionJob;
 import com.smarttoni.entities.Segment;
 import com.smarttoni.entities.User;
 import com.smarttoni.entities.Work;
+import com.smarttoni.utils.Strings;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -245,9 +246,23 @@ public class InterventionManager {
             return uid;
         }
 
+
         DaoAdapter daoAdapter = ServiceLocator
                 .getInstance()
                 .getDatabaseAdapter();
+
+
+        if(work.getMeal() !=null && Strings.isNotEmpty(work.getMeal().getChefId())){
+            User user = daoAdapter.getUserById(work.getMeal().getChefId());
+            if(user.getOnline()){
+                if(isUserIdle(user.getId(), work, false)){
+                    return user.getId();
+                }else{
+                    return null;
+                }
+            }
+        }
+
 
         //Map<String, Long> userAndWorks = UserManager.getInstance().getUsersAndWorks(ServiceLocator.getInstance().getQueue());
 

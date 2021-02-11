@@ -551,7 +551,7 @@ public class TaskManger {
         return taskRegister.getTask(userId);
     }
 
-    private Queue getQueue() {
+    public Queue getQueue() {
         return ServiceLocator.getInstance().getQueue();
     }
 

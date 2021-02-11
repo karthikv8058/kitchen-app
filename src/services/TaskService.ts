@@ -39,7 +39,13 @@ export default class TaskService {
             successCallback(response);
         }).catch();
     }
-
+pingIp(taskId:any){
+    return new Promise((resolve, reject) => {
+    this.httpClient.post(this!.apiBuilder!.paths!.pingIp, {  taskId: taskId,  }).then(response => {
+        resolve(true);
+    }).catch(() => resolve(false));
+}); 
+}
     finishTask(work: Work): Promise<boolean> {
         return new Promise((resolve, reject) => {
             if (work.Orderobject) {

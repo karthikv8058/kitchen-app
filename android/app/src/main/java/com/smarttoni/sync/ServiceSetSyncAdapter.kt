@@ -24,28 +24,27 @@ class ServiceSetSyncAdapter : AbstractSyncAdapter {
                     val serviceSetUpdated = data.updated
                     val serviceSetDeleted = data.deleted
                     val serviceSetToCreate = ArrayList<ServiceSet>()
-                    val ServiceSettoDelete = ArrayList<String>()
+                    val serviceSetToDelete = ArrayList<String>()
 
                     if (serviceSetCreated != null && serviceSetCreated.size > 0) {
                         serviceSetToCreate.addAll(serviceSetCreated)
                         for (r in serviceSetCreated) {
-                            ServiceSettoDelete.add(r.id)
+                            serviceSetToDelete.add(r.id)
                         }
                     }
                     if (serviceSetUpdated != null && serviceSetUpdated.size > 0) {
                         serviceSetToCreate.addAll(serviceSetUpdated)
                         for (r in serviceSetUpdated) {
-                            ServiceSettoDelete.add(r.id)
+                            serviceSetToDelete.add(r.id)
                         }
                     }
                     if (serviceSetDeleted != null && serviceSetDeleted.size > 0) {
                         for (r in serviceSetDeleted) {
-                            ServiceSettoDelete.add(r.id)
+                            serviceSetToDelete.add(r.id)
                         }
                     }
-                    deleteServiceSets(ServiceSettoDelete, daoAdapter)
+                    daoAdapter.deleteServiceSet(serviceSetToDelete)
                     saveServiceSetToDb(context, serviceSetToCreate, daoAdapter)
-
                     successListener.onSuccess()
                 }).start()
             }
@@ -63,12 +62,12 @@ class ServiceSetSyncAdapter : AbstractSyncAdapter {
             serviceSet.name = serviceSet.locales[0].name
             serviceSet.description = serviceSet.locales[0].description
             for (serviceSetRecipe in serviceSet.recipes) {
-                daoAdapter.deleteServiceSetRecipes(serviceSetRecipe.id)
+                //daoAdapter.deleteServiceSetRecipes(serviceSetRecipe.id);
                 serviceSetRecipe.serviceSetId = serviceSet.id
                 daoAdapter.saveServiceSetRecipes(serviceSetRecipe)
             }
             for (serviceSetTiming in serviceSet.times) {
-                daoAdapter.deleteServiceSetTimings(serviceSetTiming.id)
+                //daoAdapter.deleteServiceSetTimings(serviceSetTiming.id)
                 var weekdDay = ""
                 serviceSetTiming.serviceSetId = serviceSet.id
                 for (weekday in serviceSetTiming.weekDay) {
@@ -84,10 +83,6 @@ class ServiceSetSyncAdapter : AbstractSyncAdapter {
             list.add(serviceSet)
         }
         daoAdapter.saveServiceSets(list)
-    }
-
-    private fun deleteServiceSets(ids: List<String>, daoAdapter: DaoAdapter) {
-        daoAdapter.deleteServiceSet(ids)
     }
 
 }

@@ -5,10 +5,10 @@ import com.smarttoni.entities.ChefActivityLog;
 import com.smarttoni.entities.Course;
 import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalOrderRequest;
-import com.smarttoni.entities.ExternalOrderReservation;
 import com.smarttoni.entities.Intervention;
 import com.smarttoni.entities.InterventionJob;
 import com.smarttoni.entities.Inventory;
+import com.smarttoni.entities.InventoryMovement;
 import com.smarttoni.entities.InventoryRequest;
 import com.smarttoni.entities.InventoryReservation;
 import com.smarttoni.entities.Label;
@@ -48,6 +48,8 @@ import com.smarttoni.entities.WebAppData;
 import com.smarttoni.entities.Work;
 import com.smarttoni.sync.orders.SyncOrder;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public interface DaoAdapter {
@@ -57,6 +59,8 @@ public interface DaoAdapter {
 
     //User
     User getUserById(String id);
+
+    Label loadLabelById(String id);
 
     User getUserByEmail(String email);
 
@@ -147,7 +151,7 @@ public interface DaoAdapter {
 
     void deleteuserStationAssignment(String id);
 
-    List<Order> getOrderByStatus();
+    List<Order> listOrdersWithOpenStatus();
 
     Inventory getInventoryById(String id);
 
@@ -177,6 +181,7 @@ public interface DaoAdapter {
     List<Meal> loadMeals();
 
     Printer getPrinterDataById(String id);
+
     //Work
     Work getWorkById(Long id);
 
@@ -413,6 +418,7 @@ public interface DaoAdapter {
     //Label
 
     List<Label> loadLabels();
+
     List<ServiceSet> loadServiceSets();
     //Intervention
 
@@ -559,9 +565,9 @@ public interface DaoAdapter {
 
     void saveInventoryRequest(InventoryRequest inventoryRequest);
 
-    void addChildOrder(String parentOrderId,String childOrderId);
+    void addExternalOrderRequest(String parentOrderId, String externalOrderId, String recipeId, float qty);
 
-    List<ExternalOrderRequest> listExternalOrderRequestFor(String externalOrderId);
+    void addExternalAvailableQuantity(String externalOrderId, String recipeId, float qty);
 
     ExternalAvailableQuantity getExternalAvailableQuantity(String externalOrderId);
 
@@ -575,9 +581,9 @@ public interface DaoAdapter {
 
     List<InventoryReservation> listInventoryReservations(String orderId);
 
-    List<InventoryReservation> listInventoryReservations(String orderId,String recipeId);
+    List<InventoryReservation> listInventoryReservations(String orderId, String recipeId);
 
-    void writeLog(String tag,String value);
+    void writeLog(String tag, String value);
 
     void saveUnitConversions(List<UnitConversion> conversions);
 
@@ -586,21 +592,50 @@ public interface DaoAdapter {
 
     List<UnitConversion> listUnitConversions(String fromUnitId);
 
-    void deleteServiceSetRecipes(String id);
+    //void deleteServiceSetRecipes(String id);
 
-    void deleteServiceSetTimings(String id);
+    //void deleteServiceSetTimings(String id);
 
 
     List<Inventory> loadAllInventories();
 
     String getSupplierNameByOrderId(String orderId);
 
-//=======
-//
-//    Supplier getSupplierById(String id);
-//
-//    void deleteSupplier(Supplier supplier);
-//
-//    void saveSupplierList(List<Supplier> machines);
-//>>>>>>> develop
+    List<Printer> getPrinterList();
+
+    List<ExternalAvailableQuantity> listExternalAvailableQuantityForRecipe(String recipeId);
+
+    void updateExternalAvailableQuantity(ExternalAvailableQuantity eaq);
+
+    List<ExternalOrderRequest> listExternalOrderRequestForExternalOrder(String externalOrderId);
+
+    List<ExternalOrderRequest> listExternalOrderRequestForOrder(String id);
+
+    void deleteExternalOrderRequestForExternalOrder(String externalOrderId);
+
+    List<ExternalAvailableQuantity> listExternalAvailableQuantityForOrder(String id);
+
+    void deleteExternalAvailableQuantityForExternalOrder(String id);
+
+    void deleteExternalOrderRequestForParentOrder(String id);
+
+    List<ExternalAvailableQuantity> listExternalAvailableQuantity(String externalOrder, String recipe);
+
+
+    List<InventoryMovement> listInventoryMovement();
+
+    void deleteInventoryMovements(@NotNull List<InventoryMovement> orders);
+
+    void insertInventoryMovement(InventoryMovement im);
+
+    List<ExternalAvailableQuantity> listExternalAvailableQuantity();
+
+    List<ExternalOrderRequest> listExternalOrderRequest();
+
+    List<InventoryReservation> listInventoryReservationsForRecipe(String id);
+
+    void insertAllExternalAvailableQuantity(List<ExternalAvailableQuantity> eaq);
+
+    void insertAllExternalOrderRequest(List<ExternalOrderRequest> eoq);
+
 }

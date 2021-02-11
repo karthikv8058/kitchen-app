@@ -32,6 +32,10 @@ public class Label {
     @SerializedName("locales")
     private List<Locales> locales;
 
+    @Property(nameInDb = "printerUuid")
+    @SerializedName("printer_uuid")
+    private String printerUuid;
+
     @Property(nameInDb = "name")
     private String name;
 
@@ -60,12 +64,14 @@ public class Label {
     public Label() {
     }
 
-    @Generated(hash = 1489482980)
-    public Label(@NotNull String id, String color, String restaurantId, String name,
-            String parentLabel, String childLabels, String description) {
+    @Generated(hash = 1043016626)
+    public Label(@NotNull String id, String color, String restaurantId,
+            String printerUuid, String name, String parentLabel, String childLabels,
+            String description) {
         this.id = id;
         this.color = color;
         this.restaurantId = restaurantId;
+        this.printerUuid = printerUuid;
         this.name = name;
         this.parentLabel = parentLabel;
         this.childLabels = childLabels;
@@ -134,5 +140,13 @@ public class Label {
 
     public void setChildLabels(String childLabels) {
         this.childLabels = childLabels;
+    }
+
+    public String getPrinterUuid() {
+        return this.printerUuid;
+    }
+
+    public void setPrinterUuid(String printerUuid) {
+        this.printerUuid = printerUuid;
     }
 }

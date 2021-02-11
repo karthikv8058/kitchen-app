@@ -21,10 +21,13 @@ import ShutdownPage from './ShutdownPage';
 import RecipeLookUp from './RecipeLookUp';
 import RecipeDetailPage from './RecipeDetailPage';
 import PosPage from './PosPage';
+import PrinterDetailPage from './DetailPage/PrinterDetailPage';
 import DetailPage from './DetailPage/DetailPage';
+
 import OrderDetailPage from './OrderDetailPage';
 import ExternalOrderOverView from './ExternalOverView/ExternalOrderOverView';
 import OrientationSelectionPage from './OrientationSelectionPage';
+
 //import DetectedRestuarants from './DetectedRestuarants';
 
 
@@ -68,6 +71,7 @@ function AppNavigation() {
                 <Stack.Screen name="PosPage" component={PosPage} />
 
                 <Stack.Screen name="DetailPage" component={DetailPage} />
+                <Stack.Screen name="PrinterDetailPage" component={PrinterDetailPage} />
 
 
                 <Stack.Screen name="SmarttoniWeb" component={SmarttoniWeb} />

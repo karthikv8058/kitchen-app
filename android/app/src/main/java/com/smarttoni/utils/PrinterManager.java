@@ -43,13 +43,11 @@ public class PrinterManager {
     }
 
 
-    public void printTask( Work t) throws Exception{
+    public void printTask( Work t, String interventionName,Task task) throws Exception{
         if(context == null){
             throw new IllegalStateException("init before print");
         }
         DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
-        Task task = daoAdapter.getTaskById(t.getTaskId());
-        if (task.getPrintLabel() == true) {
             if (task.getStationId() != null) {
                 Station station = daoAdapter.getStationById(t.getStationId());
                 Printer printerObject = daoAdapter.getPrinterDataById(station.getPrinterUuid());
@@ -60,34 +58,68 @@ public class PrinterManager {
                 }
                 Order finalOrder = order;
                 String tableNo=finalOrder != null ?( finalOrder.getTableNo()!=""? finalOrder.getTableNo():"--") : "--";
-                new Thread(() -> {
-                    try {
-                        EscPosPrinter printer = new EscPosPrinter(new TcpConnection(printerObject.getIpAddress(), Integer.parseInt(String.valueOf(printerObject.getPort()))), 203, 48f, 32);
-                        printer.printFormattedTextAndCut(
-                                "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, context.getResources().getDrawableForDensity(R.drawable.smarttoni, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
-                                        "[L]\n" +
-                                        "[C]<font size='normal'>  Task Completed</font>\n" +
+                if(interventionName!=""){
+                    printeInterventionDetails(printerObject,task,station,tableNo,recipe,interventionName);
+                }else{
+                    printTaskDetails(printerObject,task,station,tableNo,recipe,t);
+                }
+
+            }
+    }
+
+    private void printTaskDetails(Printer printerObject, Task task, Station station, String tableNo, Recipe recipe,Work w) {
+        new Thread(() -> {
+            try {
+                EscPosPrinter printer = new EscPosPrinter(new TcpConnection(printerObject.getIpAddress(), Integer.parseInt(String.valueOf(printerObject.getPort()))), 203, 48f, 32);
+                printer.printFormattedTextAndCut(
+                        "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, context.getResources().getDrawableForDensity(R.drawable.smarttoni, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                                "[L]\n" +"[C]<font size='normal'> Task Completed</font>\n" +
+                                "[L]\n" +
+                                "[C]================================\n" +
+                                "[L]\n" + "Task            : " + task.getName() + " ( " +  (w.getActualQty()  > 0? w.getActualQty() :task.getOutputQuantity() ) + " " + task.getOutputUnitName() + " )" +
+                                "[L]\n" +
+                                "[L]\n" + "Station         : " + station.getName() +
+                                "[L]\n" +
+                                "[L]\n" + "Recipe          : " + recipe.getName() +
+                                "[L]\n" +
+                                "[L]\n" + "Table           : " +  tableNo+
+                                "[L]\n" +
+                                "[C]================================\n" +
+                                "[L]\n" + "[L]\n" +
+                                "[L]SmartTONi\n"
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void printeInterventionDetails(Printer printerObject, Task task, Station station, String tableNo, Recipe recipe, String interventionName) {
+        new Thread(() -> {
+            try {
+                EscPosPrinter printer = new EscPosPrinter(new TcpConnection(printerObject.getIpAddress(), Integer.parseInt(String.valueOf(printerObject.getPort()))), 203, 48f, 32);
+                printer.printFormattedTextAndCut(
+                        "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, context.getResources().getDrawableForDensity(R.drawable.smarttoni, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                                "[L]\n" +"[C]<font size='normal'> Intervention Completed</font>\n" +
                                         "[L]\n" +
                                         "[C]================================\n" +
-                                        "[L]\n" + "Task    : " + task.getName() + " ( " + task.getOutputQuantity() + " " + task.getOutputUnitName() + " )" +
+                                        "[L]\n" + "Intervention    : " + interventionName+
+                                        "[L]\n" + "Task            : " + task.getName() + " ( " + task.getOutputQuantity() + " " + task.getOutputUnitName() + " )" +
                                         "[L]\n" +
-                                        "[L]\n" + "Station : " + station.getName() +
+                                        "[L]\n" + "Station         : " + station.getName() +
                                         "[L]\n" +
-                                        "[L]\n" + "Recipe  : " + recipe.getName() +
+                                        "[L]\n" + "Recipe          : " + recipe.getName() +
                                         "[L]\n" +
-                                        "[L]\n" + "Table   : " +  tableNo+
+                                        "[L]\n" + "Table           : " +  tableNo+
                                         "[L]\n" +
                                         "[C]================================\n" +
                                         "[L]\n" + "[L]\n" +
                                         "[L]SmartTONi\n"
-                        );
-                    } catch (Exception e) {
-                    }
-                }).start();
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }
+        }).start();
     }
-
-
 
 }

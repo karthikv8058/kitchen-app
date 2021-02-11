@@ -22,12 +22,13 @@ class UpdateManager {
     @SuppressLint("CheckResult")
     fun syncAll(context: Context, daoAdapter: DaoAdapter, restaurantId: String, syncFinishCallback: SyncFromWeb.SyncFinishCallback?) {
         //SyncObservable//.//sync(context, daoAdapter, restaurantId, UserSyncAdapter())
-                SyncObservable.sync(context, daoAdapter, restaurantId, OrderSyncToWeb())
+        SyncObservable.sync(context, daoAdapter, restaurantId, OrderSyncToWeb())
                 .concatMap { SyncObservable.sync(context, daoAdapter, restaurantId, SyncInterventionToWeb()) }
                 .concatMap { SyncObservable.sync(context, daoAdapter, restaurantId, SyncSegmentToWeb()) }
-                .subscribe ({
+                .concatMap { SyncObservable.sync(context, daoAdapter, restaurantId, InventoryMovementSyncAdapter()) }
+                .subscribe({
                     syncFinishCallback?.onFinish()
-                },{})
+                }, {})
 
     }
 }

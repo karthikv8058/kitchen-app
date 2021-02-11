@@ -21,7 +21,15 @@ export default class StationService {
             }).catch(() => resolve([]));
         });
     }
+    printerList(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.httpClient.post(this.apiBuilder.paths!.getPrinterList, {}).then(response => {
+                resolve(response);
+            }).catch((erro) => 
 
+             resolve([]));
+        });
+    }
     loadStationsList(): Promise<Station[]> {
         return new Promise((resolve, reject) => {
             this.httpClient.post(this.apiBuilder.paths!.getstationlist, {}).then(response => {

@@ -1,15 +1,22 @@
 package com.smarttoni.server.controlles.pos;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 
+import com.dantsu.escposprinter.EscPosPrinter;
+import com.dantsu.escposprinter.connection.tcp.TcpConnection;
+import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
+import com.smarttoni.R;
 import com.smarttoni.assignment.AssignmentFactory;
 import com.smarttoni.assignment.order.OrderManager;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.core.SmarttoniContext;
+import com.smarttoni.entities.Label;
+import com.smarttoni.entities.Printer;
 import com.smarttoni.utils.Strings;
 import com.smarttoni.auth.HttpSecurityRequest;
 import com.smarttoni.database.DbOpenHelper;
@@ -36,7 +43,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -69,6 +82,7 @@ public class NewPosOrder extends HttpSecurityRequest {
 
         Order newOrder = null;
         PosOrderMeal posOrderMeal = null;
+        printOrderDetails(order);
         if (order.getInventory() && order.getMeals().size() > 0) {
             int i = 0;
             for (PosOrderMeal orderMeal : order.getMeals()) {
@@ -78,22 +92,124 @@ public class NewPosOrder extends HttpSecurityRequest {
                     order.setOrderId("");
                     newOrder = setOrderDetails(order, orderMeal);
                 }
-
                 i++;
             }
         } else {
             newOrder = setOrderDetails(order, posOrderMeal);
         }
-
         PosUtils posUtils = new PosUtils(context);
+
         Type type = new TypeToken<NewPosOrderModel>() {
         }.getType();
-
         new OrderSyncToWeb().onSync(context,
                 ServiceLocator.getInstance().getDatabaseAdapter(),
                 new LocalStorage(context).getRestaurantId(),
                 null, null);
+
         response.send(gson.toJson(posUtils.getPosStateByOrderId(newOrder.getId()), type));
+    }
+
+    private void printOrderDetails(NewPosOrderModel order) {
+        Map<String, Integer> recipeList = new HashMap<>();
+        Map<String, List<String>> labelWithRecipe = new HashMap<>();
+
+        for (PosOrderMeal orderMeal : order.getMeals()) {
+            for (PosRecipe recipe : orderMeal.getRecipes()) {
+//<<<<<<< HEAD
+                if (recipeList.get(recipe.getId()) != null) {
+                    recipeList.put(recipe.getId(), recipeList.get(recipe.getId()) + 1);
+                } else {
+                    recipeList.put(recipe.getId(), 1);
+//=======
+//                Recipe recipe1 = greenDaoAdapter.getRecipeById(recipe.getId());
+//                String[] values = {};
+//                if(recipe1.getParentLabel() != null){
+//                    values = recipe1.getParentLabel().split(",");
+//                }
+//                for (String labelId : values) {
+//                    if (labelWithRecipes.get(labelId) != null) {
+//                        labelWithRecipes.get(labelId).add(recipe.getId());
+//                    } else {
+//                        List<String> recipes = new ArrayList<>();
+//                        recipes.add(recipe.getId());
+//                        labelWithRecipes.put(labelId, recipes);
+//                    }
+//>>>>>>> f/external_order_mapping
+                }
+            }
+        }
+
+        for (Map.Entry<String, Integer> entry : recipeList.entrySet()) {
+            Recipe recipe1 = greenDaoAdapter.getRecipeById(entry.getKey());
+            String[] values = {};
+            if (recipe1.getParentLabel() != null) {
+                values = recipe1.getParentLabel().split(",");
+            }
+            for (String labelId : values) {
+                if (labelWithRecipe.get(labelId) != null) {
+                    labelWithRecipe.get(labelId).add(recipe1.getId());
+                } else {
+                    List<String> recipes = new ArrayList<>();
+                    recipes.add(recipe1.getId());
+                    labelWithRecipe.put(labelId, recipes);
+                }
+            }
+        }
+
+        for (Map.Entry<String, List<String>> entry : labelWithRecipe.entrySet()) {
+            String recipeName = "";
+            for (String a : entry.getValue()) {
+                Recipe recipe1 = greenDaoAdapter.getRecipeById(a);
+                recipeName = recipeName + "[L]\n" + recipe1.getName() + " * " +recipeList.get(recipe1.getId()) ;
+            }
+            Label label = greenDaoAdapter.loadLabelById(entry.getKey());
+            PrintLabelDetails(label, recipeName, order);
+        }
+
+
+    }
+
+    private void PrintLabelDetails(Label label, String recipe, NewPosOrderModel order) {
+        if (Strings.isEmpty(label.getPrinterUuid())) {
+            return;
+        }
+        Printer printerObject = greenDaoAdapter.getPrinterDataById(label.getPrinterUuid());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(new Date(Long.parseLong(order.getDeliveryTime())));
+        String createdDate = sdf.format(new Date());
+        String labelName=label.getName();
+        String table = order.getTableNumber() == null || order.getTableNumber() == "" ? "--" : order.getTableNumber();
+        if (printerObject != null) {
+            new Thread(() -> {
+                try {
+                    EscPosPrinter printer = new EscPosPrinter(new TcpConnection(printerObject.getIpAddress(), Integer.parseInt(String.valueOf(printerObject.getPort()))), 203, 48f, 32);
+                    printer.printFormattedTextAndCut(
+                            "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, context.getResources().getDrawableForDensity(R.drawable.smarttoni, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                                    "[L]\n" +
+                                    "[C]<font size='normal'>Order Received </font>\n" +
+                                    "[L]\n" +
+                                    "[C]=========================================\n" +
+                                    "[L]\n" +
+                                    "[L]\n" + "Table             : " + table +
+                                    "[L]\n" +
+                                    "[L]\n" + "Order received at : " + createdDate +
+                                    "[L]\n" + "Delivery Time     : " + date +
+                                    "[L]\n" +
+                                    "[L]\n" + "Label             : " + labelName +
+                                    "[L]\n" +
+                                    "[L]\n" + "Recipe            : " +recipe +
+                                    "[L]\n" + "Ordering Staff    : " + getUser().getName() +
+                                    "[L]\n" +
+                                    "[C]=========================================\n" +
+                                    "[L]\n" + "[L]\n" +
+                                    "[L]SmartTONi\n"
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+
     }
 
     private Order setOrderDetails(NewPosOrderModel order, PosOrderMeal orderMealItem) {
@@ -108,6 +224,7 @@ public class NewPosOrder extends HttpSecurityRequest {
             newOrder.setTableNo(order.getTableNumber());
             newOrder.setModification(Order.MODIFICATION_UPDATED);
             newOrder.setProcessed(false);
+            newOrder.setChildOrderStatus(Order.EXTERNAL_ORDER_NOT_CREATED);
 
             greenDaoAdapter.updateOrder(newOrder);
             course = DbOpenHelper.Companion.getDaoSession(context).getCourseDao().queryBuilder().where(CourseDao.Properties.OrderId.eq(newOrder.getId())).list().get(0);
@@ -148,8 +265,7 @@ public class NewPosOrder extends HttpSecurityRequest {
             orderLine.setModifiers("");
             orderLine.setCourseId(course.getId());
             Recipe r = ServiceLocator.getInstance().getDatabaseAdapter().getRecipeById(recipe.getId());
-            int actualQty = UnitHelper.getRecipeQty(recipe.getUnit(),r,recipe.getQuantity());
-
+            int actualQty = UnitHelper.getRecipeQty(recipe.getUnit(), r, recipe.getQuantity());
 
 
             orderLine.setQty(actualQty);
@@ -160,29 +276,10 @@ public class NewPosOrder extends HttpSecurityRequest {
 
 
     private void clearExistingData(Order newOrder, Course course) {
-        DeleteQuery<Meal> deleteQuery = DbOpenHelper.Companion.getDaoSession(context).queryBuilder(Meal.class)
+       DbOpenHelper.Companion.getDaoSession(context).queryBuilder(Meal.class)
                 .where(MealDao.Properties.CourseId.eq(course.getId()))
-                .buildDelete();
-        deleteQuery.executeDeleteWithoutDetachingEntities();
-        DbOpenHelper.Companion.getDaoSession(context).clear();
-
-//        List<Meal> existingMeals = DbOpenHelper.Companion.getDaoSession(context).getMealDao().queryBuilder().where(MealDao.Properties.CourseId.eq(course.getId())).list();
-
-//        for (Meal currentmeal : existingMeals) {
-//            List<SelectedRecipe> selectedRecipes = currentmeal.getSelectedRecipes();
-//            for (SelectedRecipe selectedRecipe : selectedRecipes) {
-//                DeleteQuery<SelectedRecipeModifier> modifierDeleteQuery = DbOpenHelper.Companion.getDaoSession(context).queryBuilder(SelectedRecipeModifier.class)
-//                        .where(SelectedRecipeModifierDao.Properties.SelectedRecipeId.eq(selectedRecipe.getId()))
-//                        .buildDelete();
-//                modifierDeleteQuery.executeDeleteWithoutDetachingEntities();
-//            }
-
-//            DeleteQuery<SelectedRecipe> mealDeleteQuery = DbOpenHelper.Companion.getDaoSession(context).queryBuilder(SelectedRecipe.class)
-//                    .where(SelectedRecipeDao.Properties.MealsId.eq(currentmeal.getId()))
-//                    .buildDelete();
-//            mealDeleteQuery.executeDeleteWithoutDetachingEntities();
-//            DbOpenHelper.Companion.getDaoSession(context).clear();
-//        }
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
 
         DbOpenHelper.Companion.getDaoSession(context).queryBuilder(OrderLine.class)
                 .where(OrderLineDao.Properties.OrderId.eq(newOrder.getId()))
@@ -190,9 +287,9 @@ public class NewPosOrder extends HttpSecurityRequest {
                 .executeDeleteWithoutDetachingEntities();
 
         DbOpenHelper.Companion.getDaoSession(context).clear();
-        OrderManager orderManager = ((SmarttoniContext) ServiceLocator.getInstance().getService(ServiceLocator.SMARTTONI_CONTEXT)).getOrderManager();
-        orderManager.deleteOrderForEdit(context, newOrder.getId(), true);
 
+        OrderManager orderManager = ((SmarttoniContext) ServiceLocator.getInstance().getService(ServiceLocator.SMARTTONI_CONTEXT)).getOrderManager();
+        orderManager.deleteOrderForEdit( newOrder.getId());
     }
 
 

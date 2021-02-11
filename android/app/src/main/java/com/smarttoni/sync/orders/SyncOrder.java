@@ -9,7 +9,7 @@ public class SyncOrder {
     public int status;
     public boolean inventoryOrder;
     public String table;
-    public String parentOrderUuid;
+    public int type;
     public List<SyncCourse> courses;
     public int childOrderStatus;
 }

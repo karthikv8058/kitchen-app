@@ -3,12 +3,15 @@ package com.smarttoni.assignment;
 import android.content.Context;
 
 import com.smarttoni.database.DaoAdapter;
+import com.smarttoni.entities.ExternalOrderRequest;
 import com.smarttoni.entities.Inventory;
 import com.smarttoni.entities.InventoryMovement;
 import com.smarttoni.entities.InventoryRequest;
 import com.smarttoni.entities.Order;
 import com.smarttoni.entities.OrderLine;
+import com.smarttoni.utils.DateUtil;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +45,9 @@ public class InventoryManagement {
                 orderId,
                 inventory.getId(),
                 qty,
-                "date");
+                DateUtil.formatStandardDate(new Date()));
+
+        daoAdapter.insertInventoryMovement(im);
 
     }
 
@@ -56,13 +61,16 @@ public class InventoryManagement {
                         inventory.setQuantity(inventory.getQuantity() - inventoryRequest.getQty());
                         daoAdapter.deleteInventoryRequests(inventoryRequest);
                         Order order = daoAdapter.getOrderById(inventoryRequest.getOrderId());
-//                        if (daoAdapter.loadIncompleteChildOrders(order.getId()).isEmpty()) {
-//
-//                            order.setChildOrderStatus(Order.EXTERNAL_ORDER_COMPLETED);
-//                            order.setProcessed(false);
-//                            daoAdapter.updateOrder(order);
-//                            AssignmentFactory.getInstance().processOrder(context,order);
-//                        }
+                        if(order != null){
+                            List<ExternalOrderRequest> _eors = daoAdapter
+                                    .listExternalOrderRequestForOrder(order.getId());
+                            if (_eors.isEmpty()) {
+                                order.setChildOrderStatus(Order.EXTERNAL_ORDER_COMPLETED);
+                                order.setProcessed(false);
+                                daoAdapter.updateOrder(order);
+                                AssignmentFactory.getInstance().processOrder(context, order);
+                            }
+                        }
                     } else if (inventory.getQuantity() > 0) {
                         inventoryRequest.setQty(inventoryRequest.getQty() - inventory.getQuantity());
                         inventory.setQuantity(0);
@@ -83,8 +91,9 @@ public class InventoryManagement {
                 orderId,
                 inventory.getId(),
                 qty,
-                "date");
+                DateUtil.formatStandardDate(new Date()));
 
+        daoAdapter.insertInventoryMovement(im);
 
         inventory.setQuantity(inventory.getQuantity() - qty);
         daoAdapter.updateInventoryDao(inventory);

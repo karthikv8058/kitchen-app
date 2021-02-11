@@ -8,6 +8,8 @@ import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.core.SmarttoniContext;
 import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.entities.Course;
+import com.smarttoni.entities.ExternalAvailableQuantity;
+import com.smarttoni.entities.ExternalOrderRequest;
 import com.smarttoni.entities.Meal;
 import com.smarttoni.entities.Order;
 import com.smarttoni.entities.OrderLine;
@@ -16,7 +18,9 @@ import com.smarttoni.sync.orders.SyncCourse;
 import com.smarttoni.sync.orders.SyncMeal;
 import com.smarttoni.sync.orders.SyncOrder;
 import com.smarttoni.sync.orders.SyncOrderLine;
+import com.smarttoni.sync.orders.SyncOrderWrapper;
 import com.smarttoni.sync.orders.SyncOrders;
+import com.smarttoni.utils.AppState;
 import com.smarttoni.utils.LocalStorage;
 import com.smarttoni.utils.DateUtil;
 import com.smarttoni.utils.Strings;
@@ -36,18 +40,42 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
     public void onSync(@NotNull Context context, @NotNull DaoAdapter daoAdapter, @NotNull String restaurantId, @NotNull SyncSuccessListener successListener, @NotNull SyncFailListener failListener) {
         List<Order> orders = daoAdapter.loadOrders();
 
+
+        SyncOrderWrapper wrapper = new SyncOrderWrapper();
+
+
+
+
         SyncOrders s = new SyncOrders();
         List<SyncOrder> os = s.sync(daoAdapter, daoAdapter.loadOrders());
 
+
+        wrapper.setOrders(os);
+        wrapper.setAvailableQuantity(daoAdapter.listExternalAvailableQuantity());
+        wrapper.setRequestedQuantity(daoAdapter.listExternalOrderRequest());
+
+
         LocalStorage ls = (LocalStorage) ServiceLocator.getInstance().getService(ServiceLocator.LOCAL_STORAGE_SERVICE);
 
-        new HttpClient(context).getHttpClient().syncOrders(ls.getRestaurantId(), os).enqueue(new Callback<List<SyncOrder>>() {
+        new HttpClient(context).getHttpClient().syncOrders(ls.getRestaurantId(), !AppState.initialOrderSyncCompleted, wrapper).enqueue(new Callback<SyncOrderWrapper>() {
 
             @Override
-            public void onResponse(Call<List<SyncOrder>> call, Response<List<SyncOrder>> response) {
+            public void onResponse(Call<SyncOrderWrapper> call, Response<SyncOrderWrapper> response) {
                 if (response.body() != null) {
 
-                    List<SyncOrder> orders = response.body();
+                    SyncOrderWrapper orderWrapper = response.body();
+
+                    if(!AppState.initialOrderSyncCompleted){
+                        List<ExternalAvailableQuantity> eaqs = orderWrapper.getAvailableQuantity();
+                        daoAdapter.insertAllExternalAvailableQuantity(eaqs);
+
+                        List<ExternalOrderRequest> eoqs = orderWrapper.getRequestedQuantity();
+                        daoAdapter.insertAllExternalOrderRequest(eoqs);
+                    }
+
+                    AppState.initialOrderSyncCompleted = true;
+
+                    List<SyncOrder> orders = orderWrapper.getOrders();
 
                     for (SyncOrder o : orders) {
                         Order _order = daoAdapter.getOrderById(o.uuid);
@@ -59,15 +87,17 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                         }
 
                         OrderManager orderManager = ((SmarttoniContext) ServiceLocator.getInstance().getService(ServiceLocator.SMARTTONI_CONTEXT)).getOrderManager();
-                        orderManager.removeWorksForOrder(o.uuid,null);
+                        orderManager.removeExternalOrderRequests(o.uuid);
+                        orderManager.removeWorksForOrder(o.uuid);
 
                         Order order = new Order();
                         order.setId(o.uuid);
                         order.setUpdatedAt(DateUtil.parse(o.updatedAt));
                         order.setStatus(o.status);
-                        if(Strings.isEmpty(o.parentOrderUuid) && o.status == Order.ORDER_STARTED){
+                        if(o.type == Order.TYPE_INTERNAL && o.status == Order.ORDER_STARTED){
                             order.setStatus(Order.ORDER_OPEN); // TO BUILD WORK TREE , Order Started Never build tree
                         }
+                        order.setType(o.type);
                         order.setIsInventory(o.inventoryOrder);
                         order.setTableNo(o.table);
                         order.setProcessed(false);
@@ -141,7 +171,7 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
             }
 
             @Override
-            public void onFailure(Call<List<SyncOrder>> call, Throwable t) {
+            public void onFailure(Call<SyncOrderWrapper> call, Throwable t) {
                 if (failListener != null) {
                     failListener.onFail();
                 }

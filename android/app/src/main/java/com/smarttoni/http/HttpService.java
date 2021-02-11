@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.smarttoni.entities.ChefActivityLog;
 import com.smarttoni.entities.Intervention;
 import com.smarttoni.entities.Inventory;
+import com.smarttoni.entities.InventoryMovement;
 import com.smarttoni.entities.Label;
 import com.smarttoni.entities.Machine;
 import com.smarttoni.entities.Printer;
@@ -29,6 +30,7 @@ import com.smarttoni.models.Chat;
 import com.smarttoni.server_app.models.UsersResponse.InventoryList;
 import com.smarttoni.server_app.models.UsersResponse.UsersResponse;
 import com.smarttoni.sync.orders.SyncOrder;
+import com.smarttoni.sync.orders.SyncOrderWrapper;
 
 import java.util.List;
 
@@ -46,10 +48,6 @@ public interface HttpService {
 
     @GET("api/1.0/mobile/{restaurant_uuid}/sync/recipes")
     Call<SyncWarpper> syncRecipes(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpsdated);
-
-    @FormUrlEncoded
-    @POST("get-latest-tasks")
-    Call<SyncData<Task>> syncTask(@Field("lastUpdated") String lastUpdated, @Field("restaurantId") String restaurantId);
 
     @GET("api/1.0/mobile/{restaurant_uuid}/sync/units")
     Call<UnitSync> syncUnits(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpsdated);
@@ -92,26 +90,6 @@ public interface HttpService {
     @GET("api/1.0/mobile/{restaurant_uuid}/sync/service-sets")
     Call<ServiceSetSyncWrapper> syncServiceSet(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpsdated);
 
-    //
-//    @GET("/api/1.0/mobile/{restaurant_uuid}/sync/suppliers")
-//    Call<SyncData<Supplier>> syncSupplier(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpsdated);
-//
-//    @Multipart
-//    @POST("upload-local-db")
-//    Call<ResponseBody> uploadLocalDb(
-//            @Query("restaurant_id") String restaurantId,
-//            @Part("fileName") RequestBody filename,
-//            @Part MultipartBody.Part file
-//    );
-
-//    @Multipart
-//    @POST("api/1.0/mobile/{restaurant_uuid}/upload-db")
-//    Call<ResponseBody> uploadDb(
-//            @Path(value = "restaurant_uuid", encoded = true) String restaurantId,
-//            @Part("fileName") RequestBody filename,
-//            @Part MultipartBody.Part file
-//    );
-//
     @POST("api/1.0/mobile/{restaurant_uuid}/incremental-upload")
     Call<ResponseBody> uploadIncrementalDb(
             @Path(value = "restaurant_uuid", encoded = true) String restaurantId,@Query("printer_data") List<PrinterData> printerData,
@@ -120,11 +98,8 @@ public interface HttpService {
     );
 
     @POST("api/1.0/mobile/{restaurant_uuid}/sync/orders")
-    Call<List<SyncOrder>> syncOrders(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Body List<SyncOrder> orders);
+    Call<SyncOrderWrapper> syncOrders(@Path(value = "restaurant_uuid", encoded = true) String restaurantId,  @Query("initialSync") boolean initialSync, @Body SyncOrderWrapper orders);
 
-
-//    @GET("api/1.0/restaurant/{restaurant_uuid}/order")
-//    Call<JsonArray> getOrdersFromWeb(@Path(value = "restaurant_uuid", encoded = true) String restaurantId);
 
     @FormUrlEncoded
     @POST("api/1.0/chat/relay")
@@ -157,4 +132,7 @@ public interface HttpService {
 
     @GET("api/1.0/mobile/{restaurant_uuid}/sync/suppliers")
     Call<SyncData<Supplier>> syncSuppliers(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpdated);
+
+    @POST("api/1.0/mobile/{restaurant_uuid}/sync/inventory-movement")
+    Call<Void> syncInventoryMovement(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Body List<InventoryMovement> inventoryMovements);
 }
