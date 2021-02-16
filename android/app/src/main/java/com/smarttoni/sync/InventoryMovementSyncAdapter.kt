@@ -13,13 +13,13 @@ class InventoryMovementSyncAdapter : AbstractSyncAdapter {
 
         val orders = daoAdapter.listInventoryMovement();
 
-        HttpClient(context).httpClient.syncInventoryMovement(restaurantId,orders).enqueue(object : Callback<Void>{
-            override fun onFailure(call: Call<Void>, t: Throwable) {
+        HttpClient(context).httpClient.syncInventoryMovement(restaurantId,orders).enqueue(object : Callback<String>{
+            override fun onFailure(call: Call<String>, t: Throwable) {
                 daoAdapter.deleteInventoryMovements(orders)
                 successListener?.onSuccess()
             }
 
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
                 failListener?.onFail()
             }
 

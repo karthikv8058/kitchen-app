@@ -115,7 +115,12 @@ public class OrderProcessor {
                 Float qty = recipeQty.get(orderLine.getRecipe().getId());
                 if (qty != null && qty != 0) {
                     orderLine.setQty(qty);
-                    if (TaskTreeBuilder.buildWorkTree(orderLine.getRecipe(),orderLine.getQty(), order, orderLine, null, mQueue,true)!= null) {
+
+                    NumberOfItemsAndActualQuantity numberOfItemsAndActualQuantity = new NumberOfItemsAndActualQuantity();
+                    numberOfItemsAndActualQuantity.numberOfItems = (int) orderLine.getQty();
+                    numberOfItemsAndActualQuantity.actualQuantity = orderLine.getQty() * orderLine.getRecipe().getOutputQuantity();
+
+                    if (TaskTreeBuilder.buildWorkTree(orderLine.getRecipe(),numberOfItemsAndActualQuantity, order, orderLine, null, mQueue,true)!= null) {
                         completedAllRecipes = false;
                     }
                 }
@@ -144,7 +149,7 @@ public class OrderProcessor {
                 recipeQty.put(recipeId, qty);
             }
 
-            boolean isOrderCreated = TaskTreeBuilder.getInstance().parseAndCheckExternalOrders(order);
+            boolean isOrderCreated = ExternalOrderManager.getInstance().parseAndCheckExternalOrders(order);
             if(isOrderCreated){
                 order.setChildOrderStatus(Order.EXTERNAL_ORDER_CREATED);
                 daoAdapter.updateOrder(order);

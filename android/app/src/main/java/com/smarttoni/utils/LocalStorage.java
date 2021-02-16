@@ -24,6 +24,8 @@ public class LocalStorage {
     public static String RESTAURANT_NAME = "RESTAURANT_NAME";
     public static String RESTAURANT_TOKEN = "RESTAURANT_TOKEN";
 
+    public static String INITIAL_ORDER_SYNC_COMPLETED = "INITIAL_ORDER_SYNC_COMPLETED";
+
     public LocalStorage(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }

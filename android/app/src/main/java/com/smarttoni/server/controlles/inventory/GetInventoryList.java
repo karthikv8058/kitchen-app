@@ -231,6 +231,11 @@ public class GetInventoryList extends HttpSecurityRequest {
                 if (recipe.getId().equals(eor.getRecipe())) {
                     OpenOrderWrapper openOrderWrapper = new OpenOrderWrapper();
                     openOrderWrapper.setQty(eor.getQuantity());
+
+                    if(eor.getParentOrder() == null){
+                        continue ;
+                    }
+
                     Order order = daoAdapter.getOrderById(eor.getParentOrder());
 
                     List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(order.getId());

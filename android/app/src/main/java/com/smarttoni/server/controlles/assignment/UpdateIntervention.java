@@ -49,9 +49,9 @@ public class UpdateIntervention extends HttpSecurityRequest {
                 Work work = ServiceLocator.getInstance().getDatabaseAdapter().getWorkById(interventionJob.getWorkId());
                 Task task = ServiceLocator.getInstance().getDatabaseAdapter().getTaskById(work.getTaskId());
 
-                if(status ==InterventionJob.COMPLETED && interventionJob.getIntervention().getPrintLabel()==true){
+                if(status ==InterventionJob.COMPLETED && interventionJob.getIntervention().getPrintLabel()){
                     try {
-                        PrinterManager.getInstance().printTask(work,interventionJob.getIntervention().getDescription(),task);
+                        PrinterManager.getInstance().printTask(getUser().getId(),work,interventionJob.getIntervention().getDescription(),task);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

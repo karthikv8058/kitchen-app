@@ -62,50 +62,59 @@ class PrinterDetailPage extends AbstractComponent<Props, State> {
     }
 
     componentDidMount() {
-        this.taskService.pingIp(this.props.route?.params?.task.uuid).then((response) => {
-            this.setState({
-                isPingSuccess: response,
-                isLoading: false
-            })
-        }).catch(e => console.log(e));
+        // this.taskService.pingIp(this.props.route?.params?.printDetailstask.uuid).then((response) => {
+        //     this.setState({
+        //         isPingSuccess: response,
+        //         isLoading: false
+        //     })
+        // }).catch(e => console.log(e));
     }
 
 
     completeTask = () => {
         this.props.navigation.pop()
     }
-    getStationName(){        
-        let station='';
-        this.props.route?.params?.station.forEach(stationItem => {
-            if(stationItem.uuid===this.props.route?.params?.task.station){
-                station=!!stationItem?stationItem.name:''
-            }
-        });
-        return station
+
+    getStationName() {
+        // let station = '';
+        // this.props.route?.params?.printDetailsstation.forEach(stationItem => {
+        //     if (stationItem.uuid === this.props.route?.params?.printDetailstask.station) {
+        //         station = !!stationItem ? stationItem.name : ''
+        //     }
+        // });
+        // return station
     }
 
     render() {
+        let printDetails = this.props.route?.params?.printDetails;
 
+        let isSuccess =printDetails.isSuccess;
+        
         return (
             <Appbackground
                 hideBack={false}
                 doNaviagte={!this.state.isBackButtonVisible}
                 navigation={this.props.navigation}
-               >
+            >
 
-                <View style={{ flex: 1, flexDirection: 'column', alignSelf: 'stretch', }}>
+                <View style={{ flex: 1, flexDirection: 'column', alignSelf: 'stretch', backgroundColor: colors.white }}>
                     <SwipeView
                         onSwipedRight={this.completeTask}
                         disableSwipeToLeft={false}
                         disableSwipeToRight={false}>
-                        {this.state.isLoading? <ActivityIndicator size='large' color={colors.white} />:<View>
-                            <Text style={{fontWeight:'bold', marginTop:20,fontSize:15, textAlign: 'center', color: !!this.state.isPingSuccess  ? colors.black : colors.red, }}>{!!this.state.isPingSuccess  ? 'Please label your product! The label is printed.' : 'Please label your product! could not be printed.'}</Text>
-                            {this.state.isPingSuccess?<View style={{height: Dimensions.get('window').height}}>
-                            <Text style={{marginTop:20,fontSize:15, marginLeft:20, marginRight:15,color:  colors.black  }}>{'Task      :  '+!!this.props.route?.params?.task?this.props.route?.params?.task.name:''}</Text>
-                            <Text style={{marginTop:20,fontSize:15, marginLeft:20,marginRight:15, color:  colors.black  }}>{'Station   :  '+this.getStationName()}</Text>
-                            <Text style={{marginTop:20,fontSize:15, marginLeft:20,marginRight:15, color:  colors.black  }}>{'Recipe    :  '+!!this.props.route?.params?.task && this.props.route?.params?.task.recipes?this.props.route?.params?.task.recipes.name:''}</Text>
-                            </View>:null}
-                        </View>}
+                        <View>
+                            <View style={{ backgroundColor: colors.darkGrey, padding: 16 }}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 15, textAlign: 'center', color: colors.black  }}>Please label your product</Text>
+                            </View>
+
+                            <View style={{ flexDirection: "column", margin: 16 }}>
+                                <Text style={{ padding: 8, color: isSuccess ? colors.borderGreen : colors.red }}>{isSuccess ? 'The label is printed.' : 'Label could not be printed!'}</Text>
+                                { (!!printDetails.intervention) && <Text style={{ padding: 8 }}>Intervention      :  {printDetails.intervention}</Text> }
+                                <Text style={{ padding: 8 }}>Task      :  {printDetails.task}</Text>
+                                <Text style={{ padding: 8 }}>Station   :  {printDetails.station}</Text>
+                                <Text style={{ padding: 8 }}>Recipe    :   {printDetails.recipe}</Text>
+                            </View>
+                        </View>
                     </SwipeView>
                 </View>
             </Appbackground>

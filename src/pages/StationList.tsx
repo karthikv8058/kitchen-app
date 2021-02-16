@@ -137,11 +137,7 @@ export default class StationList extends AbstractComponent<Props, State> {
         });
     }
     getPrinterList(){
-        console.log('jjj ');
-        
         this.stationService.printerList().then((res: any) => {
-            console.log('jjj 11',res);
-
             this.setState({
                 printerList: res,
                 isLoading: false
@@ -153,7 +149,6 @@ export default class StationList extends AbstractComponent<Props, State> {
         if (!this.props.route.params.fromTasks) {
             stations = stations.concat(this.stationUserData);
         }
-        console.log('tttt ',stations);
 
         return (
             <View style={{ flexDirection: 'column', flex: 1, margin: 20 }}>
@@ -232,7 +227,7 @@ export default class StationList extends AbstractComponent<Props, State> {
 
                     </View>
                 </TouchableOpacity >
-               {!!this.props.route.params.fromTasks? <TouchableOpacity onPress={()=>this.testStationPrinter(stations.uuid)} style={{flex:.1,marginTop:20,marginLeft:10
+               {!!this.props.route.params.fromTasks && stations.printer_uuid ? <TouchableOpacity onPress={()=>this.testStationPrinter(stations.uuid)} style={{flex:.1,marginTop:20,marginLeft:10
             }}>
                     <Icon name='printer' size={20} color={colors.white} />
                 </TouchableOpacity>:null}
@@ -243,10 +238,10 @@ export default class StationList extends AbstractComponent<Props, State> {
     testStationPrinter=(stationId:any)=>{
         this.userService.testStationPrinter(stationId).then(response => {
                 if (!!response) {
-                    ToastAndroid.show('Printer tested successfully', ToastAndroid.SHORT);
+                    ToastAndroid.show('Print successful', ToastAndroid.SHORT);
 
                 }else{
-                    ToastAndroid.show('Something went wrong ,Please check the printer details', ToastAndroid.SHORT);
+                    ToastAndroid.show('Something went wrong, Please check the printer', ToastAndroid.SHORT);
 
                 }
         });
@@ -309,8 +304,7 @@ export default class StationList extends AbstractComponent<Props, State> {
         return !this.props.route.params.backNavigation;
     }
     render() {
-        console.log('tttt ooo',this.state.printerList);
-        
+    
         return (
             <AppBackground
                 navigation={this.props.navigation}

@@ -121,7 +121,7 @@ export default class ApiBuilder {
             loadArchivedOrder:this.baseURL + 'load-archived-order',
             getAllRecipes:this.baseURL + 'get-all-recipes',
             addNewIngredient:this.baseURL+'add-new-ingredient',
-            testStationPrinter:this.baseURL+'test=station-printer',
+            testStationPrinter:this.baseURL+'test-station-printer',
             pingIp:this.baseURL+'ping-ip',
             getPrinterList:'get-printers'
         };

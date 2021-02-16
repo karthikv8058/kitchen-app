@@ -134,5 +134,5 @@ public interface HttpService {
     Call<SyncData<Supplier>> syncSuppliers(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpdated);
 
     @POST("api/1.0/mobile/{restaurant_uuid}/sync/inventory-movement")
-    Call<Void> syncInventoryMovement(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Body List<InventoryMovement> inventoryMovements);
+    Call<String> syncInventoryMovement(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Body List<InventoryMovement> inventoryMovements);
 }

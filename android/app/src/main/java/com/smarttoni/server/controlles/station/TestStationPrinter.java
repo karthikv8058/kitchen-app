@@ -68,21 +68,22 @@ public class TestStationPrinter extends HttpSecurityRequest {
                                         "[L]\n" + "[L]\n" +
                                         "[L]SmartTONi\n"
                         );
+
+                        Gson gson = GSONBuilder.createGSON();
+                        Type type = new TypeToken<Boolean>() {
+                        }.getType();
+                        response.send(gson.toJson(true, type));
                     } catch (Exception e) {
                         Gson gson = GSONBuilder.createGSON();
                         Type type = new TypeToken<Boolean>() {
                         }.getType();
                         response.send(gson.toJson(false, type));
                         e.printStackTrace();
+
                         return;
                     }
                 }
             }).start();
-
-            Gson gson = GSONBuilder.createGSON();
-            Type type = new TypeToken<Boolean>() {
-            }.getType();
-            response.send(gson.toJson(true, type));
 
         } catch (Exception e) {
             Gson gson = GSONBuilder.createGSON();

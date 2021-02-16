@@ -113,7 +113,7 @@ public class HttpRoute {
         mHttpServer.post("/load-archived-order", new LoadArchivedOrder(context));
         mHttpServer.post("/get-all-recipes", new GetAllRecipes(context));
         mHttpServer.post("/add-new-ingredient", new AddNewIngredient(context));
-        mHttpServer.post("/test=station-printer", new TestStationPrinter(context));
+        mHttpServer.post("/test-station-printer", new TestStationPrinter(context));
         mHttpServer.post("/ping-ip", new PingIp(context));
         mHttpServer.post("/get-printers", new getPrinters(context));
 
