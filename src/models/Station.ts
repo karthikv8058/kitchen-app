@@ -1,7 +1,8 @@
 export default interface Station {
     color: string;
     created_at: string;
-    uuid: number;
+    uuid: string;
     name: string;
     updated_at: string;
+    printer_uuid: string;
 }

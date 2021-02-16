@@ -337,13 +337,8 @@ class TaskOverviewPage extends AbstractComponent<Props, State> {
     }
 
     finishTask = (work: Work) => {
+       
         return this.taskService.finishTask(work).then((isCompleted: boolean) => {
-            this.navigationService.push('PrinterDetailPage', {
-                task: work.task,
-                station:this.stations
-                
-            });
-
             this.getTasks();
             return isCompleted;
         });

@@ -59,7 +59,7 @@ export default class App extends AbstractComponent<Props, State> {
 
   componentDidMount() {
 
- // TODO quick fix
+    // TODO quick fix
     this.storageService.get(Storage.ORIENTATION).then(value => {
       let type = +value;
       switch (type) {
@@ -69,7 +69,7 @@ export default class App extends AbstractComponent<Props, State> {
         default: Orientation.unlockAllOrientations();
       }
     });
-   
+
     AsyncStorage.getItem(Storage.ORIENTATION)
 
     StatusBar.setHidden(true);
@@ -116,6 +116,7 @@ export default class App extends AbstractComponent<Props, State> {
     const TYPE_UPDATE_USER = 3;
     const TYPE_INTERVENTION = 4;
     const TYPE_UDP = 5;
+    const TYPE_PRINT_COMPLETE = 6;
 
     data = JSON.parse(data);
 
@@ -143,6 +144,12 @@ export default class App extends AbstractComponent<Props, State> {
         break;
       case TYPE_UDP:
         this.eventEmitterService.emit({ type: EventTypes.SERVER_FOUND, data: data.data });
+        break;
+
+      case TYPE_PRINT_COMPLETE:
+        this.navigationService.push('PrinterDetailPage', {
+          printDetails: data.data
+        });
         break;
     }
   }

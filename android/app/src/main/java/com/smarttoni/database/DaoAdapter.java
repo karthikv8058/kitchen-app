@@ -638,4 +638,7 @@ public interface DaoAdapter {
 
     void insertAllExternalOrderRequest(List<ExternalOrderRequest> eoq);
 
+
+    void saveInventoryRequirement(String orderId, String recipeId, float required);
+
 }

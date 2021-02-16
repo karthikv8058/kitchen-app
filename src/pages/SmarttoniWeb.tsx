@@ -93,7 +93,8 @@ export default class SmarttoniWeb extends AbstractComponent<Props, State> {
     }
 
     render() {
-        const applicationData = `(function(){
+
+        const applicationData =  this.state.webAppData ? `(function(){
             let tk = window.localStorage.getItem('ACCESS_TOKEN');
             if(!tk || (tk && tk != '${this.state.webAppData.accessToken}')){
               window.localStorage.setItem('ACCESS_TOKEN', '${this.state.webAppData.accessToken}');
@@ -102,7 +103,7 @@ export default class SmarttoniWeb extends AbstractComponent<Props, State> {
               window.localStorage.setItem('WEBVIEW', '${true}');
               window.location.reload();
             }
-      })();`;
+      })();` : '';
         return (
             <AppBackground
                 navigation={this.props.navigation}

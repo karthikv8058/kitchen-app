@@ -62,7 +62,7 @@ public class UpdateTask extends HttpSecurityRequest {
 
             if(work.getStatus() == Work.COMPLETED && task.getPrintLabel()){
                 try {
-                    PrinterManager.getInstance().printTask(work,"",task);
+                    PrinterManager.getInstance().printTask(getUser().getId(),work,"",task);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

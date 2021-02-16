@@ -52,7 +52,7 @@ export default ioc;
 
 export const HTTP_CLIENT = 'httpClient';
 
-export function Bind(service: String) {
+export function Bind(service: string) {
 
     return ioc.ServiceFactory.getServiceBy(service);
     // return function (target: any, key: string | symbol) {

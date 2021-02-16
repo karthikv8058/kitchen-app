@@ -135,6 +135,9 @@ public class TaskManger {
             //If it End of SubTree , mark its used , to handle inventory or to move inventory
 
             if (t.getIsEndNode()) {
+
+                daoAdapter.saveInventoryRequirement(t.getOrderId(),t.getRecipeId(),t.getQuantity());
+
                 if (t.getSubRecipes() != null) {
                     String[] ids = t.getSubRecipes().split(",");
                     for (String id : ids) {

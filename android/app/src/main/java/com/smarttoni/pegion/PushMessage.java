@@ -8,6 +8,8 @@ public class PushMessage {
     public static final int TYPE_INTERVENTION = 4;
     public static final int TYPE_UDP = 5;
 
+    public static final int TYPE_PRINT_COMPLETE = 6;
+
     private int type;
     private Object data;
 

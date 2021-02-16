@@ -111,6 +111,7 @@ public class RNWebServer extends ReactContextBaseJavaModule {
                     ServerStartResponse serverStartResponse =response.body();
                     if(serverStartResponse != null && serverStartResponse.getSignature() != null){
                         localStorage.putString(LocalStorage.RESTAURANT_TOKEN,serverStartResponse.getSignature());
+                        localStorage.putString(LocalStorage.RESTAURANT_TOKEN,serverStartResponse.getSignature());
                         startServices(promise);
                     }else{
                         context.sendBroadcast(new Intent(MainActivity.ACTION_SERVER_START_FAILED));

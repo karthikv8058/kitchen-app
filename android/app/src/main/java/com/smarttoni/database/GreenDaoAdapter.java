@@ -17,6 +17,7 @@ import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalAvailableQuantityDao;
 import com.smarttoni.entities.ExternalOrderRequest;
 import com.smarttoni.entities.ExternalOrderRequestDao;
+import com.smarttoni.entities.IngredientRequirement;
 import com.smarttoni.entities.Intervention;
 import com.smarttoni.entities.InterventionDao;
 import com.smarttoni.entities.InterventionJob;
@@ -2319,5 +2320,30 @@ public class GreenDaoAdapter implements DaoAdapter {
     public Printer getPrinterDataById(String printerUuid) {
         return getDaoSession().getPrinterDao().queryBuilder()
                 .where(PrinterDao.Properties.UuId.eq(printerUuid)).unique();
+    }
+
+    @Override
+    public void saveInventoryRequirement(String orderId, String recipeId, float required) {
+
+        Realm realm = Realm.getDefaultInstance();
+
+        IngredientRequirement ir = realm.where(IngredientRequirement.class)
+                .equalTo("orderId", orderId)
+                .and()
+                .equalTo("recipeId", recipeId)
+                .findFirst();
+
+        realm.beginTransaction();
+
+        if (ir == null) {
+            ir = new IngredientRequirement();
+            ir.setOrderId(orderId);
+            ir.setRecipeId(recipeId);
+            ir.setQuantity(required);
+            realm.copyToRealm(ir);
+        }else{
+            ir.setQuantity(ir.getQuantity()+required);
+        }
+        realm.commitTransaction();
     }
 }
