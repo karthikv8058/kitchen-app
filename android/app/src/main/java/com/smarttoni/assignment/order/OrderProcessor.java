@@ -114,10 +114,10 @@ public class OrderProcessor {
             for (OrderLine orderLine : orderLines) {
                 Float qty = recipeQty.get(orderLine.getRecipe().getId());
                 if (qty != null && qty != 0) {
-                    orderLine.setQty(qty);
+                    //orderLine.setQty(qty);
 
                     NumberOfItemsAndActualQuantity numberOfItemsAndActualQuantity = new NumberOfItemsAndActualQuantity();
-                    numberOfItemsAndActualQuantity.numberOfItems = (int) orderLine.getQty();
+                    numberOfItemsAndActualQuantity.numberOfItems = (int) Math.ceil(qty);
                     numberOfItemsAndActualQuantity.actualQuantity = orderLine.getQty() * orderLine.getRecipe().getOutputQuantity();
 
                     if (TaskTreeBuilder.buildWorkTree(orderLine.getRecipe(),numberOfItemsAndActualQuantity, order, orderLine, null, mQueue,true)!= null) {

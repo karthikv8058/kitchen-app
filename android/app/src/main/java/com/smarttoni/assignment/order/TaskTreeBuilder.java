@@ -66,7 +66,7 @@ public class TaskTreeBuilder {
 
 
 
-    public static Work buildWorkTree(Recipe recipe, NumberOfItemsAndActualQuantity quantity, Order order, OrderLine orderLine, Work next, Queue queue, boolean isMainRecipe) {
+    public static Work buildWorkTree(Recipe recipe, NumberOfItemsAndActualQuantity quantity, Order order,OrderLine orderLine, Work next, Queue queue, boolean isMainRecipe) {
 
         DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
         List<Task> tasks = daoAdapter.loadTasks(recipe.getId());
@@ -92,7 +92,7 @@ public class TaskTreeBuilder {
         }
         //if(!order.getIsInventory() && checkForExternalOrder(daoAdapter,order.getId(),recipe,0,false,(isMainRecipe && order.getIsInventory())) != CreateExternalOrder.NO_EXTERNAL_ORDER){
         if (!order.getIsInventory() && hasInventoryQty) {
-            int qty = (int) orderLine.getQty();
+            int qty = quantity.numberOfItems;// (int) orderLine.getQty();
             float inventoryTakeQty = qty * recipe.getOutputQuantity();
 
             Work t = null;
@@ -111,17 +111,22 @@ public class TaskTreeBuilder {
 
             daoAdapter.saveInventoryRequirement(order.getId(),recipe.getId(),quantity.actualQuantity);
 
-            //TODO Why????
-            if (qty == orderLine.getQty()) {
+
+            if (qty == quantity.numberOfItems) {
                 recipeCompleted = true;
-            } else if (next == null) {
-                // if its main recipe
-                actualQty = orderLine.getQty() - qty;
-                orderLine.setQty(actualQty);
-                //actualQty = recipe.getOutputQuantity() * orderLine.getQty();
-            } else {
-                actualQty = orderLine.getQty() - qty;
             }
+
+            //TODO Why????
+//            if (qty == quantity.numberOfItems) {
+//                recipeCompleted = true;
+//            } else if (next == null) {
+//                // if its main recipe
+//                actualQty = orderLine.getQty() - qty;
+//                //orderLine.setQty(actualQty);
+//                //actualQty = recipe.getOutputQuantity() * orderLine.getQty();
+//            } else {
+//                actualQty = orderLine.getQty() - qty;
+//            }
         }
 
         // Old Inventory Logic, Now Only for manged and no supplier recipe

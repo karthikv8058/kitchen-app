@@ -70,7 +70,7 @@ public class PrinterManager {
 
             PrintDetails printDetails = new PrintDetails();
             printDetails.intervention = interventionName;
-            printDetails.task = task.getName() + " ( " + task.getOutputQuantity() + " " + task.getOutputUnitName() + " )";
+            printDetails.task = task.getName() + " ( " + (t.getQuantity() * task.getOutputQuantity()) + " " + task.getOutputUnitName() + " )";
             printDetails.station = station.getName();
             printDetails.recipe = recipe.getName();
             printDetails.table = tableNo;

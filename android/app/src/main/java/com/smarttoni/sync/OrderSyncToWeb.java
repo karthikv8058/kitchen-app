@@ -118,7 +118,7 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                             course.setIsOnCall(c.onCall);
                             course.setDeliveryTime(DateUtil.parse(c.deliveryDate));
                             course.setCourseName("course1");
-
+                            //TODO  Check
                             daoAdapter.saveCourse(course);
 
                             if (c.meals == null) {
