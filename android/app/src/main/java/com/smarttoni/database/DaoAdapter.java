@@ -5,6 +5,7 @@ import com.smarttoni.entities.ChefActivityLog;
 import com.smarttoni.entities.Course;
 import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalOrderRequest;
+import com.smarttoni.entities.IngredientExtras;
 import com.smarttoni.entities.Intervention;
 import com.smarttoni.entities.InterventionJob;
 import com.smarttoni.entities.Inventory;
@@ -641,4 +642,13 @@ public interface DaoAdapter {
 
     void saveInventoryRequirement(String orderId, String recipeId, float required);
 
+    void useInventoryRequirement(String orderId, String recipeId, float used);
+
+    void removeIngredientRequirementForOrder(String orderId);
+
+    void saveIngredientExtras(Long workId, String recipeId, float extra);
+
+    void moveToInventoryAndDeleteExtras(String orderId,Long workId);
+
+    void putBackIngredientRequirementToInventory(String orderId);
 }

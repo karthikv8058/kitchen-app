@@ -1,7 +1,7 @@
-# SmartTONi Developrs
+# SmartTONi Developers
 
 ## Topics
 
-- [Git Flow](http://git.pitsolutions.com/mobile/skki_server2/blob/develop/doc/git_flow.md)
-- [Naming Convention](http://git.pitsolutions.com/mobile/skki_server2/blob/develop/doc/naming_convention.md)
-- [API Documentation](http://git.pitsolutions.com/mobile/skki_server2/blob/develop/doc/api.md)
+- [Git Flow](https://bitbucket.org/smartTONi/app/src/master/doc/git_flow.md)
+- [Naming Convention](https://bitbucket.org/smartTONi/app/src/master/doc/naming_convention.md)
+- [API Documentation](https://bitbucket.org/smartTONi/app/src/master/doc/api.md)

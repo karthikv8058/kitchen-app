@@ -2,6 +2,7 @@ package com.smarttoni.database;
 
 import android.content.Context;
 
+import com.smarttoni.assignment.InventoryManagement;
 import com.smarttoni.assignment.interventions.InterventionManager;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.core.SmarttoniContext;
@@ -17,7 +18,10 @@ import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalAvailableQuantityDao;
 import com.smarttoni.entities.ExternalOrderRequest;
 import com.smarttoni.entities.ExternalOrderRequestDao;
+import com.smarttoni.entities.IngredientExtras;
+import com.smarttoni.entities.IngredientExtrasDao;
 import com.smarttoni.entities.IngredientRequirement;
+import com.smarttoni.entities.IngredientRequirementDao;
 import com.smarttoni.entities.Intervention;
 import com.smarttoni.entities.InterventionDao;
 import com.smarttoni.entities.InterventionJob;
@@ -2325,25 +2329,111 @@ public class GreenDaoAdapter implements DaoAdapter {
     @Override
     public void saveInventoryRequirement(String orderId, String recipeId, float required) {
 
-        Realm realm = Realm.getDefaultInstance();
+        QueryBuilder<IngredientRequirement> qb = getDaoSession()
+                .getIngredientRequirementDao()
+                .queryBuilder()
+                .where(IngredientRequirementDao.Properties.OrderId.eq(orderId))
+                .where(IngredientRequirementDao.Properties.RecipeId.eq(recipeId));
 
-        IngredientRequirement ir = realm.where(IngredientRequirement.class)
-                .equalTo("orderId", orderId)
-                .and()
-                .equalTo("recipeId", recipeId)
-                .findFirst();
+        List<IngredientRequirement> list =  qb.list();
 
-        realm.beginTransaction();
-
-        if (ir == null) {
-            ir = new IngredientRequirement();
+        if (list.size() == 0 ) {
+            IngredientRequirement ir = new IngredientRequirement();
             ir.setOrderId(orderId);
             ir.setRecipeId(recipeId);
             ir.setQuantity(required);
-            realm.copyToRealm(ir);
+            getDaoSession()
+                    .getIngredientRequirementDao()
+                    .insert(ir);
         }else{
+            IngredientRequirement ir = list.get(0);
             ir.setQuantity(ir.getQuantity()+required);
+            getDaoSession()
+                    .getIngredientRequirementDao()
+                    .update(ir);
         }
-        realm.commitTransaction();
+    }
+
+
+    @Override
+    public void useInventoryRequirement(String orderId, String recipeId, float used) {
+
+        QueryBuilder<IngredientRequirement> qb = getDaoSession()
+                .getIngredientRequirementDao()
+                .queryBuilder()
+                .where(IngredientRequirementDao.Properties.OrderId.eq(orderId))
+                .where(IngredientRequirementDao.Properties.RecipeId.eq(recipeId));
+
+
+        //qb.and(IngredientRequirementDao.Properties.OrderId.eq(orderId),IngredientRequirementDao.Properties.RecipeId.eq(recipeId));
+
+        List<IngredientRequirement> list =  qb.list();
+
+        if(list.size() > 0 ){
+            IngredientRequirement ir = list.get(0);
+            float newQty = ir.getQuantity() - used ;
+            ir.setQuantity(newQty);
+            getDaoSession()
+                    .getIngredientRequirementDao()
+                    .update(ir);
+        }
+    }
+
+    @Override
+    public void removeIngredientRequirementForOrder(String orderId){
+
+        getDaoSession()
+                .getIngredientRequirementDao()
+                .queryBuilder()
+                .where(IngredientRequirementDao.Properties.OrderId.eq(orderId))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
+
+    }
+
+    @Override
+    public void saveIngredientExtras(Long workId, String recipeId, float extra){
+
+        IngredientExtras ie =  new IngredientExtras();
+        ie.setWorkId(workId);
+        ie.setRecipeId(recipeId);
+        ie.setQuantity(extra);
+
+        getDaoSession().getIngredientExtrasDao().insert(ie);
+
+    }
+
+    @Override
+    public void moveToInventoryAndDeleteExtras(String orderId,Long workId){
+
+        IngredientExtrasDao ingredientExtrasDao = getDaoSession().getIngredientExtrasDao();
+
+        List<IngredientExtras> extrasList = ingredientExtrasDao
+                .queryBuilder()
+                .where(IngredientExtrasDao.Properties.WorkId.eq(workId))
+                .list();
+
+        for(IngredientExtras extra : extrasList){
+            useInventoryRequirement(orderId, extra.getRecipeId(), extra.getQuantity());
+            InventoryManagement.moveToInventory(orderId,extra.getRecipeId(), extra.getQuantity());
+            ingredientExtrasDao.delete(extra);
+        }
+    }
+
+    @Override
+    public void putBackIngredientRequirementToInventory(String orderId){
+
+        List<IngredientRequirement> list = getDaoSession()
+                .getIngredientRequirementDao()
+                .queryBuilder()
+                .where(IngredientRequirementDao.Properties.OrderId.eq(orderId))
+                .list();
+
+
+
+        for(IngredientRequirement ir:list){
+            InventoryManagement.moveToInventory(orderId,ir.getRecipeId(), ir.getQuantity());
+        }
+
     }
 }

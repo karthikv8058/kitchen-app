@@ -2,6 +2,7 @@ package com.smarttoni.assignment;
 
 import android.content.Context;
 
+import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.entities.ExternalOrderRequest;
 import com.smarttoni.entities.Inventory;
@@ -22,8 +23,14 @@ public class InventoryManagement {
         return inventory;
     }
 
-    public static void moveToInventory(String orderId,String recipeId, float qty, DaoAdapter daoAdapter) {
+    public static void moveToInventory(String orderId,String recipeId, float qty) {
 
+
+        if(qty == 0){
+            return;
+        }
+
+        DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
 
         Inventory inventory = daoAdapter.getFilteredInventory(recipeId);
 
@@ -85,6 +92,9 @@ public class InventoryManagement {
 
     public synchronized static void takeFromInventory(String orderId,Inventory inventory, float qty, DaoAdapter daoAdapter) {
 
+        if(qty == 0){
+            return;
+        }
 
         InventoryMovement im = new InventoryMovement( UUID.randomUUID().toString(),
                 InventoryMovement.INVENTORY_OUT,

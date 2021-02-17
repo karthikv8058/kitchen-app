@@ -206,7 +206,7 @@ public class TaskTreeBuilder {
                         NumberOfItemsAndActualQuantity q = new NumberOfItemsAndActualQuantity();
                         q.numberOfItems = qty;
                         q.actualQuantity = actualQuantity;
-                        q.extra = 10;
+                        q.extra = extra;
 
                         Work end = buildWorkTree(_recipe, q, order, orderLine, work, queue, false);
                         if (end != null && work.getTransportType() == 0) {
@@ -219,6 +219,8 @@ public class TaskTreeBuilder {
                                     .toString();
                             end.setExtraQuantity(_newExtras);
                             daoAdapter.updateWork(end);
+
+                            daoAdapter.saveIngredientExtras(end.getId(),_recipe.getId(),extra);
                         }
                         ids.add(_recipe.getId());
                         //subRecipes.add(r.getId());

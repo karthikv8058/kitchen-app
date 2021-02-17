@@ -19,9 +19,9 @@ public class RealmAdapter {
 
 
     public void logNetwork(NetworkLog networkLog) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealm(networkLog);
-        realm.commitTransaction();
+//        Realm realm = Realm.getDefaultInstance();
+//        realm.beginTransaction();
+//        realm.copyToRealm(networkLog);
+//        realm.commitTransaction();
     }
 }
