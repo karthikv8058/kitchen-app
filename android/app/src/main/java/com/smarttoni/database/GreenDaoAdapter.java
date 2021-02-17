@@ -593,7 +593,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     {
         return getDaoSession()
                 .getOrderDao()
-                .queryBuilder()
+                .queryBuilder().orderDesc(OrderDao.Properties.UpdatedAt)
                 .where(OrderDao.Properties.IsArchive.notEq(1)).list();
     }
 
