@@ -8,6 +8,7 @@ import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.auth.HttpSecurityRequest;
+import com.smarttoni.database.DbOpenHelper;
 import com.smarttoni.database.GreenDaoAdapter;
 import com.smarttoni.entities.ArchivedOrders;
 import com.smarttoni.entities.Order;
@@ -22,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,19 +45,12 @@ public class LoadOrderFromWeb extends HttpSecurityRequest {
     public void processRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse respons) {
         try {
         JSONObject jsonObject = HttpHelper.postDataToJson(request);
-
             int isExternalOrder = jsonObject.getInt("isExternalOrder");
 
         List<Order> ordersList = greenDaoAdapter.loadOrders();
         String orderId = "";
         LocalStorage ls = (LocalStorage) ServiceLocator.getInstance().getService(ServiceLocator.LOCAL_STORAGE_SERVICE);
-//        List<ArchivedOrders> archivedOrders = greenDaoAdapter.loadArchivedOrders();
-//        if (archivedOrders.size()>=10){
-//            Gson gson = GSONBuilder.createGSON();
-//            Type type = new TypeToken<Boolean >() {
-//            }.getType();
-//            respons.send(gson.toJson(true, type));
-//        }else{
+
             for (int i = 0; i < ordersList.size(); i++) {
                 if (i + 1 < ordersList.size()) {
                     Date result = new Date(ordersList.get(i).getCreatedAt());
@@ -111,7 +106,6 @@ public class LoadOrderFromWeb extends HttpSecurityRequest {
                     respons.send(gson.toJson(false, type));
                 }
             });
-//        }
 
         } catch (JSONException e) {
             e.printStackTrace();

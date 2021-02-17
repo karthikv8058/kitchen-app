@@ -14,22 +14,17 @@ export default class OrderService {
         this.httpClient = httpClient;
         this.apiBuilder = apiBuilder;
     }
-
-    getAllOrders(
-        successesCallback: (response: Order[]) => void,
-        errorCallback: (error: Error) => void) {
-        if (this.apiBuilder.paths) {
-            this.httpClient.post(this.apiBuilder.paths.overviewTask, {}).then(response => {
-                if (successesCallback) {
-                    successesCallback(response);
-                }
-            }).catch(error => {
-                if (errorCallback) {
-                    errorCallback(error);
-                }
-            });
-        }
+    getAllOrders(pageCount: number) {
+        return new Promise((resolve, reject) => {
+            this.httpClient.post(this.apiBuilder!.paths!.overviewTask,{pageCount:pageCount}
+               ).then(response => {
+                    resolve(response);
+                }).catch(error => {
+                    resolve(null);
+                });
+        });
     }
+    
 
     loadExternalOrders(
         successesCallback: (response: Order[]) => void,
