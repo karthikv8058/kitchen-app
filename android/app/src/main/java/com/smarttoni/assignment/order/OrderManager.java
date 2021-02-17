@@ -13,6 +13,7 @@ import com.smarttoni.assignment.task.TaskManger;
 import com.smarttoni.core.SmarttoniContext;
 import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalOrderRequest;
+import com.smarttoni.entities.IngredientRequirement;
 import com.smarttoni.utils.Strings;
 import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.entities.Course;
@@ -105,7 +106,7 @@ public class OrderManager {
                 List<ExternalAvailableQuantity> eaqs = daoAdapter.listExternalAvailableQuantityForOrder(order.getId());
 
                 for (ExternalAvailableQuantity eaq : eaqs) {
-                    InventoryManagement.moveToInventory(orderId, eaq.getRecipe(), eaq.getQuantity(), daoAdapter);
+                    InventoryManagement.moveToInventory(orderId, eaq.getRecipe(), eaq.getQuantity());
                 }
 
                 daoAdapter.deleteExternalOrderRequestForExternalOrder(order.getId());
@@ -177,7 +178,7 @@ public class OrderManager {
 
         List<InventoryReservation> inventoryReservations = daoAdapter.listInventoryReservations(orderId);
         for (InventoryReservation ir : inventoryReservations) {
-            InventoryManagement.moveToInventory(orderId, ir.getRecipeId(), ir.getQty(), daoAdapter);
+            InventoryManagement.moveToInventory(orderId, ir.getRecipeId(), ir.getQty());
         }
         //daoAdapter.removeInventoryReservations(orderId);
 
@@ -207,8 +208,6 @@ public class OrderManager {
 
         DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
 
-        daoAdapter.removeInventoryReservations(order.getId());
-
         TimerManager.getInstance().removeOrder(order.getId());
         ((SmarttoniContext) ServiceLocator.getInstance().getService(ServiceLocator.SMARTTONI_CONTEXT))
                 .getInterventionManager()
@@ -218,20 +217,35 @@ public class OrderManager {
         if (order == null) {
             return false;
         }
+
         if (order.getStatus() == Order.ORDER_DELETED || order.getStatus() == Order.ORDER_COMPLETED) {
             return true;
         }
+
         if (isRemoved) {
             order.setStatus(Order.ORDER_DELETED);
+            daoAdapter.putBackIngredientRequirementToInventory(order.getId());
         } else {
             order.setStatus(Order.ORDER_COMPLETED);
+            if (order.getIsInventory()) {
+                List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(order.getId());
+                for (OrderLine orderLine : orderLines) {
+                    Recipe recipe = orderLine.getRecipe();
+                    InventoryManagement.moveToInventory(order.getId(), recipe.getId(), orderLine.getQty() * recipe.getOutputQuantity());
+                }
+            }
         }
+
         unSetOnCall(order.getId());
-        if (isRemoved || order.getIsInventory()) {
-            updateInventory(daoAdapter, order, isRemoved);
-        }
+
         order.setIsUpdated(true);
         daoAdapter.updateOrder(order);
+
+
+        daoAdapter.removeIngredientRequirementForOrder(order.getId());
+        daoAdapter.removeInventoryReservations(order.getId());
+
+
         return !isRemoved;
     }
 
@@ -245,58 +259,6 @@ public class OrderManager {
                 daoAdapter.updateCourse(c);
             }
         }
-    }
-
-    private void updateInventory(DaoAdapter daoAdapter, Order order, boolean isOrderRemoved) {
-
-        List<Long> list = new ArrayList<>();
-        List<Work> works = daoAdapter.getAllUnusedWorkEndNodes(order.getId());
-        for (Work work : works) {
-            if (work.getIsEndNode() && !work.getIsUsed()) {
-                list.add(work.getOrderLineId());
-                if (!isOrderRemoved || (isOrderRemoved && work.getStatus() == Work.COMPLETED)) {
-                    Recipe recipe = work.getRecipe();
-                    InventoryManagement.moveToInventory(order.getId(), recipe.getId(), work.getQuantity() * recipe.getOutputQuantity(), daoAdapter);
-                }
-            }
-        }
-
-        if (!isOrderRemoved) {
-            List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(order.getId());
-            if (list.size() != orderLines.size()) {
-                outLoop:
-                for (OrderLine orderLine : orderLines) {
-                    for (Long i : list) {
-                        if (i.equals(orderLine.getId())) {
-                            continue outLoop;
-                        }
-                    }
-                    Recipe recipe = orderLine.getRecipe();
-                    InventoryManagement.moveToInventory(order.getId(), recipe.getId(), orderLine.getQty() * recipe.getOutputQuantity(), daoAdapter);
-                }
-            }
-        }
-
-//        outLoop:
-//        for (OrderLine orderLine : orderLines) {
-//            Recipe recipe = orderLine.getRecipe();
-//            if (notCompleted != null) {
-//                for (String s : notCompleted) {
-//                    if (s.equals(orderLine.getMealId() + "*" + recipe.getId())) {
-//                        continue outLoop;
-//                    }
-//                }
-//            }
-//
-//            InventoryManagement.moveToInventory(context, recipe.getId(), orderLine.getMealId(),  recipe.getOutputQuantity());
-//            //TODO recipe.setOrderId(order.getId());
-//            DbOpenHelper
-//                    .getDaoSession(context)
-//                    .getRecipeDao()
-//                    .update(recipe);
-//        }
-
-        //TODO SyncUpdater.Companion.getInstance().syncInventory(context);
     }
 
     public boolean isOrderStarted(Context context, String orderId) {
@@ -329,7 +291,7 @@ public class OrderManager {
             if (orderId.equals(t.getOrderId())) {
                 if ((t.getTransportType() & Work.TRANSPORT_FROM_INVENTORY) > 0) {
                     Recipe recipe = t.getRecipe();
-                    InventoryManagement.moveToInventory(orderId, recipe.getId(), t.getQuantity() * recipe.getOutputQuantity(), daoAdapter);
+                    InventoryManagement.moveToInventory(orderId, recipe.getId(), t.getQuantity() * recipe.getOutputQuantity());
                 }
                 if (isNotCompletedTasks) {
                     if (t.getStatus() == Work.SYNERGY) {

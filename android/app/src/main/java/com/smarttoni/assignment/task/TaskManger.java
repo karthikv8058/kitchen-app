@@ -11,6 +11,8 @@ import com.smarttoni.assignment.order.OrderManager;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.assignment.synergy.SynergyHelper;
 import com.smarttoni.core.SmarttoniContext;
+import com.smarttoni.entities.IngredientExtras;
+import com.smarttoni.entities.TaskIngredient;
 import com.smarttoni.utils.Strings;
 import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.database.DaoNotFoundException;
@@ -26,8 +28,10 @@ import com.smarttoni.entities.Work;
 import com.smarttoni.grenade.Event;
 import com.smarttoni.grenade.EventManager;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class TaskManger {
 
@@ -134,9 +138,22 @@ public class TaskManger {
 
             //If it End of SubTree , mark its used , to handle inventory or to move inventory
 
+            Task task = daoAdapter.getTaskById(t.getTaskId());
+
+            List<TaskIngredient> ingredients = task.getTaskIngredient();
+
+            String orderId = t.getOrderId();
+            for(TaskIngredient ingredient : ingredients){
+
+                    daoAdapter.useInventoryRequirement(orderId,ingredient.getRecipeId(),ingredient.getQuantity());
+            }
+
+
             if (t.getIsEndNode()) {
 
-                daoAdapter.saveInventoryRequirement(t.getOrderId(),t.getRecipeId(),t.getQuantity());
+                if(t.getRecipe() != null){
+                    daoAdapter.saveInventoryRequirement(t.getOrderId(),t.getRecipeId(),t.getQuantity()*t.getRecipe().getOutputQuantity());
+                }
 
                 if (t.getSubRecipes() != null) {
                     String[] ids = t.getSubRecipes().split(",");
@@ -147,21 +164,27 @@ public class TaskManger {
                         daoAdapter.setAsUsed(t.getOrderLineId(), id);
                     }
                 }
-                if (Strings.isNotEmpty(t.getExtraQuantity())) {
-                    String[] recipes = t.getExtraQuantity().split("&");
-                    for (String r : recipes) {
-                        if (Strings.isEmpty(r)) {
-                            continue;
-                        }
-                        String[] recipeQty = r.split(":");
-                        if (recipeQty.length == 2) {
-                            String recipe = recipeQty[0];
-                            float qty = Float.parseFloat(recipeQty[1]);
-                            InventoryManagement.moveToInventory(t.getOrderId(),recipe, qty, daoAdapter);
-                        }
-                    }
 
-                }
+                daoAdapter.moveToInventoryAndDeleteExtras(t.getOrderId(),t.getId());
+//                for(IngredientExtras extra : extras){
+//                    InventoryManagement.moveToInventory(t.getOrderId(),extra.getRecipeId(), extra.getQuantity(), daoAdapter);
+//                }
+
+//                if (Strings.isNotEmpty(t.getExtraQuantity())) {
+//                    String[] recipes = t.getExtraQuantity().split("&");
+//                    for (String r : recipes) {
+//                        if (Strings.isEmpty(r)) {
+//                            continue;
+//                        }
+//                        String[] recipeQty = r.split(":");
+//                        if (recipeQty.length == 2) {
+//                            String recipe = recipeQty[0];
+//                            float qty = Float.parseFloat(recipeQty[1]);
+//                            InventoryManagement.moveToInventory(t.getOrderId(),recipe, qty, daoAdapter);
+//                        }
+//                    }
+//
+//                }
             }
 
             int additionalInterventionCompleted = 0;
@@ -176,7 +199,7 @@ public class TaskManger {
             for (Segment segment : segments) {
                 workDuration += segment.getDuration();
             }
-            Task task = daoAdapter.getTaskById(t.getTaskId());
+
             task.setWorkDuration(workDuration);
             daoAdapter.updateTask(task);
 

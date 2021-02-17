@@ -4,37 +4,36 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 
-@Entity(nameInDb = "IngredientRequirement")
-public class IngredientRequirement {
+@Entity(nameInDb = "IngredientExtras")
+public class IngredientExtras{
 
     @Id(autoincrement = true)
     private Long id;
 
-    private String orderId;
+    private Long workId;
 
     private String recipeId;
 
     private float quantity;
 
-    @Generated(hash = 1992482551)
-    public IngredientRequirement(Long id, String orderId, String recipeId,
-            float quantity) {
+    @Generated(hash = 2118332121)
+    public IngredientExtras(Long id, Long workId, String recipeId, float quantity) {
         this.id = id;
-        this.orderId = orderId;
+        this.workId = workId;
         this.recipeId = recipeId;
         this.quantity = quantity;
     }
 
-    @Generated(hash = 1271352810)
-    public IngredientRequirement() {
+    @Generated(hash = 781543870)
+    public IngredientExtras() {
     }
 
-    public String getOrderId() {
-        return orderId;
+    public Long getWorkId() {
+        return workId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setWorkId(Long workId) {
+        this.workId = workId;
     }
 
     public String getRecipeId() {

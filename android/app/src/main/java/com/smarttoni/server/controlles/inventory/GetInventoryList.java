@@ -196,9 +196,6 @@ public class GetInventoryList extends HttpSecurityRequest {
 
             List<OpenOrderWrapper> openOrderWrappers = new ArrayList<>();
             for (Order openOrders : normalOrders) {
-//                if(openOrders.getType() == Order.TYPE_EXTERNAL || openOrders.getIsInventory()){
-//                    continue;
-//                }
 
                 OpenOrderWrapper openOrderWrapper = new OpenOrderWrapper();
                 openOrderWrapper.setDeliveryTime(openOrders.getCourses().get(0).getDeliveryTime());
