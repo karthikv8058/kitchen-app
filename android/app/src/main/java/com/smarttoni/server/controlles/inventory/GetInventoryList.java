@@ -175,7 +175,13 @@ public class GetInventoryList extends HttpSecurityRequest {
 
 
                 for (Meal meal : externalOrder.getCourses().get(0).getMeals()) {
+
                     for (OrderLine orderLine : meal.getOrderLine()) {
+
+//                        if(externalOrder.getIsInventory()){
+//                            recipe.getId()
+//                        }
+
                         if (recipe.getId().equals(orderLine.getRecipe().getId())) {
 
                             OpenOrderWrapper externalOrderWrapper = new OpenOrderWrapper();
@@ -201,14 +207,13 @@ public class GetInventoryList extends HttpSecurityRequest {
                 openOrderWrapper.setDeliveryTime(openOrders.getCourses().get(0).getDeliveryTime());
                 openOrderWrapper.setQty(0F);
 
-                for (Meal meal : openOrders.getCourses().get(0).getMeals()) {
-                    for (OrderLine orderLine : meal.getOrderLine()) {
-                        if (recipe.getId().equals(orderLine.getRecipe().getId())) {
-                            openOrderWrapper.setQty(openOrderWrapper.getQty() + (orderLine.getRecipe().getOutputQuantity() * orderLine.getQty()));
-                        }
+
+                List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(openOrders.getId());
+                for (OrderLine orderLine : orderLines) {
+                    if (recipe.getId().equals(orderLine.getRecipe().getId())) {
+                        openOrderWrapper.setQty(openOrderWrapper.getQty() + (orderLine.getRecipe().getOutputQuantity() * orderLine.getQty()));
                     }
                 }
-
 
                 if (openOrderWrapper.getQty() != 0) {
                     if (recipe.getOutputUnit() != null) {
