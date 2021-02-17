@@ -24,21 +24,7 @@ export default class OrderService {
                 });
         });
     }
-    // getAllOrders(pageCount: number,
-    //     successesCallback: (response: Order[]) => void,
-    //     errorCallback: (error: Error) => void) {
-    //     if (this.apiBuilder.paths) {
-    //         this.httpClient.post(this.apiBuilder.paths.overviewTask, {pageCount:pageCount}).then(response => {
-    //             if (successesCallback) {
-    //                 successesCallback(response);
-    //             }
-    //         }).catch(error => {
-    //             if (errorCallback) {
-    //                 errorCallback(error);
-    //             }
-    //         });
-    //     }
-    // }
+    
 
     loadExternalOrders(
         successesCallback: (response: Order[]) => void,

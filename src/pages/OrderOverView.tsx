@@ -230,30 +230,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         });
     }
 
-    sortOrderList = (orderList: any) => {
-        // for (let i = 0; i < orderList.length; i++) {
-        //     if( !!orderList[i+1]){
-        //         let time1 =Number(orderList[i].courses[0].deliveryTime);
-        //         let time2 =Number(orderList[i + 1].courses[0].deliveryTime);
-        //         if(time1<time2){
-        //             let temp=orderList[i+1];
-        //             orderList[i+1]=orderList[i];
-        //             orderList[i]=temp
-        //         }else if(time1>time2){
-        //             let temp=orderList[i];
-        //             orderList[i]=orderList[i+1];
-        //             orderList[i+1]=temp
-        //         }
-        //         console.log('ggg ',orderList[i].courses[0].deliveryTime,time1,time2);
-
-        //     }
-        // };
-        // this.setState({
-        //     isLoading: false,
-        //     order: orderList,
-        //     isLazyLoading: false
-        // });
-    }
+   
 
     setEnableScroll = (enableScroll: boolean) => {
         this.setState({ enableScroll })

@@ -67,7 +67,7 @@ public class getOrderItems extends HttpSecurityRequest {
             } else {
                 ordersList = DbOpenHelper.Companion.getDaoSession(context)
                         .getOrderDao()
-                        .queryBuilder().orderDesc(OrderDao.Properties.UpdatedAt)
+                        .queryBuilder().orderDesc(OrderDao.Properties.CreatedAt)
                         .where(OrderDao.Properties.IsArchive.notEq(1)).offset(10 * (pageCount - 1)).limit(10).list();
             }
 

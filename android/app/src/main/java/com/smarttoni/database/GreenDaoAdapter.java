@@ -593,7 +593,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     {
         return getDaoSession()
                 .getOrderDao()
-                .queryBuilder().orderDesc(OrderDao.Properties.UpdatedAt)
+                .queryBuilder().orderDesc(OrderDao.Properties.CreatedAt)
                 .where(OrderDao.Properties.IsArchive.notEq(1)).list();
     }
 
@@ -601,7 +601,6 @@ public class GreenDaoAdapter implements DaoAdapter {
     public List<Order> loadOrders() {
         return getDaoSession().getOrderDao().loadAll();
     }
-
 
     @Override
     public void setOrderStarted(String orderId) {
