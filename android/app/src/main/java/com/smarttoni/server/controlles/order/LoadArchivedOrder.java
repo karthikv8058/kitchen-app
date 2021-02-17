@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
+import com.smarttoni.entities.Order;
 import com.smarttoni.utils.DateUtil;
 import com.smarttoni.utils.Strings;
 import com.smarttoni.auth.HttpSecurityRequest;
@@ -54,23 +55,8 @@ public class LoadArchivedOrder extends HttpSecurityRequest {
 
             for (ArchivedOrders archivedOrders1 : archivedOrder) {
                 JSONObject jsonObject = new JSONObject(archivedOrders1.getOrderData());
-                if (isExternalOrder == 0) {
-                    if (jsonObject.optString("parentOrderUuid") != null) {
-                        if (Strings.isNotEmpty((jsonObject.optString("parentOrderUuid")))) {
-                            continue;
-                        } else {
-                            archivedOrders.add(archivedOrders1);
-                        }
-                    }
-
-                } else {
-                    if (jsonObject.optString("parentOrderUuid") != null) {
-                        if (Strings.isNotEmpty((jsonObject.optString("parentOrderUuid")))) {
-                            archivedOrders.add(archivedOrders1);
-                        } else {
-                            continue;
-                        }
-                    }
+                if ((isExternalOrder == 0 && jsonObject.optInt("type") == Order.TYPE_INTERNAL) || isExternalOrder == 1 && jsonObject.optInt("type") == Order.TYPE_EXTERNAL) {
+                    archivedOrders.add(archivedOrders1);
                 }
             }
 
