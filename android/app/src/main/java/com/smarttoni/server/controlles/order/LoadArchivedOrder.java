@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
+import com.smarttoni.entities.Order;
 import com.smarttoni.utils.DateUtil;
 import com.smarttoni.utils.Strings;
 import com.smarttoni.auth.HttpSecurityRequest;
@@ -54,43 +55,11 @@ public class LoadArchivedOrder extends HttpSecurityRequest {
 
             for (ArchivedOrders archivedOrders1 : archivedOrder) {
                 JSONObject jsonObject = new JSONObject(archivedOrders1.getOrderData());
-                if (isExternalOrder == 0) {
-                    if (jsonObject.optString("parentOrderUuid") != null) {
-                        if (Strings.isNotEmpty((jsonObject.optString("parentOrderUuid")))) {
-                            continue;
-                        } else {
-                            archivedOrders.add(archivedOrders1);
-                        }
-                    }
-
-                } else {
-                    if (jsonObject.optString("parentOrderUuid") != null) {
-                        if (Strings.isNotEmpty((jsonObject.optString("parentOrderUuid")))) {
-                            archivedOrders.add(archivedOrders1);
-                        } else {
-                            continue;
-                        }
-                    }
+                if ((isExternalOrder == 0 && jsonObject.optInt("type") == Order.TYPE_INTERNAL) || (isExternalOrder == 1 && jsonObject.optInt("type") == Order.TYPE_EXTERNAL)) {
+                    archivedOrders.add(archivedOrders1);
                 }
             }
-
-
-//            for (int i = 0; i < archivedOrders.size(); i++) {
-//                if (archivedOrders.size() > 0 && i < (archivedOrders.size() - 1)) {
-//                    JSONObject jsonObject = new JSONObject(archivedOrders.get(i).getOrderData());
-//                    JSONArray courses = jsonObject.getJSONArray("courses");
-//                    JSONObject object = courses.getJSONObject(0);
-//                    JSONObject jsonObject1 = new JSONObject(archivedOrders.get(i + 1).getOrderData());
-//                    JSONArray courses1 = jsonObject1.getJSONArray("courses");
-//                    JSONObject object1 = courses1.getJSONObject(0);
-//
-//                    int compare = object.optString("deliveryDate").compareTo(object1.optString("deliveryDate"));
-//                    if (compare > 0) {
-//                        Collections.swap(archivedOrders, i, i + 1);
-//                    }
-//                }
-//            }
-
+            
             List<OrderWrapper> orderWrappers = new ArrayList<>();
             if (archivedOrders != null) {
                 for (ArchivedOrders archivedOrders1 : archivedOrders) {

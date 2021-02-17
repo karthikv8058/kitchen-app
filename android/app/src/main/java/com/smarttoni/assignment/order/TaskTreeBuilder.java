@@ -209,8 +209,8 @@ public class TaskTreeBuilder {
                         float extra = (qty * _recipe.getOutputQuantity()) - actualQuantity;
 
                         NumberOfItemsAndActualQuantity q = new NumberOfItemsAndActualQuantity();
-                        q.numberOfItems = qty;
-                        q.actualQuantity = actualQuantity;
+                        q.numberOfItems = qty * quantity.numberOfItems;
+                        q.actualQuantity = actualQuantity * quantity.numberOfItems;
                         q.extra = extra;
 
                         Work end = buildWorkTree(_recipe, q, order, orderLine, work, queue, false);
