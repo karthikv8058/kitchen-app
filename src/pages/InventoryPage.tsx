@@ -81,7 +81,7 @@ interface State {
     recipeName: string,
     inventoryType: number,
     selectedUnit: any,
-    isOpen: boolean
+    isOpen: boolean, recipeId: any
 }
 
 const SCHEME = 'http://';
@@ -161,7 +161,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
             recipeName: '',
             inventoryType: 1,
             selectedUnit: '',
-            isOpen: false
+            isOpen: false,
+            recipeId: ''
         };
         this.shakeAnimation = new Animated.Value(0);
         this.loadInventoryList = this.loadInventoryList.bind(this);
@@ -324,7 +325,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 unitId: item.unitId,
                 isSliderActive: false,
                 adjustInventory: false,
-                inventoryItem: item
+                inventoryItem: item,
+                recipeId:item.uuid
             });
             this.editQuantityRef?.show();
         } else {
@@ -334,7 +336,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
             } else {
                 this.setState({
                     adjustInventory: true,
-                    inventoryItem: item
+                    inventoryItem: item,
+                    recipeId:item.uuid
                 });
             }
         }
@@ -533,8 +536,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 </TouchableOpacity>
                 {!this.state.orderPlace && this.permissionService.hasPermission(Action.CREATE_INVENTORY) ? <TouchableOpacity
                     activeOpacity={0.8}
-                    onPress={this.toggleOrder} style={{ height: 40, width: 40,}}>
-                    <Icons  name='circle-with-plus' size={30} color={colors.white} />
+                    onPress={this.toggleOrder} style={{ height: 40, width: 40, }}>
+                    <Icons name='circle-with-plus' size={30} color={colors.white} />
                 </TouchableOpacity> : null}
             </>
         );
@@ -547,18 +550,18 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         });
         this.tooblarList.push(
             <>
-             
+
                 <TouchableOpacity
                     onPress={this.closeOrder}
                     activeOpacity={0.8}
-                    style={{ height: 40, width: 40,  }}>
+                    style={{ height: 40, width: 40, }}>
                     <Icon name='x' size={40} color={colors.white} />
                 </TouchableOpacity>
                 {!this.state.orderPlace ?
                     <TouchableOpacity
                         onPress={this.toggleOrderType.bind(this)}
                         activeOpacity={0.8}
-                        style={{ height: 40, width: 40,}}>
+                        style={{ height: 40, width: 40, }}>
                         <Icon name='check' size={40} color={colors.white} />
                     </TouchableOpacity> : null}
             </>
@@ -637,12 +640,19 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 if (responseChecker(response, this.props.navigation)) {
                     this.editQuantityRef?.close();
                     this.recipeId = ''
-                    this.loadInventoryList();;
+
+                    this.loadInventoryList();
+                    this.setState({
+                        recipeId: ''
+                    })
                 }
             }).catch(error => {
                 this.editQuantityRef?.close();
                 this.recipeId = '';
-                this.loadInventoryList();;
+                this.loadInventoryList();
+                this.setState({
+                    recipeId: ''
+                })
             });
 
         }
@@ -662,12 +672,14 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         this.editQuantityRef?.close();
     }
 
-    renderEditQuantiyAlert = () => {
+    renderEditQuantiyAlert = () => {        
         return (
             <EditInventoryQuantity
                 ref={(ref: EditInventoryQuantity) => this.editQuantityRef = ref}
                 inventoryQuantity={this.state.inventoryQuantity}
                 isInventoryOrder={this.state.orderPlace}
+                recipeId={this.state.recipeId}
+                units={this.state.units}
                 outputQuantity={this.state.outputQuantity}
                 outputUnit={this.state.outputUnit}
                 outputUnitId={this.state.outputUnitId}
@@ -782,7 +794,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 outputUnit: item.OutPutUnit,
                 outputUnitId: item.unitId,
                 editingUnitId: item.unitId,
-                isSliderActive: false
+                isSliderActive: false,
+                recipeId:item.uuid
             });
             this.editQuantityRef?.show()
         } else {
@@ -894,25 +907,25 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         this.addedImageId = '';
         this.setState({
             newRecipeModalOpen: false,
-            selectedUnit: this.state.units.length>0?this.state.units[0].uuid:'',
+            selectedUnit: this.state.units.length > 0 ? this.state.units[0].uuid : '',
             recipeName: '',
             inventoryType: 1
         })
     }
 
-    getUnits=()=>{
-        let filterdUnits:any=[];
-        this.state.units.forEach(element => {            
-            if(!element.recipe_uuid){
+    getUnits = () => {
+        let filterdUnits: any = [];
+        this.state.units.forEach(element => {
+            if (!element.recipe_uuid) {
                 filterdUnits.push(element)
             }
         });
         return filterdUnits
     }
-    
+
     addNewRecipe = () => {
         let image = !!this.state.source ? { uri: this.state.source } : placeHolder;
-        let units=this.getUnits()
+        let units = this.getUnits()
         return (
             <Modal
                 transparent={true}
@@ -960,7 +973,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                             </View>
                             <View style={{
                                 flex: .75, height: 40, margin: 8, alignItems: 'center',
-                                backgroundColor: colors.white, borderRadius: 8, borderWidth: 1, 
+                                backgroundColor: colors.white, borderRadius: 8, borderWidth: 1,
                             }}>
                                 <TextInput
                                     value={this.state.recipeName}
@@ -994,8 +1007,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                                         this.setState({ isOpen: false, selectedUnit: unitId })
                                     }}>
                                     {units.map((unitConversion) => {
-                                        let label= unitConversion.name + ' ( ' + unitConversion.symbol + ' ) ';
-                                        if(label){
+                                        let label = unitConversion.name + ' ( ' + unitConversion.symbol + ' ) ';
+                                        if (label) {
                                             return <Picker.Item label={label} value={unitConversion.uuid} />
                                         }
                                     })}
@@ -1004,13 +1017,13 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                             </View>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10 }}>
-                                <TouchableOpacity onPress={() =>  this.closeRecipeModal()}>
-                                    <Icon name='x' size={30} color={colors.white} />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.saveNewRecipe()}>
-                                    <Icon name='check' size={30} color={colors.white} />
-                                </TouchableOpacity>
-                            </View>
+                            <TouchableOpacity onPress={() => this.closeRecipeModal()}>
+                                <Icon name='x' size={30} color={colors.white} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.saveNewRecipe()}>
+                                <Icon name='check' size={30} color={colors.white} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
                 </View>
@@ -1260,7 +1273,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         this.addedImageId = '';
         this.setState({
             newRecipeModalOpen: true,
-            selectedUnit: this.state.units.length>0?this.state.units[0].uuid:'',
+            selectedUnit: this.state.units.length > 0 ? this.state.units[0].uuid : '',
             recipeName: '',
             inventoryType: 1
         })
@@ -1295,7 +1308,7 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
     }
     barcodeRecognized = ({ barcodes }) => {
         barcodes.forEach(barcode => {
-            if (barcode.type != 'UNKNOWN_FORMAT') {                
+            if (barcode.type != 'UNKNOWN_FORMAT') {
                 this.setState({
                     isBarcodeOpened: false,
                     barcodeData: barcode.data
