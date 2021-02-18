@@ -20,8 +20,13 @@ public class UnitConversion {
     @SerializedName("to_uuid")
     private String to;
 
+
     @SerializedName("conversion_factor")
     private float factor;
+
+    @Generated(hash = 897206099)
+    public UnitConversion() {
+    }
 
     @Generated(hash = 468162090)
     public UnitConversion(Long id, String from, String to, float factor) {
@@ -29,10 +34,6 @@ public class UnitConversion {
         this.from = from;
         this.to = to;
         this.factor = factor;
-    }
-
-    @Generated(hash = 897206099)
-    public UnitConversion() {
     }
 
     public String getFrom() {
@@ -66,5 +67,7 @@ public class UnitConversion {
     public void setId(Long id) {
         this.id = id;
     }
+
+
     
 }

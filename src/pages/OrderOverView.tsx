@@ -146,7 +146,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         this.eventEmitterService.removeListner(this.pushListener);
     }
 
-    loadOrders() {
+    loadOrders() {        
         this.orderService.getAllOrders(0).then(response => {
             if (responseChecker(response, this.props.navigation)) {
                 this.setState({
@@ -331,7 +331,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         this.orderService.getAllOrders(this.pageCount).then(response => {
 
             if (responseChecker(response, this.props.navigation)) {
-                this.pageCount = this.pageCount + 1
+                this.pageCount = this.pageCount + 1                
                 if (response.orders.length > 0) {
                     let orderList: any = this.state.order
                     response.orders.forEach((element: any) => {
@@ -361,11 +361,10 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
                     }
 
 
-                } else {
+                } else {                    
                     this.orderService.loadorederFromWeb(0).then((response) => {
                         if (responseChecker(response, this.props.navigation)) {
                             if (!!response) {
-
                                 this.orderService.loadArchivedOrder(0).then((archivedOrder: any) => {
                                     let orderList: any = this.state.order
                                     archivedOrder.orders.forEach((element: any) => {
@@ -479,7 +478,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         this.loadToolbarItems();
 
     }
-    render() {
+    render() {        
         return (
             <AppBackground
                 navigation={this.props.navigation}

@@ -81,7 +81,7 @@ interface State {
     recipeName: string,
     inventoryType: number,
     selectedUnit: any,
-    isOpen: boolean
+    isOpen: boolean, recipeId: any
 }
 
 const SCHEME = 'http://';
@@ -161,7 +161,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
             recipeName: '',
             inventoryType: 1,
             selectedUnit: '',
-            isOpen: false
+            isOpen: false,
+            recipeId: ''
         };
         this.shakeAnimation = new Animated.Value(0);
         this.loadInventoryList = this.loadInventoryList.bind(this);
@@ -324,7 +325,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 unitId: item.unitId,
                 isSliderActive: false,
                 adjustInventory: false,
-                inventoryItem: item
+                inventoryItem: item,
+                recipeId:item.uuid
             });
             this.editQuantityRef?.show();
         } else {
@@ -334,7 +336,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
             } else {
                 this.setState({
                     adjustInventory: true,
-                    inventoryItem: item
+                    inventoryItem: item,
+                    recipeId:item.uuid
                 });
             }
         }
@@ -637,12 +640,19 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 if (responseChecker(response, this.props.navigation)) {
                     this.editQuantityRef?.close();
                     this.recipeId = ''
-                    this.loadInventoryList();;
+
+                    this.loadInventoryList();
+                    this.setState({
+                        recipeId: ''
+                    })
                 }
             }).catch(error => {
                 this.editQuantityRef?.close();
                 this.recipeId = '';
-                this.loadInventoryList();;
+                this.loadInventoryList();
+                this.setState({
+                    recipeId: ''
+                })
             });
 
         }
@@ -662,12 +672,14 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
         this.editQuantityRef?.close();
     }
 
-    renderEditQuantiyAlert = () => {
+    renderEditQuantiyAlert = () => {        
         return (
             <EditInventoryQuantity
                 ref={(ref: EditInventoryQuantity) => this.editQuantityRef = ref}
                 inventoryQuantity={this.state.inventoryQuantity}
                 isInventoryOrder={this.state.orderPlace}
+                recipeId={this.state.recipeId}
+                units={this.state.units}
                 outputQuantity={this.state.outputQuantity}
                 outputUnit={this.state.outputUnit}
                 outputUnitId={this.state.outputUnitId}
@@ -782,7 +794,8 @@ export default class InventoryPage extends AbstractComponent<Props, State> {
                 outputUnit: item.OutPutUnit,
                 outputUnitId: item.unitId,
                 editingUnitId: item.unitId,
-                isSliderActive: false
+                isSliderActive: false,
+                recipeId:item.uuid
             });
             this.editQuantityRef?.show()
         } else {
