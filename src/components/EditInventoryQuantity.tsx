@@ -67,7 +67,7 @@ export default class EditInventoryQuantity extends AbstractComponent<Props, Stat
         if (this.props.unitConversions) {
             for (let unitConversion of this.props.unitConversions) {
                 let unit = this.props.units.filter((l: any) => l.uuid === unitConversion.to)
-                if (!!unit[0].recipe_uuid) {                    
+                if (!!unit && unit.length>0 && !!unit[0].recipe_uuid) {                    
                     if (unitConversion.from == this.props.editingUnitId && unit[0].recipe_uuid === this.props.recipeId) {
                         units.push({ value: unitConversion.to, name: unitConversion.name });
                     }
