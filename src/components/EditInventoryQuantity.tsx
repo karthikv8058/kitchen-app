@@ -17,6 +17,8 @@ interface Props {
     onChangeValue: Function;
     delete: Function;
     updateValue: Function;
+    recipeId: any;
+    units: any;
     unitConversions: { from: string, to: string, name: string }[]
 }
 
@@ -64,9 +66,17 @@ export default class EditInventoryQuantity extends AbstractComponent<Props, Stat
         units.push({ value: this.props.editingUnitId, name: this.props.outputUnit });
         if (this.props.unitConversions) {
             for (let unitConversion of this.props.unitConversions) {
-                if (unitConversion.from == this.props.editingUnitId) {
-                    units.push({ value: unitConversion.to, name: unitConversion.name });
+                let unit = this.props.units.filter((l: any) => l.uuid === unitConversion.to)
+                if (!!unit[0].recipe_uuid) {                    
+                    if (unitConversion.from == this.props.editingUnitId && unit[0].recipe_uuid === this.props.recipeId) {
+                        units.push({ value: unitConversion.to, name: unitConversion.name });
+                    }
+                } else {
+                    if (unitConversion.from == this.props.editingUnitId) {
+                        units.push({ value: unitConversion.to, name: unitConversion.name });
+                    }
                 }
+
             }
         }
         return units;
@@ -104,7 +114,7 @@ export default class EditInventoryQuantity extends AbstractComponent<Props, Stat
                                             return <Picker.Item label={unitConversion.name} value={unitConversion.value} />
                                         })}
                                     </Picker>
-                                    
+
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10 }}>
