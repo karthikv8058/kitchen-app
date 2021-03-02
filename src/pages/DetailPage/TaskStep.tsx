@@ -224,17 +224,26 @@ class TaskStep extends AbstractComponent<Props, State> {
     render() {
         return (
             <ScrollView onLayout={this.onLayout.bind(this)}
-                style={{ maxHeight: this.state.pageHeight, flex: 1, }}
+                style={{ maxHeight: this.state.pageHeight, flex: 1}}
                 onScrollBeginDrag={this.scrollBegins.bind(this)}
                 onMomentumScrollEnd={this.handleScroll.bind(this)}
                 onContentSizeChange={(a, b) => this.setState({ scrollContentHeight: b })}
-                nestedScrollEnabled={false} >
+                nestedScrollEnabled={false} 
+                >
                 <View style={{
                     flexDirection: !!this.state.isPortrait ? 'column' : 'row',
-                    backgroundColor: colors.white, minHeight: this.state.pageHeight, flex: 1
+                    //minHeight: this.state.pageHeight,
+                    flex: 1
                 }}>
+                    {/* <View style={{flex:1.5,backgroundColor:"#f00",height:10}}>
+                    {this.props.step.name ? <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{this.props.step.name}</Text> : null}
+                    {this.props.step.description ? <Text style={styles.taskDescription}>{this.props.step.description}</Text> : null}
+                    </View>
+                    <View style={{flex:1,backgroundColor:"#f00",height:10}}>
+                    {this.renderIngredients()}
+                    </View> */}
                     <View style={{
-                        paddingLeft: 10,
+                        flex:5,
                         flexDirection: 'column',
                     }}>
                         {this.props.step.name ? <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{this.props.step.name}</Text> : null}
@@ -276,8 +285,8 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     secondColumn: {
-        flex:1,
-        paddingLeft:50,
+        marginLeft:50,
+        width:200,
     },
     image: {
         minWidth: 100,

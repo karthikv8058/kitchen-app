@@ -31,6 +31,7 @@ import com.smarttoni.entities.InventoryDao;
 import com.smarttoni.entities.InventoryMovement;
 import com.smarttoni.entities.InventoryRequest;
 import com.smarttoni.entities.InventoryReservation;
+import com.smarttoni.entities.InventoryReservationDao;
 import com.smarttoni.entities.Label;
 import com.smarttoni.entities.LabelDao;
 import com.smarttoni.entities.Machine;
@@ -377,39 +378,39 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void saveInventoryReservation(InventoryReservation inventoryReservation) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealm(inventoryReservation);
-        realm.commitTransaction();
+        getDaoSession()
+                .getInventoryReservationDao()
+                .insert(inventoryReservation);
     }
 
     @Override
     public void removeInventoryReservations(String orderId) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.where(InventoryReservation.class)
-                .equalTo("orderId", orderId)
-                .findAll()
-                .deleteAllFromRealm();
-        realm.commitTransaction();
+        getDaoSession()
+                .getInventoryReservationDao()
+                .queryBuilder()
+                .where(InventoryReservationDao.Properties.OrderId.eq(orderId))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
     }
 
     @Override
     public List<InventoryReservation> listInventoryReservations(String orderId) {
-        Realm realm = Realm.getDefaultInstance();
-        return realm.where(InventoryReservation.class)
-                .equalTo("orderId", orderId)
-                .findAll();
+        return getDaoSession()
+                .getInventoryReservationDao()
+                .queryBuilder()
+                .where(InventoryReservationDao.Properties.OrderId.eq(orderId))
+                .list();
     }
 
     @Override
     public List<InventoryReservation> listInventoryReservations(String orderId, String recipeId) {
-        Realm realm = Realm.getDefaultInstance();
-        return realm.where(InventoryReservation.class)
-                .equalTo("orderId", orderId)
-                .and()
-                .equalTo("recipeId", recipeId)
-                .findAll();
+
+        return getDaoSession()
+                .getInventoryReservationDao()
+                .queryBuilder()
+                .where(InventoryReservationDao.Properties.OrderId.eq(orderId))
+                .where(InventoryReservationDao.Properties.RecipeId.eq(recipeId))
+                .list();
     }
 
     @Override
@@ -440,40 +441,13 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .list();
     }
 
-//    @Override
-//    public void deleteServiceSetRecipes(String id) {
-//
-//        getDaoSession()
-//                .getServiceSetRecipesDao()
-//                .queryBuilder()
-//                .where(ServiceSetRecipesDao.Properties.Id.eq(id))
-//                .buildDelete().executeDeleteWithoutDetachingEntities();
-//
-//    }
-//
-//    @Override
-//    public void deleteServiceSetTimings(String id) {
-//        getDaoSession()
-//                .getServiceSetTimingsDao()
-//                .queryBuilder()
-//                .where(ServiceSetTimingsDao.Properties.Id.eq(id))
-//                .buildDelete().executeDeleteWithoutDetachingEntities();
-//    }
-
-//    @Override
-//    public List<Order> loadIncompleteChildOrders(String parentOrderId) {
-//        return getDaoSession().getOrderDao().queryBuilder()
-//                .where(OrderDao.Properties.ParentOrderId.eq(parentOrderId))
-//                .where(OrderDao.Properties.Status.in(Order.ORDER_OPEN,Order.ORDER_STARTED))
-//                .list();
-//    }
-
     @Override
     public boolean hasWaitingInventoryRequest(String orderId) {
         Realm realm = Realm.getDefaultInstance();
         List<InventoryRequest> inventoryRequests = realm
                 .copyFromRealm(realm.where(InventoryRequest.class).equalTo("orderId", orderId).limit(1).findAll());
 
+        realm.close();
         return !inventoryRequests.isEmpty();
     }
 
@@ -487,6 +461,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .findAll()
                 .deleteAllFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     @Override
@@ -494,6 +469,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         Realm realm = Realm.getDefaultInstance();
         List<InventoryRequest> inventoryRequests = realm
                 .copyFromRealm(realm.where(InventoryRequest.class).findAll());
+        realm.close();
         return inventoryRequests;
     }
 
@@ -503,6 +479,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.beginTransaction();
         realm.copyToRealm(inventoryRequest);
         realm.commitTransaction();
+        realm.close();
     }
 
     @Override
@@ -638,10 +615,12 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void saveCourse(Course course) {
-        if (course.getActualDeliveryTime() == 0) {
-            course.setActualDeliveryTime(System.currentTimeMillis());
+        if(getCourseById(course.getId()) == null){
+            if (course.getActualDeliveryTime() == 0) {
+                course.setActualDeliveryTime(System.currentTimeMillis());
+            }
+            getDaoSession().getCourseDao().insert(course);
         }
-        getDaoSession().getCourseDao().insert(course);
     }
 
     @Override
@@ -1216,6 +1195,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         if (recipeList.size() > 0) {
             return recipeList.get(0);
         }
+        realm.close();
         return null;
     }
 
@@ -1225,6 +1205,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.beginTransaction();
         realm.insertOrUpdate(recipe);
         realm.commitTransaction();
+        realm.close();
     }
 
     @Override
@@ -1273,6 +1254,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.beginTransaction();
         realm.copyToRealm(recipes);
         realm.commitTransaction();
+        realm.close();
 
         getDaoSession().getTaskDao().deleteByKeyInTx(taskIds);
         getDaoSession().
@@ -1330,6 +1312,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         if (recipe != null) {
             return realm.copyFromRealm(recipe);
         }
+        realm.close();
         return null;
     }
 
@@ -1339,6 +1322,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.beginTransaction();
         realm.where(Recipe.class).in("id", ids.toArray(new String[0])).findAll().deleteAllFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     @Override
@@ -1398,12 +1382,14 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.beginTransaction();
         realm.where(Recipe.class).findAll().deleteAllFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     @Override
     public List<Recipe> loadRecipes() {
         Realm realm = Realm.getDefaultInstance();
         List<Recipe> recipes = realm.copyFromRealm(realm.where(Recipe.class).sort("name", Sort.ASCENDING).findAll());
+        realm.close();
         return recipes;
     }
 
@@ -1411,6 +1397,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     public List<Supplier> loadSuppliers() {
         Realm realm = Realm.getDefaultInstance();
         List<Supplier> Supplier = realm.copyFromRealm(realm.where(Supplier.class).sort("name", Sort.ASCENDING).findAll());
+        realm.close();
         return Supplier;
     }
 
@@ -1857,10 +1844,12 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public List<InventoryReservation> listInventoryReservationsForRecipe(String id) {
-        Realm realm = Realm.getDefaultInstance();
-        return realm.where(InventoryReservation.class)
-                .equalTo("recipeId", id)
-                .findAll();
+        return getDaoSession()
+                .getInventoryReservationDao()
+                .queryBuilder()
+                .where(InventoryReservationDao.Properties.RecipeId.eq(id))
+                .list();
+
     }
 
     @Override
@@ -2300,6 +2289,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.beginTransaction();
         realm.copyToRealm(suppliers);
         realm.commitTransaction();
+        realm.close();
     }
 
     @Override
@@ -2307,9 +2297,10 @@ public class GreenDaoAdapter implements DaoAdapter {
         Realm realm = Realm.getDefaultInstance();
         Supplier supplier = realm.where(Supplier.class).equalTo("id", id).findFirst();
         if (supplier != null) {
-            return realm.copyFromRealm(supplier);
+            supplier =  realm.copyFromRealm(supplier);
         }
-        return null;
+        realm.close();
+        return supplier;
     }
 
     @Override
@@ -2318,6 +2309,7 @@ public class GreenDaoAdapter implements DaoAdapter {
         realm.beginTransaction();
         realm.where(Supplier.class).in("id", ids.toArray(new String[0])).findAll().deleteAllFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     public Printer getPrinterDataById(String printerUuid) {

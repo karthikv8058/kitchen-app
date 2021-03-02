@@ -2,11 +2,19 @@ package com.smarttoni.models.wrappers;
 
 public class OpenOrderWrapper {
 
+    private String id;
     private Long deliveryTime;
     private Float qty;
     private String unit;
     private String quantity;
-    private String supplier;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Long getDeliveryTime() {
         return deliveryTime;
@@ -40,11 +48,4 @@ public class OpenOrderWrapper {
         this.quantity = quantity;
     }
 
-    public String getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(String supplier) {
-        this.supplier = supplier;
-    }
 }

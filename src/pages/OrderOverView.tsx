@@ -50,7 +50,8 @@ interface State {
     enableScroll: boolean;
     isLazyLoading: boolean;
     screen: any,
-    isPortrait: boolean
+    isPortrait: boolean,
+    endReached: boolean
 }
 
 export default class OrderOverview extends AbstractComponent<Props, State> {
@@ -66,8 +67,13 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     private course: courses;
     private tooblarItems: any[] = [];
     private eventEmitterService: EventEmitterService = ioc.ServiceFactory.getServiceBy('eventEmitterService');
-    private pageCount = 1;
+    private pageCount = 0;
     pushListener = { type: 1, callback: (data: string) => { this.loadOrders(); } };
+
+
+
+    private alreadyFetchedWebOrders = false; 
+
 
     constructor(props: Props) {
         super(props);
@@ -79,7 +85,9 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
             enableScroll: true,
             isLazyLoading: false,
             screen: Dimensions.get('window'),
-            isPortrait: false
+            isPortrait: false,
+
+            endReached : false
         };
 
     }
@@ -106,14 +114,12 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     }
 
     componentDidMount() {
-        this.pageCount = 1;
+        //this.pageCount = 1;
         AsyncStorage.getItem('userRights').then((right: String) => {
             this.posAccess = true;//userRights('app_new_orders', right);
             this.orderDeleteAcess = true;//userRights('app_delete_orders', right);
             this.orderEditAcess = true;//userRights('app_manage_orders', right);
         });
-        // this.loadToolbarItems();
-        // this.loadOrders();
         this.eventEmitterService.addListner(this.pushListener);
     }
     goToExternalOrderOverView = () => {
@@ -146,25 +152,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         this.eventEmitterService.removeListner(this.pushListener);
     }
 
-    loadOrders() {        
-        this.orderService.getAllOrders(0).then(response => {
-            if (responseChecker(response, this.props.navigation)) {
-                this.setState({
-                    isLoading: false,
-                    order: response.orders,
-                    isLazyLoading: false
-                });
-
-            } else {
-                this.setState({
-                    order: [],
-                    isLoading: false,
-                });
-            }
-        }, (error: Error) => {
-            this.setState({ isLoading: false });
-        });
-    }
+   
 
     deletePrinterMessage = () => {
         this.orderService.deletePrinterMessage(this.orderId).then(response => {
@@ -323,18 +311,44 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
             });
         });
     }
+
+
+    loadOrders() {      
+
+
+        this.alreadyFetchedWebOrders = true;
+        this.pageCount = 0;
+       
+        this.setState({
+            endReached : false,
+            order : []
+        })
+        this.loadorederFromWeb();
+
+
+    }
+
     loadorederFromWeb = () => {
+
+
         this.alreadyLoaded = true
         this.setState({
             isLazyLoading: true
         })
-        this.orderService.getAllOrders(this.pageCount).then(response => {
 
-            if (responseChecker(response, this.props.navigation)) {
-                this.pageCount = this.pageCount + 1                
-                if (response.orders.length > 0) {
+
+      
+
+        this.orderService.getAllOrders(this.pageCount).then(orders => {
+
+            if (responseChecker(orders, this.props.navigation)) {
+                
+
+                if (orders.length > 0) {
+
+                    //let endReached = response.orders.length != 10;
                     let orderList: any = this.state.order
-                    response.orders.forEach((element: any) => {
+                    orders.forEach((element: any) => {
                         let isExist: boolean = false;
                         this.state.order .forEach((order: Order) => {
                             if (order.orderId === element.orderId) {
@@ -361,42 +375,22 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
                     }
 
 
-                } else {                    
+                    this.pageCount = this.pageCount + 1;
+
+                    // if(this.pageCount == 1 && orderList.length < 10){
+                    //     console.log("-----------------------------------------------");
+                    //     this.loadorederFromWeb();
+                    // }
+
+                } else if(!this.alreadyFetchedWebOrders){   
+
+                    this.alreadyFetchedWebOrders = true;
                     this.orderService.loadorederFromWeb(0).then((response) => {
                         if (responseChecker(response, this.props.navigation)) {
                             if (!!response) {
-                                this.orderService.loadArchivedOrder(0).then((archivedOrder: any) => {
-                                    let orderList: any = this.state.order
-                                    archivedOrder.orders.forEach((element: any) => {
-
-                                        let isExist: boolean = false;
-                                        this.state.order.forEach((order: Order) => {
-                                            if (order.orderId === element.orderId) {
-                                                isExist = true
-                                            }
-                                        });
-                                        if (!isExist) {
-                                            orderList.push(element)
-                                        }
-                                    });
-
-                                    if (orderList.length > 0) {
-                                        this.setState({
-                                            order: orderList,
-                                            isLazyLoading: false
-                                        })
-
-                                    } else {
-                                        this.setState({
-                                            isLazyLoading: false
-                                        })
-                                    }
-
-                                }, (error: Error) => {
-                                    this.setState({ isLoading: false });
-                                });
+                                this.loadorederFromWeb()
                             } else {
-                                this.setState({ isLoading: false });
+                                this.setState({ isLoading: false  , endReached : true});
                             }
 
                         } else {
@@ -405,6 +399,9 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
                     }, (error: Error) => {
                         this.setState({ isLoading: false });
                     });
+                }else{
+
+                    this.setState({ isLoading: false  , endReached : true});
                 }
 
             } else {
@@ -430,7 +427,9 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
                     contentContainerStyle={{ flexGrow: 1 }}
                     ListFooterComponent={this.renderBottomLoader()}
                     onEndReached={({ distanceFromEnd }) => {
-                        this.loadorederFromWeb()
+                        if(!this.state.endReached){
+                            this.loadorederFromWeb()
+                        }
                     }}
                     renderItem={this.renderOrderType}
                 />
@@ -457,7 +456,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     renderBottomLoader() {
         return (
             <View style={styles.bottomView}>
-                { !!this.state.isLazyLoading ? <LoaderWithText text='Loading order' /> : null}
+                { !!this.state.isLazyLoading  &&  !this.state.endReached? <LoaderWithText text='Loading order' /> : null}
             </View>
         )
     }

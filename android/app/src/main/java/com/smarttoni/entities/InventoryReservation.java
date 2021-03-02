@@ -1,14 +1,35 @@
 package com.smarttoni.entities;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+
 import io.realm.RealmObject;
+import org.greenrobot.greendao.annotation.Generated;
 
-public class InventoryReservation  extends RealmObject {
+@Entity(nameInDb = "InventoryReservation")
+public class InventoryReservation{
 
+    @Id(autoincrement = true)
+    private Long id;
+    
     private String orderId;
 
     private String recipeId;
 
     private float qty;
+
+    @Generated(hash = 1183255241)
+    public InventoryReservation(Long id, String orderId, String recipeId,
+            float qty) {
+        this.id = id;
+        this.orderId = orderId;
+        this.recipeId = recipeId;
+        this.qty = qty;
+    }
+
+    @Generated(hash = 852356338)
+    public InventoryReservation() {
+    }
 
     public String getOrderId() {
         return orderId;
@@ -32,5 +53,13 @@ public class InventoryReservation  extends RealmObject {
 
     public void setQty(float qty) {
         this.qty = qty;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

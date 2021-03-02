@@ -220,13 +220,16 @@ android {
             buildConfigField "String", "WEB_URL", "\"http:demo.mypits.org:15039/\""
             targetSdkVersion rootProject.ext.targetSdkVersion
         }
-//        uat {
-//            minSdkVersion rootProject.ext.minSdkVersion
-//            applicationId 'com.smarttoni'
-//            buildConfigField "String", "BASE_URL", "\"https://api.uat.smarttoni.com/\""
-//            buildConfigField "String", "WEB_URL", "\"http://briefing.uat.smarttoni.com/\""
-//            targetSdkVersion rootProject.ext.targetSdkVersion
-//        }
+
+
+        uat {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId 'com.smarttoni'
+            buildConfigField "String", "BASE_URL", "\"https://api.uat.smarttoni.com/\""
+            buildConfigField "String", "WEB_URL", "\"http://briefing.uat.smarttoni.com/\""
+            targetSdkVersion rootProject.ext.targetSdkVersion
+        }
+
 //        live {
 //            minSdkVersion rootProject.ext.minSdkVersion
 //            applicationId 'com.smarttoni'
@@ -335,6 +338,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 apply plugin: 'com.google.gms.google-services'
 repositories {
+    google()
     mavenCentral()
     maven { url 'https://maven.google.com' }
     maven { url "https://www.jitpack.io" }

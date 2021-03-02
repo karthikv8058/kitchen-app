@@ -65,7 +65,11 @@ public class LoadOrderFromWeb extends HttpSecurityRequest {
             new HttpClient(context).getHttpClient().loadOrders(ls.getRestaurantId(), orderId, 10,isExternalOrder).enqueue(new Callback<List<SyncOrder>>() {
                 @Override
                 public void onResponse(Call<List<SyncOrder>> call, Response<List<SyncOrder>> response) {
+                    boolean isSuccess = false;
                     if(response.body()!=null) {
+                        if(response.body().size() > 0){
+                            isSuccess = true;
+                        }
                         for (SyncOrder o : response.body()) {
                             List<Order> orders=greenDaoAdapter.loadOrderById(o.uuid);
                             List<ArchivedOrders> archivedOrders1=greenDaoAdapter.loadArchivedOrderById(o.uuid);
@@ -83,7 +87,7 @@ public class LoadOrderFromWeb extends HttpSecurityRequest {
                             order.setIsInventory(o.inventoryOrder);
                             order.setTableNo(o.table);
                             order.setProcessed(false);
-                            order.setCreatedAt(new Date().getTime());
+                            order.setCreatedAt(DateUtil.parse(o.createdAt));
                             order.setIsArchive(true);
                             archivedOrders.setId(o.uuid);
                             Gson gsons = GSONBuilder.createGSON();
@@ -95,7 +99,7 @@ public class LoadOrderFromWeb extends HttpSecurityRequest {
                     Gson gson = GSONBuilder.createGSON();
                     Type type = new TypeToken<Boolean >() {
                     }.getType();
-                    respons.send(gson.toJson(true, type));
+                    respons.send(gson.toJson(isSuccess, type));
                 }
 
                 @Override

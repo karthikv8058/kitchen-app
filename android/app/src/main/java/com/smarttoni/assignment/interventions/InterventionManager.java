@@ -44,10 +44,10 @@ public class InterventionManager {
     public void loop(DaoAdapter daoAdapter) {
 //        List<InterventionTimer> t = new ArrayList<>(interventionTimers);
         Iterator<InterventionTimer> timers = interventionTimers.iterator();
-        while (timers.hasNext()){
+        while (timers.hasNext()) {
             InterventionTimer timer = timers.next();
             Work work = ServiceLocator.getInstance().getDatabaseAdapter().getWorkById(timer.getWorkId());
-            if( work != null && (work.getStatus() == Work.COMPLETED || work.getStatus() == Work.REMOVED)){
+            if (work != null && (work.getStatus() == Work.COMPLETED || work.getStatus() == Work.REMOVED)) {
                 timers.remove();
             }
             timer.tick(daoAdapter);
@@ -61,9 +61,9 @@ public class InterventionManager {
 
     public void removeOrder(String orderId) {
         Iterator<InterventionTimer> timers = interventionTimers.iterator();
-        while (timers.hasNext()){
+        while (timers.hasNext()) {
             InterventionTimer timer = timers.next();
-            if (timer.getInterventionJob().getOrderId()!= null && timer.getInterventionJob().getOrderId().equals(orderId)) {
+            if (timer.getInterventionJob().getOrderId() != null && timer.getInterventionJob().getOrderId().equals(orderId)) {
                 timers.remove();
                 map.remove(timer.getInterventionJob().getId());
                 break;
@@ -223,7 +223,7 @@ public class InterventionManager {
         sendInterventionPush(interventionJob);
     }
 
-    private boolean isUserIdle(String userId, Work work,boolean checkTaskAssignment) {
+    private boolean isUserIdle(String userId, Work work, boolean checkTaskAssignment) {
         if (register.hasIntervention(userId)) {
             return false;
         }
@@ -232,7 +232,7 @@ public class InterventionManager {
         }
         TaskManger taskManger = context.getTaskManger();
         Work w = taskManger.getTask(userId);
-        return  w == null || w.getId().equals(work.getId());
+        return w == null || w.getId().equals(work.getId());
     }
 
 
@@ -242,7 +242,7 @@ public class InterventionManager {
 
         String uid = register.getUser(interventionJob.getId());
 
-        if(uid != null && uid != ""){
+        if (uid != null && uid != "") {
             return uid;
         }
 
@@ -252,12 +252,12 @@ public class InterventionManager {
                 .getDatabaseAdapter();
 
 
-        if(work.getMeal() !=null && Strings.isNotEmpty(work.getMeal().getChefId())){
+        if (work.getMeal() != null && Strings.isNotEmpty(work.getMeal().getChefId())) {
             User user = daoAdapter.getUserById(work.getMeal().getChefId());
-            if(user.getOnline()){
-                if(isUserIdle(user.getId(), work, false)){
+            if (user != null && user.getOnline()) {
+                if (isUserIdle(user.getId(), work, false)) {
                     return user.getId();
-                }else{
+                } else {
                     return null;
                 }
             }
@@ -330,7 +330,7 @@ public class InterventionManager {
         //pause all interventions for this work
         pauseOtherInterventionsFor(interventionJob.getWorkId());
 
-        register.register(interventionJob.getUserId(),interventionJob.getId());
+        register.register(interventionJob.getUserId(), interventionJob.getId());
 
         PusherService pusherService = (PusherService) ServiceLocator.getInstance().getService(ServiceLocator.PUSH_SERVICE);
         pusherService.sendInterventionPush(interventionJob);
@@ -353,7 +353,7 @@ public class InterventionManager {
     }
 
 
-    public boolean popInterventions(Work work,String userId) {
+    public boolean popInterventions(Work work, String userId) {
         if (work == null) {
             return false;
         }

@@ -41,10 +41,9 @@ import java.util.List;
 import java.util.Map;
 
 public class GetInventoryList extends HttpSecurityRequest {
-    private Context context;
 
     public GetInventoryList(Context context) {
-        this.context = context;
+
     }
 
     @Override
@@ -55,82 +54,29 @@ public class GetInventoryList extends HttpSecurityRequest {
 
         List<Order> orders = daoAdapter.listOrdersWithOpenStatus();
 
-        //List<String> recipeIds = new ArrayList<>();
-        //List<Order> ordersList = daoAdapter.loadOrders();
-
         List<Order> normalOrders = new ArrayList<>();
         List<Order> inventoryOrders = new ArrayList<>();
         List<Order> externalOrders = new ArrayList<>();
         for (Order o : orders) {
-            if (o.getType() == Order.TYPE_EXTERNAL || o.getIsInventory()) {
+            if (o.getType() == Order.TYPE_EXTERNAL) {
                 externalOrders.add(o);
-            } else if (o.getType() == Order.TYPE_INTERNAL) {
+            } else if (o.getIsInventory()) {
+                //normalOrders.add(o);
+                inventoryOrders.add(o);
+            }else if (o.getType() == Order.TYPE_INTERNAL) {
                 normalOrders.add(o);
+                inventoryOrders.add(o);
             }
+
+//            normalOrders.add(o);
         }
-
-//        for (Order order : externalOrders) {
-//            order.getCourses();
-//            Comparator comparator = (Comparator<Course>) (lhs, rhs) -> Long.compare(rhs.getDeliveryTime(), lhs.getDeliveryTime());
-//            Collections.sort(order.getCourses(), comparator);
-//            for (Course course : order.getCourses()) {
-//                for (Meal meal : course.getMeals()) {
-//                    for (OrderLine orderLine : meal.getOrderLine()) {
-//                        orderLine.getRecipe();
-//                        orderLine.getRecipeId();
-//                    }
-//                }
-//            }
-//        }
-
-//        for (Order order : orders) {
-//            order.getCourses();
-//            Comparator comparator = (Comparator<Course>) (lhs, rhs) -> Long.compare(rhs.getDeliveryTime(), lhs.getDeliveryTime());
-//            Collections.sort(order.getCourses(), comparator);
-//            for (Course course : order.getCourses()) {
-//                for (Meal meal : course.getMeals()) {
-//                    for (OrderLine orderLine : meal.getOrderLine()) {
-//                        orderLine.getRecipe();
-//                        orderLine.getRecipeId();
-//                        if (orderLine.getRecipe() != null) {
-//                            recipeIds.add(orderLine.getRecipe().getId());
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-//        List<Recipe> recipes = ServiceLocator.getInstance().getDatabaseAdapter().loadRecipes();
-//        List<Recipe> recipeList = new ArrayList<>();
-//        for (Recipe recipe : recipes) {
-//            if (recipe.getStatus() == Recipe.STATUS_PUBLISHED || recipeIds.contains(recipe.getId())) {
-//                if (recipe.getOutputUnit()!=null){
-//                    recipe.setOutputUnit(recipe.getOutputUnit());
-//                }
-//                recipeList.add(recipe);
-//            }
-//        }
-
 
         List<RecipeWrapper> recipeWrappers = new ArrayList<>();
 
-
         List<Recipe> recipes = ServiceLocator.getInstance().getDatabaseAdapter().loadRecipes();
 
-//        List<ExternalAvailableQuantity> eaqs = daoAdapter.listExternalAvailableQuantity();
-//
         List<ExternalOrderRequest> eors = daoAdapter.listExternalOrderRequest();
-//
-//
-//        Map<String, Float> recipeMap = new HashMap<>();
-//
-//        for (ExternalOrderRequest eor : eors) {
-//            Float qty = recipeMap.get(eor.getRecipe());
-//            if (qty == null) {
-//                qty = 0F;
-//            }
-//            recipeMap.put(eor.getRecipe(), qty + eor.getQuantity());
-//        }
+
 
         for (Recipe recipe : recipes) {
             if (recipe.getStatus() != Recipe.STATUS_PUBLISHED) {
@@ -166,39 +112,64 @@ public class GetInventoryList extends HttpSecurityRequest {
             recipeWrapper.setUnitId(recipe.getOutputUnitId());
             recipeWrapper.setInventoryType(recipe.getInventoryType());
 
-            List<OpenOrderWrapper> externalOrderWrappers = new ArrayList<>();
-
-
-            for (Order externalOrder : externalOrders) {
+            List<OpenOrderWrapper> inventoryOrderWrappers = new ArrayList<>();
+            for (Order externalOrder : inventoryOrders) {
 
                 List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(externalOrder.getId());
 
-
-                for (Meal meal : externalOrder.getCourses().get(0).getMeals()) {
-
-                    for (OrderLine orderLine : meal.getOrderLine()) {
-
-//                        if(externalOrder.getIsInventory()){
-//                            recipe.getId()
-//                        }
-
-                        if (recipe.getId().equals(orderLine.getRecipe().getId())) {
-
-                            OpenOrderWrapper externalOrderWrapper = new OpenOrderWrapper();
-                            externalOrderWrapper.setQty(orderLine.getRecipe().getOutputQuantity() * orderLine.getQty());
-                            externalOrderWrapper.setDeliveryTime(externalOrder.getCourses().get(0).getDeliveryTime());
-                            if (orderLine.getRecipe().getOutputUnit() != null) {
-                                externalOrderWrapper.setUnit(orderLine.getRecipe().getOutputUnit().getSymbol());
-                            }
-                            if (recipe.getOutputUnit() != null) {
-                                externalOrderWrapper.setQuantity(UnitHelper.convertToString(externalOrderWrapper.getQty(), recipe.getOutputUnit()));
-
-                            }
-                            externalOrderWrappers.add(externalOrderWrapper);
+                for (OrderLine orderLine : orderLines) {
+                    if (recipe.getId().equals(orderLine.getRecipe().getId())) {
+                        OpenOrderWrapper externalOrderWrapper = new OpenOrderWrapper();
+                        externalOrderWrapper.setId(externalOrder.getId());
+                        externalOrderWrapper.setQty(orderLine.getRecipe().getOutputQuantity() * orderLine.getQty());
+                        externalOrderWrapper.setDeliveryTime(externalOrder.getCourses().get(0).getDeliveryTime());
+                        if (orderLine.getRecipe().getOutputUnit() != null) {
+                            externalOrderWrapper.setUnit(orderLine.getRecipe().getOutputUnit().getSymbol());
                         }
+                        if (recipe.getOutputUnit() != null) {
+                            externalOrderWrapper.setQuantity(UnitHelper.convertToString(externalOrderWrapper.getQty(), recipe.getOutputUnit()));
+                        }
+                        inventoryOrderWrappers.add(externalOrderWrapper);
                     }
                 }
             }
+
+
+            List<OpenOrderWrapper> externalOrderWrappers = new ArrayList<>();
+
+            for (Order externalOrder : externalOrders) {
+
+
+                List<Order> parentOrders = daoAdapter.loadParentOrders(externalOrder.getId());
+
+                List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(externalOrder.getId());
+                mainLoop:
+                for (OrderLine orderLine : orderLines) {
+                    if (recipe.getId().equals(orderLine.getRecipe().getId())) {
+
+                        for (OpenOrderWrapper w : inventoryOrderWrappers) {
+                            for (Order o : parentOrders) {
+                                if (o.getId().equals(w.getId())) {
+                                    continue mainLoop;
+                                }
+                            }
+                        }
+
+                        OpenOrderWrapper externalOrderWrapper = new OpenOrderWrapper();
+                        externalOrderWrapper.setQty(orderLine.getRecipe().getOutputQuantity() * orderLine.getQty());
+                        externalOrderWrapper.setDeliveryTime(externalOrder.getCourses().get(0).getDeliveryTime());
+                        if (orderLine.getRecipe().getOutputUnit() != null) {
+                            externalOrderWrapper.setUnit(orderLine.getRecipe().getOutputUnit().getSymbol());
+                        }
+                        if (recipe.getOutputUnit() != null) {
+                            externalOrderWrapper.setQuantity(UnitHelper.convertToString(externalOrderWrapper.getQty(), recipe.getOutputUnit()));
+                        }
+                        externalOrderWrappers.add(externalOrderWrapper);
+                    }
+                }
+            }
+
+            inventoryOrderWrappers.addAll(externalOrderWrappers);
 
             List<OpenOrderWrapper> openOrderWrappers = new ArrayList<>();
             for (Order openOrders : normalOrders) {
@@ -224,31 +195,35 @@ public class GetInventoryList extends HttpSecurityRequest {
                     }
                     openOrderWrappers.add(openOrderWrapper);
                 }
-
-
             }
 
 
-            outLoop: for (ExternalOrderRequest eor : eors) {
+            outLoop:
+            for (ExternalOrderRequest eor : eors) {
                 if (recipe.getId().equals(eor.getRecipe())) {
                     OpenOrderWrapper openOrderWrapper = new OpenOrderWrapper();
                     openOrderWrapper.setQty(eor.getQuantity());
 
-                    if(eor.getParentOrder() == null){
-                        continue ;
+                    if (eor.getParentOrder() == null) {
+                        continue;
                     }
 
                     Order order = daoAdapter.getOrderById(eor.getParentOrder());
 
+
+                    if(order == null){
+                        continue ;
+                    }
+
                     List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(order.getId());
 
                     //TODO update
-                    for(OrderLine orderLine : orderLines ){
-                        if(orderLine.getRecipeId().equals(recipe.getId())){
-                            float qty = openOrderWrapper.getQty()  - (orderLine.getQty() * recipe.getOutputQuantity());
-                            if(qty > 0){
+                    for (OrderLine orderLine : orderLines) {
+                        if (orderLine.getRecipeId().equals(recipe.getId())) {
+                            float qty = openOrderWrapper.getQty() - (orderLine.getQty() * recipe.getOutputQuantity());
+                            if (qty > 0) {
                                 openOrderWrapper.setQty(qty);
-                            }else{
+                            } else {
                                 openOrderWrapper.setQty(0f);
                             }
                         }
@@ -259,16 +234,15 @@ public class GetInventoryList extends HttpSecurityRequest {
                     if (recipe.getOutputUnit() != null) {
                         openOrderWrapper.setQuantity(UnitHelper.convertToString(openOrderWrapper.getQty(), recipe.getOutputUnit()));
                     }
-                    if(openOrderWrapper.getQty() > 0 ){
+                    if (openOrderWrapper.getQty() > 0) {
                         openOrderWrappers.add(openOrderWrapper);
                     }
                 }
             }
 
-
             float delivery = 0;
 
-            for (OpenOrderWrapper order : externalOrderWrappers) {
+            for (OpenOrderWrapper order : inventoryOrderWrappers) {
                 delivery += order.getQty();
             }
 
@@ -286,17 +260,18 @@ public class GetInventoryList extends HttpSecurityRequest {
 
 
             float reserved = 0;
-            for(InventoryReservation ir : reservations){
+            for (InventoryReservation ir : reservations) {
                 reserved += ir.getQty();
             }
 
-            float expected = (inventoryQty + delivery  + reserved)  - consumption;
+            //inventoryQty += reserved;
+            float expected = (inventoryQty + delivery ) - consumption;
             if (recipe.getOutputUnit() != null) {
                 recipeWrapper.setExpectedInventory(UnitHelper.convertToString(expected > 0 ? expected : 0, recipe.getOutputUnit()));
 
             }
             recipeWrapper.setOpenOrderWrappers(openOrderWrappers);
-            recipeWrapper.setExternalOrderWrappers(externalOrderWrappers);
+            recipeWrapper.setExternalOrderWrappers(inventoryOrderWrappers);
             recipeWrappers.add(recipeWrapper);
         }
 
