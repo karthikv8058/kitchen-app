@@ -14,10 +14,24 @@ export default class OrderService {
         this.httpClient = httpClient;
         this.apiBuilder = apiBuilder;
     }
+
     getAllOrders(pageCount: number) {
         return new Promise((resolve, reject) => {
-            this.httpClient.post(this.apiBuilder!.paths!.overviewTask,{pageCount:pageCount}
+            this.httpClient.get(this.apiBuilder!.paths!.orders
                ).then(response => {
+                   console.log(response);
+                    resolve(response);
+                }).catch(error => {
+                    resolve(null);
+                });
+        });
+    }
+
+    loadOrderFromWeb() {
+        return new Promise((resolve, reject) => {
+            this.httpClient.get(this.apiBuilder!.paths!.archivedOrders
+               ).then(response => {
+                   console.log(response);
                     resolve(response);
                 }).catch(error => {
                     resolve(null);

@@ -1,5 +1,6 @@
 package com.smarttoni.database;
 
+import com.smarttoni.entities.ArchivedOrder;
 import com.smarttoni.entities.ArchivedOrders;
 import com.smarttoni.entities.ChefActivityLog;
 import com.smarttoni.entities.Course;
@@ -651,4 +652,8 @@ public interface DaoAdapter {
     void moveToInventoryAndDeleteExtras(String orderId,Long workId);
 
     void putBackIngredientRequirementToInventory(String orderId);
+
+    void saveArchivedOrder(ArchivedOrder order);
+
+    List<ArchivedOrder> listArchivedOrder();
 }

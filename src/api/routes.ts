@@ -12,7 +12,8 @@ interface Paths {
     getstations: string;
     stationTasks: string;
     getstationusers: string;
-    overviewTask: string;
+    orders: string;
+    archivedOrders: string;
     checkOrderStarted: string;
     finishOrder: string;
     addStationUser: string;
@@ -23,7 +24,7 @@ interface Paths {
     logoutUser: string;
     ping: string;
     deleteOrder: string;
-    deleteExternalOrder:string;
+    deleteExternalOrder: string;
     getInventoryList: string;
     updateInventoryQuantity: string;
     getPrinterData: string;
@@ -40,15 +41,15 @@ interface Paths {
     getUserRights: string;
     imageUrl: string;
     getVideo: string;
-    placeExternalOrder:string;
-    loadExternalOrders:string;
-    loadorederFromWeb:string;
-    loadArchivedOrder:string;
-    getAllRecipes:string
-    addNewIngredient:string,
-    testStationPrinter:string,
-    pingIp:string,
-    getPrinterList:string
+    placeExternalOrder: string;
+    loadExternalOrders: string;
+    loadorederFromWeb: string;
+    loadArchivedOrder: string;
+    getAllRecipes: string
+    addNewIngredient: string,
+    testStationPrinter: string,
+    pingIp: string,
+    getPrinterList: string
 }
 
 export default class ApiBuilder {
@@ -87,7 +88,8 @@ export default class ApiBuilder {
             getstations: this.baseURL + 'get-stations',
             stationTasks: this.baseURL + 'station-tasks',
             getstationusers: this.baseURL + 'get-station-users',
-            overviewTask: this.baseURL + 'overview-task',
+            orders: this.baseURL + 'orders',
+            archivedOrders: this.baseURL + 'archived-orders',
             checkOrderStarted: this.baseURL + 'check-order-started',
             finishOrder: this.baseURL + 'finish-order',
             addStationUser: this.baseURL + 'add-station-user',
@@ -115,15 +117,15 @@ export default class ApiBuilder {
             getUserRights: this.baseURL + 'get-user-right',
             imageUrl: this.baseURL + 'get-image?filename=',
             getVideo: this.baseURL + 'play-video?filename=',
-            placeExternalOrder:this.baseURL + 'place-external-order',
-            loadExternalOrders:this.baseURL + 'external-overview-orders',
-            loadorederFromWeb:this.baseURL + 'load-order-from-web',
-            loadArchivedOrder:this.baseURL + 'load-archived-order',
-            getAllRecipes:this.baseURL + 'get-all-recipes',
-            addNewIngredient:this.baseURL+'add-new-ingredient',
-            testStationPrinter:this.baseURL+'test-station-printer',
-            pingIp:this.baseURL+'ping-ip',
-            getPrinterList:'get-printers'
+            placeExternalOrder: this.baseURL + 'place-external-order',
+            loadExternalOrders: this.baseURL + 'external-overview-orders',
+            loadorederFromWeb: this.baseURL + 'load-order-from-web',
+            loadArchivedOrder: this.baseURL + 'load-archived-order',
+            getAllRecipes: this.baseURL + 'get-all-recipes',
+            addNewIngredient: this.baseURL + 'add-new-ingredient',
+            testStationPrinter: this.baseURL + 'test-station-printer',
+            pingIp: this.baseURL + 'ping-ip',
+            getPrinterList: 'get-printers'
         };
     }
 }

@@ -14,7 +14,7 @@ export default interface Order {
     orderTo ?: string
     printerData?:Array<String>
     labels?:[],
-
+    tableNo:string,
     //verified
     status:number;
     uuid:string;

@@ -29,7 +29,9 @@ import com.smarttoni.server.controlles.order.DeleteOrder;
 import com.smarttoni.server.controlles.order.DeletePrinterMessage;
 import com.smarttoni.server.controlles.order.FetchOrder;
 import com.smarttoni.server.controlles.order.FinishOrder;
+import com.smarttoni.server.controlles.order.GetArchivedOrder;
 import com.smarttoni.server.controlles.order.GetOrderDetails;
+import com.smarttoni.server.controlles.order.GetOrders;
 import com.smarttoni.server.controlles.order.GetPrinterData;
 import com.smarttoni.server.controlles.order.LoadArchivedOrder;
 import com.smarttoni.server.controlles.order.LoadOrderFromWeb;
@@ -116,6 +118,11 @@ public class HttpRoute {
         mHttpServer.post("/test-station-printer", new TestStationPrinter(context));
         mHttpServer.post("/ping-ip", new PingIp(context));
         mHttpServer.post("/get-printers", new getPrinters(context));
+
+
+
+        mHttpServer.get("/orders", new GetOrders(context));
+        mHttpServer.get("/archived-orders", new GetArchivedOrder(context));
 
         //Devv
         mHttpServer.get("/dev-stations", new DevStationList(context));

@@ -1,6 +1,6 @@
 import AbstractComponent from '@components/AbstractComponent';
 import AppBackground from '@components/AppBackground';
-import OrderView from '@components/OrderView';
+import Order from './OrderOverView/Order';
 import EventEmitterService from '@services/EventEmitterService';
 import colors from '@theme/colors';
 import t from '@translate';
@@ -32,7 +32,7 @@ import Icons from 'react-native-vector-icons/Entypo';
 import OrderService from '@services/OrderService';
 import { error } from 'react-native-gifted-chat/lib/utils';
 import PrinterOrder from '@components/PrinterOrder';
-import Order from '@models/Order';
+//import Order from '@models/Order';
 import courses from '@models/Course';
 import PermissionService from '@services/PermissionService';
 import NavigationService from '@services/NavigationService';
@@ -72,7 +72,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
 
 
 
-    private alreadyFetchedWebOrders = false; 
+    private alreadyFetchedWebOrders = false;
 
 
     constructor(props: Props) {
@@ -87,7 +87,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
             screen: Dimensions.get('window'),
             isPortrait: false,
 
-            endReached : false
+            endReached: false
         };
 
     }
@@ -122,9 +122,11 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         });
         this.eventEmitterService.addListner(this.pushListener);
     }
+
     goToExternalOrderOverView = () => {
         this.props.navigation.navigate('ExternalOrderOverView', {});
     }
+
     loadToolbarItems = () => {
         this.tooblarItems = []
         if (this.permissionService.checkRoutePermission('PosPage')) {
@@ -152,7 +154,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         this.eventEmitterService.removeListner(this.pushListener);
     }
 
-   
+
 
     deletePrinterMessage = () => {
         this.orderService.deletePrinterMessage(this.orderId).then(response => {
@@ -218,15 +220,13 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         });
     }
 
-   
-
     setEnableScroll = (enableScroll: boolean) => {
         this.setState({ enableScroll })
     }
 
     renderOrder(order: courses) {
         return (
-            <OrderView
+            <Order
                 key={order.uuid}
                 ref={(courseReference: Course) => this.course = courseReference}
                 navigation={this.props.navigation}
@@ -236,7 +236,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
                 editOrder={this.editOrder}
                 deletOrder={this.deletOrder}
                 onCall={this.onCall}>
-            </OrderView>
+            </Order>
         );
     }
     editOrder = (orderId: number) => {
@@ -313,20 +313,37 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     }
 
 
-    loadOrders() {      
+    loadOrders() {
 
 
         this.alreadyFetchedWebOrders = true;
         this.pageCount = 0;
-       
+
         this.setState({
-            endReached : false,
-            order : []
+            endReached: false,
+            order: []
         })
         this.loadorederFromWeb();
 
 
     }
+
+
+    loadOrderFromWeb() {
+
+        this.pageCount = 0;
+        this.orderService.loadOrderFromWeb().then(orders => {
+            this.setState({
+                isLoading: false,
+                order: this.state.order.concat(orders),
+                isLazyLoading: false
+            })
+
+        }, (error: Error) => {
+            this.setState({ isLoading: false });
+        });
+    }
+
 
     loadorederFromWeb = () => {
 
@@ -336,117 +353,31 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
             isLazyLoading: true
         })
 
-
-      
-
         this.orderService.getAllOrders(this.pageCount).then(orders => {
 
-            if (responseChecker(orders, this.props.navigation)) {
-                
 
-                if (orders.length > 0) {
+            this.setState({
+                isLoading: false,
+                order: orders,
+                isLazyLoading: false
+            })
 
-                    //let endReached = response.orders.length != 10;
-                    let orderList: any = this.state.order
-                    orders.forEach((element: any) => {
-                        let isExist: boolean = false;
-                        this.state.order .forEach((order: Order) => {
-                            if (order.orderId === element.orderId) {
-                                isExist = true
-                            }
-                        });
-                        if (!isExist) {
-                            orderList.push(element)
-                        }
-                    });
-
-                    if (orderList.length > 0) {
-                        this.setState({
-                            isLoading: false,
-                            order: orderList,
-                            isLazyLoading: false
-                        })
-
-                    } else {
-                        this.setState({
-                            isLoading: false,
-                            isLazyLoading: false
-                        })
-                    }
-
-
-                    this.pageCount = this.pageCount + 1;
-
-                    // if(this.pageCount == 1 && orderList.length < 10){
-                    //     console.log("-----------------------------------------------");
-                    //     this.loadorederFromWeb();
-                    // }
-
-                } else if(!this.alreadyFetchedWebOrders){   
-
-                    this.alreadyFetchedWebOrders = true;
-                    this.orderService.loadorederFromWeb(0).then((response) => {
-                        if (responseChecker(response, this.props.navigation)) {
-                            if (!!response) {
-                                this.loadorederFromWeb()
-                            } else {
-                                this.setState({ isLoading: false  , endReached : true});
-                            }
-
-                        } else {
-                            this.setState({ isLoading: false });
-                        }
-                    }, (error: Error) => {
-                        this.setState({ isLoading: false });
-                    });
-                }else{
-
-                    this.setState({ isLoading: false  , endReached : true});
-                }
-
-            } else {
-                this.setState({
-                    order: [],
-                    isLoading: false,
-                });
-            }
         }, (error: Error) => {
             this.setState({ isLoading: false });
         });
 
     }
-    renderOrderItems() {
-        return (
-            <View style={styles.overviewHolder}>
-                <FlatList
-                    keyExtractor={(item) => item.uuid}
-                    scrollEnabled={this.state.enableScroll}
-                    style={styles.basicContainer}
-                    extraData={this.state}
-                    data={this.state.order}
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    ListFooterComponent={this.renderBottomLoader()}
-                    onEndReached={({ distanceFromEnd }) => {
-                        if(!this.state.endReached){
-                            this.loadorederFromWeb()
-                        }
-                    }}
-                    renderItem={this.renderOrderType}
-                />
-            </View>
-        );
-    }
 
-    renderPrinterModal() {
-        return (
-            <PrinterOrder
-                togglePrinterModal={this.togglePrinterModal}
-                printerModalVisible={this.state.printerModalVisible}
-                deletePrinterMessage={this.deletePrinterMessage}
-                storeToWeb={this.storeToWeb}>
-            </PrinterOrder>
-        );
-    }
+    // renderPrinterModal() {
+    //     return (
+    //         <PrinterOrder
+    //             togglePrinterModal={this.togglePrinterModal}
+    //             printerModalVisible={this.state.printerModalVisible}
+    //             deletePrinterMessage={this.deletePrinterMessage}
+    //             storeToWeb={this.storeToWeb}>
+    //         </PrinterOrder>
+    //     );
+    // }
 
     togglePrinterModal = (toggleBoolean: boolean) => {
         this.setState({
@@ -456,7 +387,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     renderBottomLoader() {
         return (
             <View style={styles.bottomView}>
-                { !!this.state.isLazyLoading  &&  !this.state.endReached? <LoaderWithText text='Loading order' /> : null}
+                { !!this.state.isLazyLoading && !this.state.endReached ? <LoaderWithText text='Loading order' /> : null}
             </View>
         )
     }
@@ -477,7 +408,9 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
         this.loadToolbarItems();
 
     }
-    render() {        
+
+
+    render() {
         return (
             <AppBackground
                 navigation={this.props.navigation}
@@ -488,12 +421,28 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
 
                 <View onLayout={this.onLayout.bind(this)} style={styles.viewContainer}>
                     <View style={styles.container}>
-                        {this.renderPrinterModal()}
+                        {/* {this.renderPrinterModal()} */}
                         {this.state.isLoading ?
                             <View style={styles.loaderStyle}>
                                 {!!this.state.isLazyLoading ? <LoaderWithText text='Loading order' /> : null}
                             </View>
-                            : this.renderOrderItems()}
+                            : null}
+
+                        <FlatList
+                            keyExtractor={(item) => item.uuid}
+                            scrollEnabled={this.state.enableScroll}
+                            style={styles.basicContainer}
+                            extraData={this.state}
+                            data={this.state.order}
+                            contentContainerStyle={{ flexGrow: 1 }}
+                            ListFooterComponent={this.renderBottomLoader()}
+                            onEndReached={({ distanceFromEnd }) => {
+                                if (!this.state.endReached) {
+                                    this.loadOrderFromWeb()
+                                }
+                            }}
+                            renderItem={this.renderOrderType}
+                        />
                         {!this.alreadyLoaded ? this.loadorederFromWeb() : null}
                     </View>
                 </View>

@@ -10,6 +10,7 @@ import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.auth.HttpSecurityRequest;
 import com.smarttoni.database.DbOpenHelper;
 import com.smarttoni.database.GreenDaoAdapter;
+import com.smarttoni.entities.ArchivedOrder;
 import com.smarttoni.entities.ArchivedOrders;
 import com.smarttoni.entities.Order;
 import com.smarttoni.server.GSONBuilder;
@@ -92,8 +93,16 @@ public class LoadOrderFromWeb extends HttpSecurityRequest {
                             archivedOrders.setId(o.uuid);
                             Gson gsons = GSONBuilder.createGSON();
                             archivedOrders.setOrderData(gsons.toJson(o));
-                            greenDaoAdapter.saveOrder(order);
+                            //greenDaoAdapter.saveOrder(order);
                             greenDaoAdapter.saveArchivedOrders(archivedOrders);
+
+
+                            ArchivedOrder archivedOrder = new ArchivedOrder();
+                            archivedOrder.setOrderId(o.uuid);
+                            archivedOrder.setOrder(gsons.toJson(o));
+                            archivedOrder.setType(isExternalOrder);
+                            greenDaoAdapter.saveArchivedOrder(archivedOrder);
+
                         }
                     }
                     Gson gson = GSONBuilder.createGSON();

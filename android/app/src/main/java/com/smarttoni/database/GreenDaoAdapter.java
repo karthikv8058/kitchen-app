@@ -7,6 +7,7 @@ import com.smarttoni.assignment.interventions.InterventionManager;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.core.SmarttoniContext;
 import com.smarttoni.entities.AppLog;
+import com.smarttoni.entities.ArchivedOrder;
 import com.smarttoni.entities.ArchivedOrders;
 import com.smarttoni.entities.ArchivedOrdersDao;
 import com.smarttoni.entities.ChefActivityLog;
@@ -325,6 +326,16 @@ public class GreenDaoAdapter implements DaoAdapter {
     @Override
     public void saveArchivedOrders(ArchivedOrders order) {
         getDaoSession().getArchivedOrdersDao().insert(order);
+    }
+
+    @Override
+    public void saveArchivedOrder(ArchivedOrder order) {
+        getDaoSession().getArchivedOrderDao().insert(order);
+    }
+
+    @Override
+    public List<ArchivedOrder> listArchivedOrder() {
+        return getDaoSession().getArchivedOrderDao().loadAll();
     }
 
     @Override

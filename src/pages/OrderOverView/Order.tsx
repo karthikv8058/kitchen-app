@@ -2,13 +2,11 @@ import OrderService from '@services/OrderService';
 import colors from '@theme/colors';
 import t from '@translate';
 import React from 'react';
-import { ActivityIndicator, FlatList, Modal, StyleSheet, Text, ToastAndroid, TouchableOpacity, View, AsyncStorage } from 'react-native';
-import { Bind } from '../ioc/ServiceContainer';
-import { responseChecker } from '../utils/responseChecker';
-import AbstractComponent from './AbstractComponent';
-import SwipeView from './SwipeView';
-import CourseView from '@components/CourseView';
-import courses from '@models/Course';
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Bind } from '../../ioc/ServiceContainer';
+import AbstractComponent from '@components/AbstractComponent';
+import SwipeView from '@components/SwipeView';
+import Course from './Course';
 import PermissionService, { Action } from '@services/PermissionService';
 
 interface Props {
@@ -28,7 +26,6 @@ interface State {
 
 export default class OrderView extends AbstractComponent<Props, State> {
 
-    private orderService: OrderService = Bind('orderService');
     private permissionService: PermissionService = Bind('permissionService');
 
     private orderId = '';
@@ -39,7 +36,6 @@ export default class OrderView extends AbstractComponent<Props, State> {
         this.state = {
             modalVisible: false,
         };
-        //this.renderMeal = this.renderMeal.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
     }
 
@@ -64,18 +60,6 @@ export default class OrderView extends AbstractComponent<Props, State> {
             });
         }
     }
-
-    // renderMeal(course: courses) {
-    //     this.isOnCall = course.item.isOnCall;
-    //     this.courseId = course.item.id;
-    //     return (
-    //         <Meal
-    //             order={this.props.course}
-    //             navigation={this.props.navigation}
-    //             course={course}>
-    //         </Meal>
-    //     );
-    // }
 
     renderDeleteOrderAlert() {
         return (
@@ -139,21 +123,10 @@ export default class OrderView extends AbstractComponent<Props, State> {
                     <TouchableOpacity
                         onPress={() => this.showDeleteOrderAlert(orderId)}>
                         <View style={styles.orderContainer}>
-                            {/* <FlatList
-                                listKey={this.props.order.uuid}
-                                style={styles.orderContainer}
-                                extraData={this.state}
-                                data={this.props.order.courses}
-                                renderItem={(course) => <CourseView
-                                    order={this.props.order}
-                                    navigation={this.props.navigation}
-                                    course={course.item}>
-                                </CourseView>}
-                            /> */}
-                            <CourseView
+                            <Course
                                 order={this.props.order}
                                 navigation={this.props.navigation}
-                                course={!!this.props.order.courses[0]?this.props.order.courses[0]:[]} />
+                                course={!!this.props.order.courses[0] ? this.props.order.courses[0] : []} />
                         </View>
                     </TouchableOpacity>
                 </SwipeView>
