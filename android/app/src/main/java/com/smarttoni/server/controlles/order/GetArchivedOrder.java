@@ -11,9 +11,15 @@ import com.smarttoni.auth.HttpSecurityRequest;
 import com.smarttoni.http.HttpClient;
 import com.smarttoni.server.GSONBuilder;
 import com.smarttoni.server.RequestCallback;
+import com.smarttoni.sync.orders.SyncCourse;
+import com.smarttoni.sync.orders.SyncMeal;
 import com.smarttoni.sync.orders.SyncOrder;
+import com.smarttoni.sync.orders.SyncOrderLine;
+import com.smarttoni.utils.HttpHelper;
+import com.smarttoni.utils.Strings;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -33,16 +39,31 @@ public class GetArchivedOrder extends RequestCallback {
 
     @Override
     public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse r) {
-        new HttpClient(context).getHttpClient().loadOrders(ServiceLocator.getInstance().getSmarttoniContext().getRestaurant().getUuid(), "", 10, 0).enqueue(new Callback<List<SyncOrder>>() {
+
+        JSONObject jsonObject = HttpHelper.postDataToJson(request);
+        String orderId = "";
+        boolean isExternal = false;
+        try {
+            orderId = jsonObject.getString("lastOrder");
+            isExternal = jsonObject.getBoolean("isExternal");
+        } catch (JSONException e) {}
+
+        new HttpClient(context).getHttpClient().loadOrders(ServiceLocator.getInstance().getSmarttoniContext().getRestaurant().getUuid(), orderId, 10, isExternal).enqueue(new Callback<List<SyncOrder>>() {
             @Override
             public void onResponse(Call<List<SyncOrder>> call, Response<List<SyncOrder>> response) {
 
                 Gson gson = GSONBuilder.createGSON();
 
-
                 StringBuilder builder = new StringBuilder("[");
 
                 for (SyncOrder o : response.body()) {
+                    for(SyncCourse c:o.courses){
+                        for(SyncMeal m: c.meals){
+                            for (SyncOrderLine ol:m.orderLines){
+                                ol.qty = (ol.outputQuantity *  ol.quantity) + ol.outputUnitSymbol;
+                            }
+                        }
+                    }
                     builder.append(gson.toJson(o));
                     builder.append(",");
                 }

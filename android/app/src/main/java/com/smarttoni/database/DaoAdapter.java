@@ -452,6 +452,8 @@ public interface DaoAdapter {
 
     List<Order> getUpdatedOrders();
 
+    List<Order> listOrdersByType(int type);
+
     void deleteAllStations();
 
     void deleteAllOrder();

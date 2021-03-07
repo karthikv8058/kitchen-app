@@ -606,6 +606,11 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
+    public List<Order> listOrdersByType(int type) {
+        return getDaoSession().getOrderDao().queryBuilder().where(OrderDao.Properties.Type.eq(type)).list();
+    }
+    
+    @Override
     public List<Order> loadOrders() {
         return getDaoSession().getOrderDao().loadAll();
     }

@@ -18,6 +18,7 @@ import com.smarttoni.entities.Course;
 import com.smarttoni.entities.Meal;
 import com.smarttoni.entities.Order;
 import com.smarttoni.entities.OrderLine;
+import com.smarttoni.entities.Recipe;
 import com.smarttoni.http.HttpClient;
 import com.smarttoni.models.wrappers.CourseWrapper;
 import com.smarttoni.models.wrappers.MealWrapper;
@@ -30,6 +31,8 @@ import com.smarttoni.sync.orders.SyncMeal;
 import com.smarttoni.sync.orders.SyncOrder;
 import com.smarttoni.sync.orders.SyncOrderLine;
 import com.smarttoni.utils.DateUtil;
+import com.smarttoni.utils.HttpHelper;
+import com.smarttoni.utils.UnitHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,9 +59,15 @@ public class GetOrders extends RequestCallback {
     //@Override
     @Override
     public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+
+
+        JSONObject jsonObject = HttpHelper.postDataToJson(request);
+        int type = 0;
+        try {
+            type = jsonObject.getInt("type");
+        } catch (JSONException e) {}
+
         DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
-
-
 
 //        new HttpClient(context).getHttpClient().loadOrders(ServiceLocator.getInstance().getSmarttoniContext().getRestaurant().getUuid(), "", 10,0).enqueue(new Callback<List<SyncOrder>>() {
 //            @Override
@@ -107,7 +116,7 @@ public class GetOrders extends RequestCallback {
 //        builder.append("]");
 
 
-        List<Order> orders = daoAdapter.loadOrders();
+        List<Order> orders = daoAdapter.listOrdersByType(type);
 
         List<SyncOrder> orderWrappers = new ArrayList<>();
 
@@ -115,9 +124,6 @@ public class GetOrders extends RequestCallback {
         for (Order order : orders) {
             if (order.getCourses().size() > 0) {
                 SyncOrder orderWrapper = new SyncOrder();
-                if (order.getType() == Order.TYPE_EXTERNAL) {
-                    continue;
-                }
                 orderWrapper.uuid = order.getId();
                 orderWrapper.table = order.getTableNo();
                 orderWrapper.status = order.getStatus();
@@ -149,6 +155,11 @@ public class GetOrders extends RequestCallback {
 //                                recipeWrapper.setOutPutUnit(orderLine.getRecipe().getOutputUnit().getSymbol());
 //                            }
                             recipeWrapper.recipeName = orderLine.getRecipe().getName();
+                            Recipe r = orderLine.getRecipe();
+                            if(r != null) {
+                                recipeWrapper.qty = UnitHelper.convertToString(orderLine.getRecipe().getOutputQuantity() * orderLine.getQty(),orderLine.getRecipe().getOutputUnit());
+                                recipeWrapper.image = r.getImageUrl();
+                            }
                             recipeWrappers.add(recipeWrapper);
                         }
                         mealWrapper.orderLines = recipeWrappers;
@@ -172,8 +183,8 @@ public class GetOrders extends RequestCallback {
         Collections.reverse(orderWrappers);
 
         Gson gson = GSONBuilder.createGSON();
-        Type type = new TypeToken<List<SyncOrder>>() {
+        Type t = new TypeToken<List<SyncOrder>>() {
         }.getType();
-        response.send(gson.toJson(orderWrappers, type));
+        response.send(gson.toJson(orderWrappers, t));
     }
 }

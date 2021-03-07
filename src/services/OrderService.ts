@@ -15,30 +15,30 @@ export default class OrderService {
         this.apiBuilder = apiBuilder;
     }
 
-    getAllOrders(pageCount: number) {
+    getAllOrders(type: number) {
         return new Promise((resolve, reject) => {
-            this.httpClient.get(this.apiBuilder!.paths!.orders
-               ).then(response => {
-                   console.log(response);
-                    resolve(response);
-                }).catch(error => {
-                    resolve(null);
-                });
+            this.httpClient.post(this.apiBuilder!.paths!.orders, { type }
+            ).then(response => {
+                console.log(response);
+                resolve(response);
+            }).catch(error => {
+                resolve(null);
+            });
         });
     }
 
-    loadOrderFromWeb() {
+    loadOrderFromWeb(isExternal: boolean, lastOrder: string) {
         return new Promise((resolve, reject) => {
-            this.httpClient.get(this.apiBuilder!.paths!.archivedOrders
-               ).then(response => {
-                   console.log(response);
-                    resolve(response);
-                }).catch(error => {
-                    resolve(null);
-                });
+            this.httpClient.post(this.apiBuilder!.paths!.archivedOrders, { isExternal, lastOrder }
+            ).then(response => {
+                console.log(response);
+                resolve(response);
+            }).catch(error => {
+                resolve(null);
+            });
         });
     }
-    
+
 
     loadExternalOrders(
         successesCallback: (response: Order[]) => void,

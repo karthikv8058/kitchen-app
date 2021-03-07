@@ -47,7 +47,7 @@ class Order extends AbstractComponent<Props, State> {
     }
 
     formatDate = (deliveryTime: string) => {
-        if(deliveryTime){
+        if (deliveryTime) {
             let date = new Date(Number(deliveryTime));
             if (date.toString() != 'Invalid Date') {
                 let day = date.getDate();
@@ -59,6 +59,14 @@ class Order extends AbstractComponent<Props, State> {
             }
         }
         return '';
+    }
+
+    getUrl(url : string){
+        var pattern = /^((http|https):\/\/)/;
+        if(!pattern.test(url)) {
+            url = this.apiBuilder.paths.imageUrl + url;
+        }
+        return url;
     }
 
     renderMeal = (course: any) => {
@@ -82,18 +90,18 @@ class Order extends AbstractComponent<Props, State> {
                     flexDirection: 'column',
                 }}>
                     {
-                        course.meals.map((orderLine: any) => {
-                            return orderLine.recipes.map((meals) => {
-                                let unit = !!meals.OutPutUnit ? meals.OutPutUnit : ''
+                        course.meals.map((meal: any) => {
+                            return meal.orderLines.map((orderLine) => {
+                                let unit = !!orderLine.OutPutUnit ? orderLine.OutPutUnit : ''
                                 return (
                                     <View style={{
                                         flexDirection: 'row',
                                     }}>
                                         <Image style={{ flex: 1.5, height: 70, width: 70, margin: 5, borderRadius: 15 }}
-                                            source={!!meals.recipe && meals.recipe.image ? { uri: this.apiBuilder.paths.imageUrl + meals.recipe.image } : placeholderImage} >
+                                            source={orderLine.image ? { uri: this.getUrl(orderLine.image) } : placeholderImage} >
                                         </Image>
                                         <Text style={{ flex: 3.5, color: colors.white, marginTop: 15 }}>
-                                            {(!!meals.recipeName && meals.recipeName != '') ? meals.recipeName + ' (' + meals.qty+')' : ''}
+                                            {(!!orderLine.recipeName && orderLine.recipeName != '') ? orderLine.recipeName + ' (' + orderLine.qty + ')' : ''}
                                         </Text>
 
                                     </View>

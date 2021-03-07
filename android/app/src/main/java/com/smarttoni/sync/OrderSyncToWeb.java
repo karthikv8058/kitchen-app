@@ -10,9 +10,11 @@ import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.entities.Course;
 import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalOrderRequest;
+import com.smarttoni.entities.Label;
 import com.smarttoni.entities.Meal;
 import com.smarttoni.entities.Order;
 import com.smarttoni.entities.OrderLine;
+import com.smarttoni.entities.Recipe;
 import com.smarttoni.http.HttpClient;
 import com.smarttoni.sync.orders.SyncCourse;
 import com.smarttoni.sync.orders.SyncMeal;
@@ -23,11 +25,15 @@ import com.smarttoni.sync.orders.SyncOrders;
 import com.smarttoni.utils.AppState;
 import com.smarttoni.utils.LocalStorage;
 import com.smarttoni.utils.DateUtil;
+import com.smarttoni.utils.PrinterManager;
 import com.smarttoni.utils.Strings;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,6 +82,25 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                     AppState.initialOrderSyncCompleted = true;
 
                     List<SyncOrder> orders = orderWrapper.getOrders();
+
+
+//                    Map<String, List<String>> labelWithRecipe = new HashMap<>();
+//                    for (Map.Entry<String, Integer> entry : recipeList.entrySet()) {
+//                        Recipe recipe1 = daoAdapter.getRecipeById(entry.getKey());
+//                        String[] values = {};
+//                        if (recipe1.getParentLabel() != null) {
+//                            values = recipe1.getParentLabel().split(",");
+//                        }
+//                        for (String labelId : values) {
+//                            if (labelWithRecipe.get(labelId) != null) {
+//                                labelWithRecipe.get(labelId).add(recipe1.getId());
+//                            } else {
+//                                List<String> recipes = new ArrayList<>();
+//                                recipes.add(recipe1.getId());
+//                                labelWithRecipe.put(labelId, recipes);
+//                            }
+//                        }
+//                    }
 
                     for (SyncOrder o : orders) {
                         Order _order = daoAdapter.getOrderById(o.uuid);
@@ -153,6 +178,14 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
 
 
                                     daoAdapter.saveOrderLine(orderLine);
+                                    Recipe r= daoAdapter.getRecipeById(orderLine.getRecipeId());
+                                    if(r != null && r.getParentLabel() != null){
+                                        String[] labels = r.getParentLabel().split(",");
+                                        for(String label: labels){
+                                            Label l = daoAdapter.loadLabelById(label);
+                                            PrinterManager.getInstance().printOrder(l,r.getId(),order.getTableNo(),course.getDeliveryTime(),"");
+                                        }
+                                    }
                                 }
                             }
                             AssignmentFactory.getInstance().processOrder(context, order);

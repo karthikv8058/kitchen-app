@@ -34,7 +34,6 @@ import com.smarttoni.server.controlles.order.GetOrderDetails;
 import com.smarttoni.server.controlles.order.GetOrders;
 import com.smarttoni.server.controlles.order.GetPrinterData;
 import com.smarttoni.server.controlles.order.LoadArchivedOrder;
-import com.smarttoni.server.controlles.order.LoadOrderFromWeb;
 import com.smarttoni.server.controlles.order.PlaceExternalOrder;
 import com.smarttoni.server.controlles.order.getExternalOrders;
 import com.smarttoni.server.controlles.order.getOrderItems;
@@ -111,7 +110,6 @@ public class HttpRoute {
         mHttpServer.post("/place-external-order", new PlaceExternalOrder(context));
         mHttpServer.post("/external-overview-orders", new getExternalOrders(context));
         mHttpServer.post("/delete-external-order", new DeleteExternalOrder(context));
-        mHttpServer.post("/load-order-from-web", new LoadOrderFromWeb(context));
         mHttpServer.post("/load-archived-order", new LoadArchivedOrder(context));
         mHttpServer.post("/get-all-recipes", new GetAllRecipes(context));
         mHttpServer.post("/add-new-ingredient", new AddNewIngredient(context));
@@ -121,8 +119,8 @@ public class HttpRoute {
 
 
 
-        mHttpServer.get("/orders", new GetOrders(context));
-        mHttpServer.get("/archived-orders", new GetArchivedOrder(context));
+        mHttpServer.post("/orders", new GetOrders(context));
+        mHttpServer.post("/archived-orders", new GetArchivedOrder(context));
 
         //Devv
         mHttpServer.get("/dev-stations", new DevStationList(context));

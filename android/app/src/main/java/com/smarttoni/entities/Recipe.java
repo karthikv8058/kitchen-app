@@ -13,7 +13,6 @@ import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
-
 public class Recipe extends RealmObject {
 
     public static final int TYPE_NORMAL = 1;

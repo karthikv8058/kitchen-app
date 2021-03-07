@@ -28,6 +28,7 @@ interface Props {
 }
 interface State {
     order: IOrder[];
+    archivedOrder: IOrder[];
     isLoading: boolean;
     activeOrderId: string;
 }
@@ -45,6 +46,7 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
         super(props);
         this.state = {
             order: [],
+            archivedOrder: [],
             isLoading: true,
             activeOrderId: ''
         };
@@ -73,22 +75,47 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
     }
 
     loadOrders() {
-        this.orderService.loadExternalOrders((response: IOrder[]) => {
-            if (responseChecker(response, this.props.navigation)) {
-                if (response == null || response.length == 0) {
-                    this.loadorederFromWeb();
-                } else {
-                    this.setState({
-                        order: response.reverse(),
-                        isLoading: false,
-                    });
-                }
-            } else {
+        this.setState({
+            isLoading: true
+        })
+
+        this.orderService.getAllOrders(1).then(orders => {
+            if(orders != null && orders.length > 0 ){
                 this.setState({
-                    order: [],
                     isLoading: false,
-                });
+                    order: orders,
+                    isLazyLoading: false
+                })
+            }else{
+                this.loadOrderFromWeb();
             }
+
+        }, (error: Error) => {
+            this.setState({ isLoading: false });
+        });
+    }
+
+    loadOrderFromWeb() {
+
+        this.setState({
+            isLoading: true
+        })
+
+        let lastOrder = ""
+        let orders = this.getOrders();
+        if(orders.length > 0 ){
+            let o = orders[orders.length-1];
+            if(o){
+                lastOrder = o.uuid
+            }
+        }
+
+        this.orderService.loadOrderFromWeb(true,lastOrder).then(orders => {
+            this.setState({
+                archivedOrder: this.state.archivedOrder.concat(orders),
+                isLoading: false
+            })
+
         }, (error: Error) => {
             this.setState({ isLoading: false });
         });
@@ -158,58 +185,6 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
 
     }
 
-    loadorederFromWeb = () => {
-        this.alreadyLoaded = true
-        this.setState({
-            isLoading: true
-        })
-        this.orderService.loadorederFromWeb(1).then((response) => {
-            if (responseChecker(response, this.props.navigation)) {
-                if (!!response) {
-                    this.orderService.loadArchivedOrder(1).then((archivedOrder: any) => {
-                        let orderList: any = this.state.order
-                        archivedOrder.orders.forEach((element: any) => {
-                            let isExist: boolean = false;
-                            this.state.order.forEach((order: IOrder) => {
-                                if (order.orderId === element.orderId) {
-                                    isExist = true
-                                }
-                            });
-                            if (!isExist) {
-                                orderList.push(element)
-                            }
-                        });
-
-                        if (orderList.length > 0) {
-                            this.setState({
-                                order: orderList,
-                                isLoading: false
-                            })
-                        } else {
-                            this.setState({
-                                isLoading: false
-                            })
-                        }
-
-                    }, (error: Error) => {
-                        this.setState({ isLoading: false });
-                    });
-                } else {
-                    this.setState({
-                        isLoading: true
-                    })
-                }
-
-            } else {
-                this.setState({
-                    isLoading: true
-                })
-            }
-        }, (error: Error) => {
-            this.setState({ isLoading: false });
-        });
-    }
-
     toggleModal = (orderId: string) => {
         this.setState({
             activeOrderId: orderId
@@ -227,7 +202,26 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
         );
     }
 
+
+
+    getOrders = () => {
+
+        let orders = [];
+        if(this.state.order != null && this.state.order.length > 0){
+            orders = orders.concat(this.state.order);
+        }
+
+        if(this.state.archivedOrder != null && this.state.archivedOrder.length > 0){
+            orders = orders.concat(this.state.archivedOrder);
+        }
+
+        return orders.filter(o =>  o!= null);
+    }
+
     render() {
+
+        let orders =  this.getOrders();
+
         return (
             <AppBackground
                 navigation={this.props.navigation}
@@ -253,19 +247,18 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
                             <FlatList
                                 style={styles.basicContainer}
                                 extraData={this.state}
-                                data={this.state.order}
+                                data={orders}
                                 contentContainerStyle={{ flexGrow: 1 }}
                                 ListFooterComponent=
                                 {<View style={styles.bottomView}>
                                     {this.state.isLoading ? <LoaderWithText text='Loading order' /> : null}
                                 </View>}
                                 onEndReached={({ distanceFromEnd }) => {
-                                    this.loadorederFromWeb()
+                                    this.loadOrderFromWeb()
                                 }}
                                 renderItem={this.renderOrder}
                             />
                         </View>
-                        {!this.alreadyLoaded ? this.loadorederFromWeb() : null}
                     </View>
                 </View>
             </AppBackground>

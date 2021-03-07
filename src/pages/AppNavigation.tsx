@@ -14,7 +14,7 @@ import BlankPage from './BlankPage';
 import ChatPage from './ChatPage';
 import LoginUserListPage from './LoginUserListPage';
 import TaskOverviewPage from './TaskOverviewPage';
-import OrderOverview from './OrderOverView';
+import OrderOverView from '@pages/OrderOverView/OrderOverView';
 import InventoryPage from './InventoryPage';
 import SmarttoniWeb from './SmarttoniWeb';
 import ShutdownPage from './ShutdownPage';
@@ -56,7 +56,7 @@ function AppNavigation() {
                 <Stack.Screen name="ChatPage" component={ChatPage} />
 
                 <Stack.Screen name="TaskOverview" component={TaskOverviewPage} />
-                <Stack.Screen name="OrderOverview" component={OrderOverview} />
+                <Stack.Screen name="OrderOverview" component={OrderOverView} />
                 <Stack.Screen name="OrientationSelectionPage" component={OrientationSelectionPage} />
 
                 <Stack.Screen name="ExternalOrderOverView" component={ExternalOrderOverView} />
