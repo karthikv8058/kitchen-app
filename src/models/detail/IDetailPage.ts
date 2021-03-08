@@ -4,6 +4,8 @@ import ITaskStep from "./ITaskStep";
 import Work from "@models/Work";
 
 export default interface DetailPageResponse {
+    name: string;
+    parentTask: string;
     station: Station;
     recipe: Recipe;
     work: Work;
