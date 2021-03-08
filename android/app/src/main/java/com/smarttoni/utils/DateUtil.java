@@ -15,8 +15,15 @@ public class DateUtil {
     public static String STANDARD_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZZZZ";
 
 
+    public static String ORDER_DATE_FORMAT = "dd-MM-yyyy HH:mm";
+
+
+    public static String formatDate(long date,String format) {
+        return formatDate(new Date((date)), format);
+    }
+
     public static String formatDate(long date) {
-        return formatDate(new Date((date)), SERVER_DATE_FORMAT);
+        return formatDate(date,SERVER_DATE_FORMAT);
     }
 
     public static String formatStandardDate(Date date) {

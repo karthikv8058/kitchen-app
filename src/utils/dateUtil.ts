@@ -18,7 +18,12 @@ export const getTime = (date: Date) => {
     return padNumber(date.getDate()) + '.' + (monthNames[date.getMonth()]) + '.' + date.getFullYear();
 };
 
-export const getDifferenceTime = (deliveryTime: number): string => {    
+export const getDifferenceTime = (deliveryTime: number | undefined): string => {   
+    
+    if(deliveryTime == undefined){
+        return "";
+    }
+    
     let currentTime = Date.now();
     let dates = new Date(deliveryTime);
     let milliseconds=deliveryTime

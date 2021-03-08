@@ -10,7 +10,7 @@ import LoginUserListPage from '@pages/LoginUserListPage';
 import LoginWithPasswordPage from '@pages/LoginWithPasswordPage';
 import MenuPage from '@pages/MenuPage';
 import OrderDetailPage from '@pages/OrderDetailPage';
-import OrderOverView from '@pages/OrderOverView';
+import OrderOverView from '@pages/OrderOverView/OrderOverView';
 import PosPage from '@pages/PosPage';
 import Recipe from '@pages/RecipeDetailPage';
 import RecipeLookUp from '@pages/RecipeLookUp';

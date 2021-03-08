@@ -7,6 +7,7 @@ import com.smarttoni.assignment.interventions.InterventionManager;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.core.SmarttoniContext;
 import com.smarttoni.entities.AppLog;
+import com.smarttoni.entities.ArchivedOrder;
 import com.smarttoni.entities.ArchivedOrders;
 import com.smarttoni.entities.ArchivedOrdersDao;
 import com.smarttoni.entities.ChefActivityLog;
@@ -53,6 +54,7 @@ import com.smarttoni.entities.PrinterData;
 import com.smarttoni.entities.PrinterDataDao;
 import com.smarttoni.entities.Rack;
 import com.smarttoni.entities.Recipe;
+import com.smarttoni.entities.RecipeDao;
 import com.smarttoni.entities.RecipeIngredients;
 import com.smarttoni.entities.RecipeIngredientsDao;
 import com.smarttoni.entities.RestaurantSettings;
@@ -328,6 +330,16 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
+    public void saveArchivedOrder(ArchivedOrder order) {
+        getDaoSession().getArchivedOrderDao().insert(order);
+    }
+
+    @Override
+    public List<ArchivedOrder> listArchivedOrder() {
+        return getDaoSession().getArchivedOrderDao().loadAll();
+    }
+
+    @Override
     public void saveOrder(Order order) {
         saveOrder(order, false);
     }
@@ -594,6 +606,11 @@ public class GreenDaoAdapter implements DaoAdapter {
                 .where(OrderDao.Properties.IsArchive.notEq(1)).list();
     }
 
+    @Override
+    public List<Order> listOrdersByType(int type) {
+        return getDaoSession().getOrderDao().queryBuilder().where(OrderDao.Properties.Type.eq(type)).list();
+    }
+    
     @Override
     public List<Order> loadOrders() {
         return getDaoSession().getOrderDao().loadAll();
@@ -1190,22 +1207,17 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public Recipe getRecipeByPrinterName(String printerName) {
-        Realm realm = Realm.getDefaultInstance();
-        List<Recipe> recipeList = realm.copyFromRealm(realm.where(Recipe.class).equalTo("printerName", printerName).limit(1).findAll());
+
+        List<Recipe> recipeList = getDaoSession().getRecipeDao().queryBuilder().where(RecipeDao.Properties.PrinterName.eq(printerName)).limit(1).list();
         if (recipeList.size() > 0) {
             return recipeList.get(0);
         }
-        realm.close();
         return null;
     }
 
     @Override
     public void updateRecipe(Recipe recipe) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.insertOrUpdate(recipe);
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().update(recipe);
     }
 
     @Override
@@ -1250,11 +1262,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 }
         }
 
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealm(recipes);
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().insertInTx(recipes);
 
         getDaoSession().getTaskDao().deleteByKeyInTx(taskIds);
         getDaoSession().
@@ -1307,22 +1315,12 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public Recipe getRecipeById(String id) {
-        Realm realm = Realm.getDefaultInstance();
-        Recipe recipe = realm.where(Recipe.class).equalTo("id", id).findFirst();
-        if (recipe != null) {
-            return realm.copyFromRealm(recipe);
-        }
-        realm.close();
-        return null;
+        return  getDaoSession().getRecipeDao().load(id);
     }
 
     @Override
     public void deleteRecipe(List<String> ids) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.where(Recipe.class).in("id", ids.toArray(new String[0])).findAll().deleteAllFromRealm();
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().deleteByKeyInTx(ids);
     }
 
     @Override
@@ -1378,19 +1376,12 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void deleteAllRecipe() {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.where(Recipe.class).findAll().deleteAllFromRealm();
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().deleteAll();
     }
 
     @Override
     public List<Recipe> loadRecipes() {
-        Realm realm = Realm.getDefaultInstance();
-        List<Recipe> recipes = realm.copyFromRealm(realm.where(Recipe.class).sort("name", Sort.ASCENDING).findAll());
-        realm.close();
-        return recipes;
+        return getDaoSession().getRecipeDao().queryBuilder().orderAsc(RecipeDao.Properties.Name).list();
     }
 
     @Override

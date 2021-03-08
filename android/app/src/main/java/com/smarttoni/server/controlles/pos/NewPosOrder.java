@@ -17,6 +17,7 @@ import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.core.SmarttoniContext;
 import com.smarttoni.entities.Label;
 import com.smarttoni.entities.Printer;
+import com.smarttoni.utils.PrinterManager;
 import com.smarttoni.utils.Strings;
 import com.smarttoni.auth.HttpSecurityRequest;
 import com.smarttoni.database.DbOpenHelper;
@@ -111,34 +112,19 @@ public class NewPosOrder extends HttpSecurityRequest {
 
     private void printOrderDetails(NewPosOrderModel order) {
         Map<String, Integer> recipeList = new HashMap<>();
-        Map<String, List<String>> labelWithRecipe = new HashMap<>();
+
 
         for (PosOrderMeal orderMeal : order.getMeals()) {
             for (PosRecipe recipe : orderMeal.getRecipes()) {
-//<<<<<<< HEAD
                 if (recipeList.get(recipe.getId()) != null) {
                     recipeList.put(recipe.getId(), recipeList.get(recipe.getId()) + 1);
                 } else {
                     recipeList.put(recipe.getId(), 1);
-//=======
-//                Recipe recipe1 = greenDaoAdapter.getRecipeById(recipe.getId());
-//                String[] values = {};
-//                if(recipe1.getParentLabel() != null){
-//                    values = recipe1.getParentLabel().split(",");
-//                }
-//                for (String labelId : values) {
-//                    if (labelWithRecipes.get(labelId) != null) {
-//                        labelWithRecipes.get(labelId).add(recipe.getId());
-//                    } else {
-//                        List<String> recipes = new ArrayList<>();
-//                        recipes.add(recipe.getId());
-//                        labelWithRecipes.put(labelId, recipes);
-//                    }
-//>>>>>>> f/external_order_mapping
                 }
             }
         }
 
+        Map<String, List<String>> labelWithRecipe = new HashMap<>();
         for (Map.Entry<String, Integer> entry : recipeList.entrySet()) {
             Recipe recipe1 = greenDaoAdapter.getRecipeById(entry.getKey());
             String[] values = {};
@@ -156,6 +142,9 @@ public class NewPosOrder extends HttpSecurityRequest {
             }
         }
 
+
+
+
         for (Map.Entry<String, List<String>> entry : labelWithRecipe.entrySet()) {
             String recipeName = "";
             for (String a : entry.getValue()) {
@@ -170,46 +159,7 @@ public class NewPosOrder extends HttpSecurityRequest {
     }
 
     private void PrintLabelDetails(Label label, String recipe, NewPosOrderModel order) {
-        if (Strings.isEmpty(label.getPrinterUuid())) {
-            return;
-        }
-        Printer printerObject = greenDaoAdapter.getPrinterDataById(label.getPrinterUuid());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date = sdf.format(new Date(Long.parseLong(order.getDeliveryTime())));
-        String createdDate = sdf.format(new Date());
-        String labelName=label.getName();
-        String table = order.getTableNumber() == null || order.getTableNumber() == "" ? "--" : order.getTableNumber();
-        if (printerObject != null) {
-            new Thread(() -> {
-                try {
-                    EscPosPrinter printer = new EscPosPrinter(new TcpConnection(printerObject.getIpAddress(), Integer.parseInt(String.valueOf(printerObject.getPort()))), 203, 48f, 32);
-                    printer.printFormattedTextAndCut(
-                            "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, context.getResources().getDrawableForDensity(R.drawable.smarttoni, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
-                                    "[L]\n" +
-                                    "[C]<font size='normal'>Order Received </font>\n" +
-                                    "[L]\n" +
-                                    "[C]=========================================\n" +
-                                    "[L]\n" +
-                                    "[L]\n" + "Table             : " + table +
-                                    "[L]\n" +
-                                    "[L]\n" + "Order received at : " + createdDate +
-                                    "[L]\n" + "Delivery Time     : " + date +
-                                    "[L]\n" +
-                                    "[L]\n" + "Label             : " + labelName +
-                                    "[L]\n" +
-                                    "[L]\n" + "Recipe            : " +recipe +
-                                    "[L]\n" + "Ordering Staff    : " + getUser().getName() +
-                                    "[L]\n" +
-                                    "[C]=========================================\n" +
-                                    "[L]\n" + "[L]\n" +
-                                    "[L]SmartTONi\n"
-                    );
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
-
+        PrinterManager.getInstance().printOrder(label,recipe,order.getTableNumber(), Long.parseLong(order.getDeliveryTime()),getUser().getName());
     }
 
     private Order setOrderDetails(NewPosOrderModel order, PosOrderMeal orderMealItem) {

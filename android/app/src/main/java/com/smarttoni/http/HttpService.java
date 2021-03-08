@@ -106,7 +106,7 @@ public interface HttpService {
     Call<Chat> chat(@Field("query") String query, @Field("session") String session);
 
     @GET("api/1.0/mobile/{restaurant_uuid}/orders/load")
-    Call<List<SyncOrder>> loadOrders(@Path(value = "restaurant_uuid", encoded = true) String restaurantId,  @Query("reference") String uuid, @Query("pageSize") int pageSize, @Query("externalOrder") int externalOrder);
+    Call<List<SyncOrder>> loadOrders(@Path(value = "restaurant_uuid", encoded = true) String restaurantId,  @Query("reference") String uuid, @Query("pageSize") int pageSize, @Query("externalOrder") boolean externalOrder);
 
     @POST("public/user/login")
     Call<WebLoginModel> syncWebData(

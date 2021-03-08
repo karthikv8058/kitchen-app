@@ -29,10 +29,11 @@ import com.smarttoni.server.controlles.order.DeleteOrder;
 import com.smarttoni.server.controlles.order.DeletePrinterMessage;
 import com.smarttoni.server.controlles.order.FetchOrder;
 import com.smarttoni.server.controlles.order.FinishOrder;
+import com.smarttoni.server.controlles.order.GetArchivedOrder;
 import com.smarttoni.server.controlles.order.GetOrderDetails;
+import com.smarttoni.server.controlles.order.GetOrders;
 import com.smarttoni.server.controlles.order.GetPrinterData;
 import com.smarttoni.server.controlles.order.LoadArchivedOrder;
-import com.smarttoni.server.controlles.order.LoadOrderFromWeb;
 import com.smarttoni.server.controlles.order.PlaceExternalOrder;
 import com.smarttoni.server.controlles.order.getExternalOrders;
 import com.smarttoni.server.controlles.order.getOrderItems;
@@ -109,13 +110,17 @@ public class HttpRoute {
         mHttpServer.post("/place-external-order", new PlaceExternalOrder(context));
         mHttpServer.post("/external-overview-orders", new getExternalOrders(context));
         mHttpServer.post("/delete-external-order", new DeleteExternalOrder(context));
-        mHttpServer.post("/load-order-from-web", new LoadOrderFromWeb(context));
         mHttpServer.post("/load-archived-order", new LoadArchivedOrder(context));
         mHttpServer.post("/get-all-recipes", new GetAllRecipes(context));
         mHttpServer.post("/add-new-ingredient", new AddNewIngredient(context));
         mHttpServer.post("/test-station-printer", new TestStationPrinter(context));
         mHttpServer.post("/ping-ip", new PingIp(context));
         mHttpServer.post("/get-printers", new getPrinters(context));
+
+
+
+        mHttpServer.post("/orders", new GetOrders(context));
+        mHttpServer.post("/archived-orders", new GetArchivedOrder(context));
 
         //Devv
         mHttpServer.get("/dev-stations", new DevStationList(context));

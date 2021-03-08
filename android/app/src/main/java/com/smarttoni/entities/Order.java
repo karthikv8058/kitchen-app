@@ -72,6 +72,9 @@ public class Order {
 
     @Property(nameInDb = "isArchive")
     private boolean isArchive;
+    
+    @Property
+    private int sort;
 
 //    @Property
 //    private String parentOrderId;
@@ -100,10 +103,10 @@ public class Order {
     @Generated(hash = 949219203)
     private transient OrderDao myDao;
 
-    @Generated(hash = 1420000041)
+    @Generated(hash = 241484941)
     public Order(@NotNull String id, String tableNo, int status, boolean isInventory, int type,
             long printerDataId, long createdAt, long updatedAt, long modification, boolean isStarted,
-            boolean isArchive, int childOrderStatus, boolean processed, boolean isUpdated) {
+            boolean isArchive, int sort, int childOrderStatus, boolean processed, boolean isUpdated) {
         this.id = id;
         this.tableNo = tableNo;
         this.status = status;
@@ -115,6 +118,7 @@ public class Order {
         this.modification = modification;
         this.isStarted = isStarted;
         this.isArchive = isArchive;
+        this.sort = sort;
         this.childOrderStatus = childOrderStatus;
         this.processed = processed;
         this.isUpdated = isUpdated;
@@ -346,6 +350,14 @@ public class Order {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getSort() {
+        return this.sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
     }
 
     /** called by internal mechanisms, do not call yourself. */

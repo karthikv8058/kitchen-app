@@ -250,7 +250,7 @@ android {
 }
 
 greendao {
-    schemaVersion 21
+    schemaVersion 22
 }
 
 dependencies {
