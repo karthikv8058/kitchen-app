@@ -54,6 +54,7 @@ import com.smarttoni.entities.PrinterData;
 import com.smarttoni.entities.PrinterDataDao;
 import com.smarttoni.entities.Rack;
 import com.smarttoni.entities.Recipe;
+import com.smarttoni.entities.RecipeDao;
 import com.smarttoni.entities.RecipeIngredients;
 import com.smarttoni.entities.RecipeIngredientsDao;
 import com.smarttoni.entities.RestaurantSettings;
@@ -1206,22 +1207,17 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public Recipe getRecipeByPrinterName(String printerName) {
-        Realm realm = Realm.getDefaultInstance();
-        List<Recipe> recipeList = realm.copyFromRealm(realm.where(Recipe.class).equalTo("printerName", printerName).limit(1).findAll());
+
+        List<Recipe> recipeList = getDaoSession().getRecipeDao().queryBuilder().where(RecipeDao.Properties.PrinterName.eq(printerName)).limit(1).list();
         if (recipeList.size() > 0) {
             return recipeList.get(0);
         }
-        realm.close();
         return null;
     }
 
     @Override
     public void updateRecipe(Recipe recipe) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.insertOrUpdate(recipe);
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().update(recipe);
     }
 
     @Override
@@ -1266,11 +1262,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                 }
         }
 
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealm(recipes);
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().insertInTx(recipes);
 
         getDaoSession().getTaskDao().deleteByKeyInTx(taskIds);
         getDaoSession().
@@ -1323,22 +1315,12 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public Recipe getRecipeById(String id) {
-        Realm realm = Realm.getDefaultInstance();
-        Recipe recipe = realm.where(Recipe.class).equalTo("id", id).findFirst();
-        if (recipe != null) {
-            return realm.copyFromRealm(recipe);
-        }
-        realm.close();
-        return null;
+        return  getDaoSession().getRecipeDao().load(id);
     }
 
     @Override
     public void deleteRecipe(List<String> ids) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.where(Recipe.class).in("id", ids.toArray(new String[0])).findAll().deleteAllFromRealm();
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().deleteByKeyInTx(ids);
     }
 
     @Override
@@ -1394,19 +1376,12 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void deleteAllRecipe() {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.where(Recipe.class).findAll().deleteAllFromRealm();
-        realm.commitTransaction();
-        realm.close();
+        getDaoSession().getRecipeDao().deleteAll();
     }
 
     @Override
     public List<Recipe> loadRecipes() {
-        Realm realm = Realm.getDefaultInstance();
-        List<Recipe> recipes = realm.copyFromRealm(realm.where(Recipe.class).sort("name", Sort.ASCENDING).findAll());
-        realm.close();
-        return recipes;
+        return getDaoSession().getRecipeDao().queryBuilder().orderAsc(RecipeDao.Properties.Name).list();
     }
 
     @Override

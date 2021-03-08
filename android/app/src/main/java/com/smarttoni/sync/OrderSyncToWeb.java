@@ -183,7 +183,7 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                                         String[] labels = r.getParentLabel().split(",");
                                         for(String label: labels){
                                             Label l = daoAdapter.loadLabelById(label);
-                                            PrinterManager.getInstance().printOrder(l,r.getId(),order.getTableNo(),course.getDeliveryTime(),"");
+                                            PrinterManager.getInstance().printOrder(l,r.getName(),order.getTableNo(),course.getDeliveryTime(),"");
                                         }
                                     }
                                 }

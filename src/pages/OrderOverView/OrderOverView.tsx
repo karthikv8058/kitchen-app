@@ -307,7 +307,9 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
                     isLazyLoading: false
                 })
             }else{
-                
+                this.setState({
+                    isLoading: false
+                })
                 this.loadOrderFromWeb();
             }
 

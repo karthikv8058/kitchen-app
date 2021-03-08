@@ -6,8 +6,9 @@ public class SyncOrderLine {
     public String recipeName;
     public String image;
     public float quantity;
-    public String qty;
 
+
+    public String qty;
     public float outputQuantity;
     public String outputUnitSymbol;
 }

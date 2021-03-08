@@ -4,16 +4,18 @@ import com.google.gson.annotations.SerializedName;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.models.Locales;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.Date;
 import java.util.List;
+import org.greenrobot.greendao.annotation.Generated;
 
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 
-public class Recipe extends RealmObject {
+@Entity
+public class Recipe{
 
     public static final int TYPE_NORMAL = 1;
     public static final int TYPE_INGREDIENT = 2;
@@ -24,11 +26,11 @@ public class Recipe extends RealmObject {
     public static final int INVENTORY_NO_STOCK = 2;
     public static final int INVENTORY_INFINITY = 3;
 
-    @Ignore
+    @Transient
     private long duration;
 
     @SerializedName("uuid")
-    @PrimaryKey
+    @Id
     private String id;
 
     private String name;
@@ -47,7 +49,7 @@ public class Recipe extends RealmObject {
     @SerializedName("outputUnit")
     private String outputUnitId;
 
-    @Ignore
+    @Transient
     private Units outputUnits;
 
     private String roomId;
@@ -109,29 +111,68 @@ public class Recipe extends RealmObject {
         this.taskIngredientComaSperatad = taskIngredientComaSperatad;
     }
 
-    @Ignore
+    @Transient
     @SerializedName("label_uuids")
     private List<String> labelIds;
 
 
-    @Ignore
+    @Transient
     @SerializedName("storage")
     private List<StorageItems> storageItems;
 
-    @Ignore
+    @Transient
     @SerializedName("locales")
     private List<Locales> locales;
 
-    @Ignore
+    @Transient
     @SerializedName("ingredients")
     private List<RecipeIngredients> recipeIngredients;
 
-    @Ignore
+    @Transient
     private List<Modifier> modifiers;
 
-    @Ignore
+    @Transient
     @SerializedName("recipe_tasks")
     private List<Task> tasks;
+
+    @Generated(hash = 146789254)
+    public Recipe(String id, String name, String printerName, String description,
+            float outputQuantity, String color, String outputUnitId, String roomId,
+            String storageId, String rackId, String placeId, String imageUrl,
+            Date createdAt, Date updatedAt, String recipeCategoryId, String lookUp,
+            int type, int status, int version, String productBarcode,
+            String parentLabel, String taskIngredientComaSperatad, String supplier,
+            String supplierName, int inventoryType) {
+        this.id = id;
+        this.name = name;
+        this.printerName = printerName;
+        this.description = description;
+        this.outputQuantity = outputQuantity;
+        this.color = color;
+        this.outputUnitId = outputUnitId;
+        this.roomId = roomId;
+        this.storageId = storageId;
+        this.rackId = rackId;
+        this.placeId = placeId;
+        this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.recipeCategoryId = recipeCategoryId;
+        this.lookUp = lookUp;
+        this.type = type;
+        this.status = status;
+        this.version = version;
+        this.productBarcode = productBarcode;
+        this.parentLabel = parentLabel;
+        this.taskIngredientComaSperatad = taskIngredientComaSperatad;
+        this.supplier = supplier;
+        this.supplierName = supplierName;
+        this.inventoryType = inventoryType;
+    }
+
+    @Generated(hash = 829032493)
+    public Recipe() {
+    }
 
 
     public List<String> getLabelIds() {
