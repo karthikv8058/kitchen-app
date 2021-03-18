@@ -53,6 +53,19 @@ class TaskStep extends AbstractComponent<Props, State> {
   private offset = 0;
   private scrollBeginsFrom = 0;
 
+  private cookingWishes = [
+    {
+      cookingWishesId: 1,
+      cookingWishes:
+        "Wishes 1 Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.",
+    },
+    {
+      cookingWishesId: 2,
+      cookingWishes:
+        "Wishes 2 The passage is attributed to an unknown typesetter in the 15th century ",
+    },
+  ];
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -240,6 +253,7 @@ class TaskStep extends AbstractComponent<Props, State> {
       }
     });
   }
+
   render() {
     return (
       <ScrollView
@@ -281,7 +295,30 @@ class TaskStep extends AbstractComponent<Props, State> {
                 {this.props.step.description}
               </Text>
             ) : null}
-
+            {
+              <View
+                style={{
+                  paddingLeft: 25,
+                  paddingRight: 5,
+                  paddingBottom: 10,
+                }}
+              >
+                {this.cookingWishes.length > 0 &&
+                  this.cookingWishes.map((item: any) => {
+                    return (
+                      <Text
+                        key={item.cookingWishesId}
+                        style={{
+                          color: "red",
+                          fontSize: 10,
+                        }}
+                      >
+                        {`\u2022 ${item.cookingWishes}`}
+                      </Text>
+                    );
+                  })}
+              </View>
+            }
             {this.renderImage(this.props.step)}
           </View>
           <View
