@@ -47,28 +47,31 @@ public class GetOrderDetails extends HttpSecurityRequest {
             OrderData orderData = new OrderData();
             Order order = greenDaoAdapter.getOrderById(orderId);
 
-            List<Work> workList = new ArrayList<>();
-            order.getCourses();
-            for (Course course : order.getCourses()) {
-                course.getMeals();
-                for (Meal meal : course.getMeals()) {
-                    meal.getOrderLine();
-                    for (OrderLine orderLine : meal.getOrderLine()) {
-                        orderLine.getRecipe();
-                        orderLine.getModifiers();
-                        List<Work> works = greenDaoAdapter.getworkByorderLine(orderLine.getId());
-                        for (Work work : works) {
-                            Work w = work.cloneWithoutNextTask();
-                            w.getOrderLineId();
-                            w.updateOutput();
-                            workList.add(w);
+            if(order != null){
+                List<Work> workList = new ArrayList<>();
+                order.getCourses();
+                for (Course course : order.getCourses()) {
+                    course.getMeals();
+                    for (Meal meal : course.getMeals()) {
+                        meal.getOrderLine();
+                        for (OrderLine orderLine : meal.getOrderLine()) {
+                            orderLine.getRecipe();
+                            orderLine.getModifiers();
+                            List<Work> works = greenDaoAdapter.getworkByorderLine(orderLine.getId());
+                            for (Work work : works) {
+                                Work w = work.cloneWithoutNextTask();
+                                w.getOrderLineId();
+                                w.updateOutput();
+                                workList.add(w);
+                            }
                         }
                     }
                 }
+                orderData.order = order;
+                orderData.work = workList;
+                orderData.chefActivityLogs = greenDaoAdapter.getChefActivityByOrderId(orderId);
             }
-            orderData.order = order;
-            orderData.work = workList;
-            orderData.chefActivityLogs = greenDaoAdapter.getChefActivityByOrderId(orderId);
+
             Gson gson = GSONBuilder.createGSON();
             Type type = new TypeToken<OrderData>() {
             }.getType();

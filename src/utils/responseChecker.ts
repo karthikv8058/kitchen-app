@@ -2,7 +2,6 @@ import { AsyncStorage } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 import { setAuthToken } from '../redux/AppActions';
 import store from '../redux/store';
-import t from '@translate';
 
 export const responseChecker = (response: any, navigation: any) => {
     if (response.error === 403) {

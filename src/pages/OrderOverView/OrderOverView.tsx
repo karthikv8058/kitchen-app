@@ -6,34 +6,23 @@ import colors from '@theme/colors';
 import t from '@translate';
 import React from 'react';
 import {
-    ActivityIndicator,
     AsyncStorage,
     FlatList,
-    Image,
-    Modal,
-    ScrollView,
     StyleSheet,
     Text,
     ToastAndroid,
     TouchableOpacity,
     View,
-    Task,
-    Alert,
     Dimensions,
 } from 'react-native';
 import ioc, { Bind } from '../../ioc/ServiceContainer';
 import { menuCategory, OPEN_ORDER } from '../../utils/constants';
 import { responseChecker } from '../../utils/responseChecker';
-import Icon from 'react-native-vector-icons/Feather';
-import AclNavigation from '../../acl/AclNavigation';
 import SwipeView from '@components/SwipeView';
-import { userRights } from '../../utils/userRights';
 import Icons from 'react-native-vector-icons/Entypo';
 import OrderService from '@services/OrderService';
-//import Order from '@models/Order';
 import courses from '@models/Course';
 import PermissionService from '@services/PermissionService';
-import NavigationService from '@services/NavigationService';
 import LoaderWithText from '@components/LoaderWithText';
 import Orientation from 'react-native-orientation-locker';
 
@@ -50,7 +39,7 @@ interface State {
     screen: any,
     isPortrait: boolean,
     endReached: boolean,
-    height:number
+    height: number
 }
 
 export default class OrderOverview extends AbstractComponent<Props, State> {
@@ -77,7 +66,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
             isPortrait: false,
 
             endReached: false,
-            height:0
+            height: 0
         };
 
     }
@@ -300,13 +289,16 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
             isLoading: true
         })
         this.orderService.getAllOrders(0).then(orders => {
-            if(orders != null && orders.length > 0 ){
+            if (orders != null && orders.length > 0) {
                 this.setState({
                     isLoading: false,
                     order: orders,
                     isLazyLoading: false
                 })
-            }else{
+                if (orders.length <= 10) {
+                    this.loadOrderFromWeb();
+                }
+            } else {
                 this.setState({
                     isLoading: false
                 })
@@ -320,7 +312,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     }
 
     loadOrderFromWeb() {
-        if(this.state.isLoading){
+        if (this.state.isLoading) {
             return;
         }
         this.setState({
@@ -329,13 +321,13 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
 
         let lastOrder = ""
         let orders = this.getOrders();
-        if(orders.length > 0 ){
-            let o = orders[orders.length-1];
-            if(o){
+        if (orders.length > 0) {
+            let o = orders[orders.length - 1];
+            if (o) {
                 lastOrder = o.uuid
             }
         }
-        this.orderService.loadOrderFromWeb(false,lastOrder).then(orders => {
+        this.orderService.loadOrderFromWeb(false, lastOrder).then(orders => {
             this.setState({
                 archivedOrder: this.state.archivedOrder.concat(orders),
                 isLoading: false
@@ -353,7 +345,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     }
 
     onLayout() {
-        const {height} = Dimensions.get('window');
+        const { height } = Dimensions.get('window');
         Orientation.getOrientation((orientation) => {
             if (orientation === 'PORTRAIT') {
                 this.setState({
@@ -375,15 +367,15 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
 
     getOrders = () => {
         let orders = [];
-        if(this.state.order != null && this.state.order.length > 0){
+        if (this.state.order != null && this.state.order.length > 0) {
             orders = orders.concat(this.state.order);
         }
 
-        if(this.state.archivedOrder != null && this.state.archivedOrder.length > 0){
+        if (this.state.archivedOrder != null && this.state.archivedOrder.length > 0) {
             orders = orders.concat(this.state.archivedOrder);
         }
 
-        return orders.filter(o =>  o!= null);
+        return orders.filter(o => o != null);
     }
 
     render() {
@@ -399,7 +391,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
             >
 
                 <View onLayout={this.onLayout.bind(this)} style={styles.viewContainer}>
-                    <View style={{flex: 1, height: this.state.height}}>
+                    <View style={{ flex: 1, height: this.state.height }}>
                         {/* {this.renderPrinterModal()} */}
                         {/* {this.state.isLoading ?
                             <View style={styles.loaderStyle}>

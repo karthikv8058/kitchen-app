@@ -1,4 +1,4 @@
-import ApiBuilder from '@api/routes';
+import ApiBuilder, { APIs } from '@api/routes';
 import Work from '@models/Work';
 
 import HttpClient from './HttpClient';
@@ -53,7 +53,7 @@ pingIp(taskId:any){
                     resolve(true);
                 }).catch(() => resolve(false));
             } else {
-                this.httpClient.post(this!.apiBuilder!.paths!.CheckToFinish, { taskId: work.id }).then(response => {
+                this.httpClient.post(this.apiBuilder!.getRounte(APIs.checkTaskCanFinish), { taskId: work.id }).then(response => {
                     if (response) {
                         this.httpClient.post(this!.apiBuilder!.paths!.updateTask,
                             { status: 4, queueId: work.id, time: 0 }).then((responses: any) => {

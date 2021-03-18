@@ -135,8 +135,8 @@ public class GetOrders extends RequestCallback {
                 for (Course course : order.getCourses()) {
                     SyncCourse courseWrapper = new SyncCourse();
                     courseWrapper.uuid = course.getId();
-                    courseWrapper.deliveryDate = DateUtil.formatDate(course.getActualDeliveryTime(),DateUtil.ORDER_DATE_FORMAT);
-                    courseWrapper.expectedDate = DateUtil.formatDate(course.getDeliveryTime(),DateUtil.ORDER_DATE_FORMAT);
+                    courseWrapper.deliveryDate = DateUtil.formatDate(course.getDeliveryTime(),DateUtil.STANDARD_DATE_FORMAT);
+                    courseWrapper.expectedDate = DateUtil.formatDate(course.getActualDeliveryTime(),DateUtil.STANDARD_DATE_FORMAT);
                     courseWrapper.uuid = course.getId();
                     courseWrapper.onCall = course.getIsOnCall();
                     //courseWrapper.deliveryDate = course.getActualDeliveryTime()

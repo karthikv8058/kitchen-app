@@ -61,6 +61,14 @@ export default class OrderView extends AbstractComponent<Props, State> {
         }
     }
 
+
+    editOrder = (orderId: string) => {
+        this.setState({
+            modalVisible: false,
+        });
+        this.props.editOrder!(this.orderId)
+    }
+
     renderDeleteOrderAlert() {
         return (
             <Modal
@@ -74,7 +82,7 @@ export default class OrderView extends AbstractComponent<Props, State> {
                         <View style={{ flexDirection: 'column' }}>
                             {this.permissionService.hasPermission(Action.EDIT_ORDER) &&
                                 <Text style={styles.textHeader}
-                                    onPress={() => this.props.editOrder!(this.orderId)}>
+                                    onPress={() => this.editOrder(this.orderId)}>
                                     {t('order-overview.edit')}</Text>}
                             <Text style={styles.textHeader}
                                 onPress={this.goToDetails}>{t('order-overview.Details')}</Text>

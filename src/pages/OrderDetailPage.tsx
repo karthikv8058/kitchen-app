@@ -64,7 +64,12 @@ export default class OrderDetailPage extends AbstractComponent<Props, State> {
     loadOrder(stationList: Station[]) {
         this.orderService.getOrderList(this.orderId, (response) => {
             if (responseChecker(response, this.props.navigation)) {
-                this.loadUserList(response, stationList);
+                if(response.order != null){
+                    this.loadUserList(response, stationList);
+                }else{
+                    this.setState({ isLoading: false });
+                }
+                
             }
         }, (error: Error) => {
             this.setState({ isLoading: false });

@@ -1,7 +1,6 @@
 
 interface Paths {
     updateTask: string;
-    CheckToFinish: string;
     getTask: string;
     getRecipes: string;
     getRecipesAndLabels: string;
@@ -52,6 +51,11 @@ interface Paths {
     getPrinterList: string
 }
 
+
+export const APIs = {
+    checkTaskCanFinish: "check-task-to-finish"
+}
+
 export default class ApiBuilder {
     public paths?: Paths = undefined;
     private baseURL?: string = '';
@@ -77,7 +81,6 @@ export default class ApiBuilder {
     _buildPaths() {
         this.paths = {
             updateTask: this.baseURL + 'update-task',
-            CheckToFinish: this.baseURL + 'check-task-to-finish',
             getTask: this.baseURL + 'get-task',
             getRecipes: this.baseURL + 'get-recipes',
             getRecipesAndLabels: this.baseURL + 'get-recipe-labels',
@@ -128,4 +131,10 @@ export default class ApiBuilder {
             getPrinterList: 'get-printers'
         };
     }
+
+    getRounte = (route: string) => {
+        return this.baseURL + route;
+    }
 }
+
+

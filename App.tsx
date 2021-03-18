@@ -24,7 +24,6 @@ import { HTTP_CLIENT } from './src/ioc/ServiceContainer';
 import { byteArrayToString } from './src/utils/commonUtil';
 import Manual from '@components/Manual';
 import NavigationService from '@services/NavigationService';
-//import AppNavigator from '@pages/AppNavigator';
 import AppNavigation from '@pages/AppNavigation';
 import AsyncStorage from '@react-native-community/async-storage';
 

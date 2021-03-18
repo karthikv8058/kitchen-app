@@ -14,24 +14,32 @@ const monthNames = [
     'December'
 ];
 
+export const formatDate = (date: Date) => {
+    let yyyy = date.getFullYear().toString();                                    
+    let mm = (date.getMonth()+1).toString();    
+    let dd  = date.getDate().toString();             
+
+    let h= date.getHours();
+    let m= date.getMinutes()
+    return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]) + " "+h+":"+m;
+}
+
 export const getTime = (date: Date) => {
     return padNumber(date.getDate()) + '.' + (monthNames[date.getMonth()]) + '.' + date.getFullYear();
 };
 
-export const getDifferenceTime = (deliveryTime: number | undefined): string => {   
+export const getDifferenceTime = (deliveryTime: Date): string => {   
     
     if(deliveryTime == undefined){
         return "";
     }
-    
-    let currentTime = Date.now();
-    let dates = new Date(deliveryTime);
-    let milliseconds=deliveryTime
-    if(dates.toString()!='Invalid Date'){
-        milliseconds=new Date(deliveryTime).getTime();
+    if(deliveryTime.toString()=='Invalid Date'){
+        return "";
     }
-    let difference: number = milliseconds- currentTime;
+    let currentTime = Date.now();
+    let difference: number = deliveryTime.getTime() - currentTime;
 
+    console.log(deliveryTime,difference);
     let isDelayed = true;
     if (difference < 0) {
         isDelayed = false;

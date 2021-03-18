@@ -86,6 +86,9 @@ export default class ExternalOrderOverView extends AbstractComponent<Props, Stat
                     order: orders,
                     isLazyLoading: false
                 })
+                if (orders.length <= 10) {
+                    this.loadOrderFromWeb();
+                }
             }else{
                 this.setState({
                     isLoading: false

@@ -6,7 +6,6 @@ import ApiBuilder from '@api/routes';
 import Modal from 'react-native-modal';
 import t from '@translate';
 import ioc, { HTTP_CLIENT } from '../ioc/ServiceContainer';
-import AclNavigation from './src/acl/AclNavigation';
 
 export default class CheckingTask extends Component {
     state = {

@@ -6,8 +6,6 @@ import t from '@translate';
 import React from 'react';
 import { ActivityIndicator, Text, View, StyleSheet, Image, FlatList, ScrollView, ListRenderItemInfo } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
-import AclNavigation from '../acl/AclNavigation';
 import ioc, { HTTP_CLIENT, Bind } from '../ioc/ServiceContainer';
 import { menuCategory, RECIPE_LOOKUP } from '../utils/constants';
 import { responseChecker } from '../utils/responseChecker';
@@ -38,7 +36,6 @@ export default class RecipeDetailPage extends AbstractComponent<Props, State> {
     private isIngredeint: Boolean = false;
     constructor(props: Props) {
         super(props);
-        // this.aclNavigation = new AclNavigation(this.props.navigation);
         this.recipeId = this.props.route.params.recipeId;
         this.state = {
             recipeDetails: [],

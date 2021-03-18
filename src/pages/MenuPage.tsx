@@ -18,18 +18,13 @@ import {
 import {
     TouchableNativeFeedback, TouchableOpacity,
 } from 'react-native-gesture-handler';
-import { SwipeRow } from 'react-native-swipe-list-view';
 import Icon from 'react-native-vector-icons/Feather';
-import { NavigationActions, StackActions } from 'react-navigation';
 import { responseChecker } from '../utils/responseChecker';
-import AclNavigation from '../acl/AclNavigation';
-import ioc, { HTTP_CLIENT, Bind } from '../ioc/ServiceContainer';
 import { setAuthToken } from '../redux/AppActions';
 import store from '../redux/store';
 import { Cancel, LogOut } from '../utils/constants';
 import { userRights } from '../utils/userRights';
 import UserService from '@services/UserService';
-import ApiBuilder from '@api/routes';
 import NavigationService from '@services/NavigationService';
 import PermissionService from '@services/PermissionService';
 

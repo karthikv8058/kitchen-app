@@ -2,7 +2,7 @@ import colors from '@theme/colors';
 import t from '@translate';
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { getDifferenceTime } from '../../utils/dateUtil';
+import { formatDate, getDifferenceTime } from '../../utils/dateUtil';
 import AbstractComponent from '@components/AbstractComponent';
 import ICourse from '@models/Course';
 import { Bind } from '../../ioc/ServiceContainer';
@@ -93,7 +93,39 @@ export default class Course extends AbstractComponent<Props, State> {
 
     renderTableContent = () => {
         let course = this.props.course;
-        let timing = 0;//getDifferenceTime(course.deliveryTime)
+
+
+        // if(course.deliveryDate != null && course.expectedDate !=null){
+
+
+        //     let start = Date.parse(course.deliveryDate);
+        //     let end = Date.parse(course.expectedDate);
+
+        //     if(start < end){
+
+        //     }
+
+        //}
+
+
+
+        let timing = "";
+
+        let deliveryDate = null;
+        let expectedDate = null;
+
+        if(course.deliveryDate != null){
+            deliveryDate = new Date(course.deliveryDate);
+        }
+        
+        if(course.expectedDate != null){
+            expectedDate = new Date(course.expectedDate);
+        }
+        if (!!course.deliveryDate && !!course.expectedDate  && !!deliveryDate) {
+            timing = getDifferenceTime(deliveryDate)
+        }
+
+
         return (
             <View style={styles.viewHolder}>
 
@@ -106,18 +138,22 @@ export default class Course extends AbstractComponent<Props, State> {
                     <Text style={styles.tableItemsWhite}>{
                         t('order-overview.table')} {this.props.order.tableNo ? this.props.order.tableNo : "-"}</Text>
                 </View>
-                <View style={{ flexDirection: 'row' }}>
+                {deliveryDate != null && <View style={{ flexDirection: 'row' }}>
                     <Text numberOfLines={1} style={styles.orderDetaillLabel}>{
-                        t('order-overview.to-be-delivered-at')} {course.deliveryDate}</Text>
+                        t('order-overview.to-be-delivered-at')} {formatDate(deliveryDate)}</Text>
                 </View>
+                }
                 <View style={{ flexDirection: 'row' }}>
-                    <Text style={styles.tableItemsWhite}>{
-                        t('order-overview.timing')} {!!timing ? timing : ''}</Text>
+                    {!!timing &&
+                        <Text style={styles.tableItemsWhite}>{
+                            t('order-overview.timing')} {timing} </Text>
+                    }
                 </View>
-                <View style={{ flexDirection: 'row' }}>
+                {expectedDate != null && <View style={{ flexDirection: 'row' }}>
                     <Text style={styles.tableItemsWhite}>{
-                        t('order-overview.actual-delivery-time')} {course.expectedDate}</Text>
-                </View>
+                        t('order-overview.actual-delivery-time')} {formatDate(expectedDate)}</Text>
+                </View>}
+
             </View>
         );
     }

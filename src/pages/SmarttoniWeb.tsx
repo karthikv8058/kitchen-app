@@ -2,7 +2,6 @@ import AbstractComponent from '@components/AbstractComponent';
 import AppBackground from '@components/AppBackground';
 import React from 'react';
 import { WebUrl } from '@native/ClientServer';
-import AclNavigation from '../acl/AclNavigation';
 import { WebView } from 'react-native-webview';
 import { ActivityIndicator, Alert, AsyncStorage, TouchableOpacity, View } from 'react-native';
 import { responseChecker } from '../utils/responseChecker';
@@ -52,9 +51,7 @@ export default class SmarttoniWeb extends AbstractComponent<Props, State> {
                         style={{ height: 40, width: 40, marginBottom: 15 }}>
                         <Icons style={{ marginTop: 10 }} name='swap' size={35} color={colors.white} />
                     </TouchableOpacity>:null}
-                   
                 </View>
-
             );
         
     }
