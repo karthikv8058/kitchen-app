@@ -139,10 +139,6 @@ public class GetOrders extends RequestCallback {
                     courseWrapper.expectedDate = DateUtil.formatDate(course.getActualDeliveryTime(),DateUtil.STANDARD_DATE_FORMAT);
                     courseWrapper.uuid = course.getId();
                     courseWrapper.onCall = course.getIsOnCall();
-                    //courseWrapper.deliveryDate = course.getActualDeliveryTime()
-
-//                    courseWrapper.setActualDeliveryTime(course.getActualDeliveryTime());
-//                    courseWrapper.setDeliveryTime(String.valueOf(course.getDeliveryTime()));
 
                     List<SyncMeal> mealWrappers = new ArrayList<>();
                     for (Meal meal : course.getMeals()) {
@@ -151,14 +147,14 @@ public class GetOrders extends RequestCallback {
                         List<SyncOrderLine> recipeWrappers = new ArrayList<>();
                         for (OrderLine orderLine : meal.getOrderLine()) {
                             SyncOrderLine recipeWrapper = new SyncOrderLine();
-//                            if (orderLine.getRecipe().getOutputUnit() != null) {
-//                                recipeWrapper.setOutPutUnit(orderLine.getRecipe().getOutputUnit().getSymbol());
-//                            }
-                            recipeWrapper.recipeName = orderLine.getRecipe().getName();
+
                             Recipe r = orderLine.getRecipe();
                             if(r != null) {
+                                recipeWrapper.recipeName = r.getName();
                                 recipeWrapper.qty = UnitHelper.convertToString(orderLine.getRecipe().getOutputQuantity() * orderLine.getQty(),orderLine.getRecipe().getOutputUnit());
                                 recipeWrapper.image = r.getImageUrl();
+                            }else{
+                                recipeWrapper.recipeName = "** Recipe Not Found ** ";
                             }
                             recipeWrappers.add(recipeWrapper);
                         }
@@ -173,11 +169,7 @@ public class GetOrders extends RequestCallback {
             }
         }
 
-//        Gson gson = GSONBuilder.createGSON();
-//        Type type = new TypeToken<String>() {
-//        }.getType();
-//        //response.send(gson.toJson());
-//        response.send(builder.toString());
+
 
 
         Collections.reverse(orderWrappers);

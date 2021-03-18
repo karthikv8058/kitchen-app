@@ -27,6 +27,7 @@ import { userRights } from '../utils/userRights';
 import UserService from '@services/UserService';
 import NavigationService from '@services/NavigationService';
 import PermissionService from '@services/PermissionService';
+import { Bind } from '../ioc/ServiceContainer';
 
 interface Props {
     navigation: any;
