@@ -125,6 +125,7 @@ public class UnitHelper {
     }
 
     private static int bestScore(float qty) {
+        qty = (float) Math.ceil(qty);
         if (qty >= 1000) {
             return DIGITS_4Plus;
         } else if (qty >= 100) {

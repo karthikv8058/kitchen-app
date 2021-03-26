@@ -225,6 +225,9 @@ public class Work {
     @Property(nameInDb = "readyToStart")
     private boolean readyToStart;
 
+    @Transient
+    private List<RecipeTag> tags;
+
 
     //1 No transport, 2 immediate,3 with synergy
     @Property(nameInDb = "transportMode")

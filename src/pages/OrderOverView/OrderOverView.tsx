@@ -392,13 +392,6 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
 
                 <View onLayout={this.onLayout.bind(this)} style={styles.viewContainer}>
                     <View style={{ flex: 1, height: this.state.height }}>
-                        {/* {this.renderPrinterModal()} */}
-                        {/* {this.state.isLoading ?
-                            <View style={styles.loaderStyle}>
-                                {!!this.state.isLazyLoading ? <LoaderWithText text='Loading order' /> : null}
-                            </View>
-                            : null} */}
-
                         <FlatList
                             keyExtractor={(item) => item.uuid}
                             scrollEnabled={this.state.enableScroll}

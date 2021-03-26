@@ -139,7 +139,7 @@ export default class Course extends AbstractComponent<Props, State> {
                         t('order-overview.table')} {this.props.order.tableNo ? this.props.order.tableNo : "-"}</Text>
                 </View>
                 {deliveryDate != null && <View style={{ flexDirection: 'row' }}>
-                    <Text numberOfLines={1} style={styles.orderDetaillLabel}>{
+                    <Text style={styles.tableItemsWhite}>{
                         t('order-overview.to-be-delivered-at')} {formatDate(deliveryDate)}</Text>
                 </View>
                 }

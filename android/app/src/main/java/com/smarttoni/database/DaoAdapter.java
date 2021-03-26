@@ -26,6 +26,7 @@ import com.smarttoni.entities.PrinterData;
 import com.smarttoni.entities.Rack;
 import com.smarttoni.entities.Recipe;
 import com.smarttoni.entities.RecipeIngredients;
+import com.smarttoni.entities.RecipeTag;
 import com.smarttoni.entities.RestaurantSettings;
 import com.smarttoni.entities.Room;
 import com.smarttoni.entities.Segment;
@@ -37,6 +38,7 @@ import com.smarttoni.entities.StationTask;
 import com.smarttoni.entities.StepIngrediant;
 import com.smarttoni.entities.Storage;
 import com.smarttoni.entities.Supplier;
+import com.smarttoni.entities.Tag;
 import com.smarttoni.entities.Task;
 import com.smarttoni.entities.TaskIngredient;
 import com.smarttoni.entities.TaskStep;
@@ -51,7 +53,9 @@ import com.smarttoni.entities.Work;
 import com.smarttoni.sync.orders.SyncOrder;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface DaoAdapter {
@@ -658,4 +662,12 @@ public interface DaoAdapter {
     void saveArchivedOrder(ArchivedOrder order);
 
     List<ArchivedOrder> listArchivedOrder();
+
+    void saveTags(@NotNull List<Tag> list);
+
+    void deleteTags(@NotNull List<String> ids);
+
+    void deleteRecipeTag(@Nullable String id);
+
+    void saveRecipeTag(@Nullable RecipeTag tag);
 }

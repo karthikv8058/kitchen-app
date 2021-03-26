@@ -328,6 +328,13 @@ private fun saveRecipesToDb(context: Context, recipes: List<Recipe>, daoAdapter:
                 recipe.roomId = storage.roomId
             }
         }
+        daoAdapter.deleteRecipeTag(recipe.id);
+        if(recipe.tags != null){
+            for (tag in recipe.tags) {
+                val t = RecipeTag(0,tag.tag,recipe.id)
+                daoAdapter.saveRecipeTag(t)
+            }
+        }
         var url: String? = recipe.imageUrl
         if (url == null) {
             url = ""

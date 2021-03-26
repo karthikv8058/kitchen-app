@@ -53,7 +53,6 @@ public class UserManager {
                 }
             }
         }
-        //List<Work> list = queue.queryTaskQueue(context, userId, true, Work.QUEUED + Work.STARTED, 0);
         return result;
     }
 

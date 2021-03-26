@@ -16,6 +16,7 @@ import com.smarttoni.entities.Station;
 import com.smarttoni.entities.Storage;
 import com.smarttoni.entities.StoreRequest;
 import com.smarttoni.entities.Supplier;
+import com.smarttoni.entities.Tag;
 import com.smarttoni.models.SyncData;
 import com.smarttoni.models.SyncWarpper;
 import com.smarttoni.entities.Task;
@@ -47,10 +48,13 @@ import retrofit2.http.Query;
 public interface HttpService {
 
     @GET("api/1.0/mobile/{restaurant_uuid}/sync/recipes")
-    Call<SyncWarpper> syncRecipes(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpsdated);
+    Call<SyncWarpper> syncRecipes(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpdated);
 
     @GET("api/1.0/mobile/{restaurant_uuid}/sync/units")
-    Call<UnitSync> syncUnits(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpsdated);
+    Call<UnitSync> syncUnits(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpdated);
+
+    @GET("api/1.0/mobile/{restaurant_uuid}/sync/tags")
+    Call<SyncData<Tag>> syncTags(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Query("lastUpdated") String lastUpdated);
 
     @GET("api/1.0/mobile/{restaurant_uuid}/sync/storage")
     Call<List<Storage>> syncStorage(@Path(value = "restaurant_uuid", encoded = true) String restaurantId);

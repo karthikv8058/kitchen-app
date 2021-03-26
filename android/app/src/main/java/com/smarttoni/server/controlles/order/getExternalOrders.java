@@ -83,7 +83,11 @@ public class getExternalOrders extends HttpSecurityRequest {
                             recipeWrapper.setSupplier(orderLine.getRecipe().getSupplier());
                             recipeWrapper.setQty(UnitHelper.convertToString(orderLine.getRecipe().getOutputQuantity() * orderLine.getQty(),orderLine.getRecipe().getOutputUnit()));
                             recipeWrappers.add(recipeWrapper);
-
+                        }
+                        if(mealWrappers.isEmpty()){
+                            RecipeWrapper recipeWrapper = new RecipeWrapper();
+                            recipeWrapper.setRecipeName("Deleted Recipe");
+                            recipeWrappers.add(recipeWrapper);
                         }
                         mealWrapper.setRecipes(recipeWrappers);
                         mealWrappers.add(mealWrapper);

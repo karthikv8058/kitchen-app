@@ -80,7 +80,9 @@ class AdvancedStartupPage extends Component<Props, State> {
 
     showLogin = () => {
         const ip = this.state.ip;
+        console.log("-------------------------",ip);
         this.restrauntService.checkRestrauntServer(ip).then(isRestaurantAvailable => {
+            console.log("------------------------->>",isRestaurantAvailable);
             if (isRestaurantAvailable) {
                 if (this.state.remindSettings) {
                     this.storageService.set(Storage.ADVANCED_CONNECTION_IP, ip);
@@ -92,7 +94,11 @@ class AdvancedStartupPage extends Component<Props, State> {
                 this.props.setIP(ip);
                 this.navigationService.push('LoginUserListPage');
             }
-        });
+        })
+        .catch(e=>
+            {
+                console.log(e)
+            });
     }
 
 

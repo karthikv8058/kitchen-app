@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -61,6 +62,14 @@ public class GetArchivedOrder extends RequestCallback {
                         for(SyncMeal m: c.meals){
                             for (SyncOrderLine ol:m.orderLines){
                                 ol.qty = (ol.outputQuantity *  ol.quantity) + ol.outputUnitSymbol;
+                            }
+                            if(m.orderLines == null){
+                                m.orderLines = new ArrayList<>();
+                            }
+                            if(m.orderLines.isEmpty()){
+                                SyncOrderLine ol = new SyncOrderLine();
+                                ol.recipeName = "** Deleted Recipe(s) **";
+                                m.orderLines.add(ol);
                             }
                         }
                     }

@@ -186,11 +186,11 @@ android {
     buildTypes {
         debug {
             buildConfigField "boolean", "isVoiceRecognitionEnabled", "false"
-            buildConfigField "int", "DB_VERSION", "20"
+            buildConfigField "int", "DB_VERSION", "22"
         }
         release {
             buildConfigField "boolean", "isVoiceRecognitionEnabled", "false"
-            buildConfigField "int", "DB_VERSION", "20"
+            buildConfigField "int", "DB_VERSION", "22"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -255,6 +255,9 @@ greendao {
 
 dependencies {
 
+
+    def room_version = "2.2.6"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
@@ -298,8 +301,9 @@ dependencies {
 
 
 
-    //implementation project(':dev_tool')
-
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     // RxJava2 Dependencies

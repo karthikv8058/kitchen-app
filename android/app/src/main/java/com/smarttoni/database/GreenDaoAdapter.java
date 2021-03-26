@@ -57,6 +57,7 @@ import com.smarttoni.entities.Recipe;
 import com.smarttoni.entities.RecipeDao;
 import com.smarttoni.entities.RecipeIngredients;
 import com.smarttoni.entities.RecipeIngredientsDao;
+import com.smarttoni.entities.RecipeTag;
 import com.smarttoni.entities.RestaurantSettings;
 import com.smarttoni.entities.Room;
 import com.smarttoni.entities.Segment;
@@ -75,6 +76,7 @@ import com.smarttoni.entities.StepIngrediantDao;
 import com.smarttoni.entities.Storage;
 import com.smarttoni.entities.StorageDao;
 import com.smarttoni.entities.Supplier;
+import com.smarttoni.entities.Tag;
 import com.smarttoni.entities.Task;
 import com.smarttoni.entities.TaskDao;
 import com.smarttoni.entities.TaskIngredient;
@@ -105,6 +107,7 @@ import com.smarttoni.utils.Strings;
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.query.QueryBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -117,9 +120,14 @@ import io.realm.Sort;
 
 public class GreenDaoAdapter implements DaoAdapter {
 
+
+    AppRoomDatabase roomDatabase ;
+
     private Context context;
 
     public GreenDaoAdapter(Context context) {
+        roomDatabase = androidx.room.Room.databaseBuilder(context.getApplicationContext(),
+                AppRoomDatabase.class, "smarttoni-room").build();
         this.context = context;
     }
 
@@ -337,6 +345,26 @@ public class GreenDaoAdapter implements DaoAdapter {
     @Override
     public List<ArchivedOrder> listArchivedOrder() {
         return getDaoSession().getArchivedOrderDao().loadAll();
+    }
+
+    @Override
+    public void saveTags(@NotNull List<Tag> list) {
+        roomDatabase.tagDao().insertAll(list);
+    }
+
+    @Override
+    public void deleteTags(@NotNull List<String> ids) {
+        roomDatabase.tagDao().deleteById(ids);
+    }
+
+    @Override
+    public void deleteRecipeTag(@Nullable String id) {
+        roomDatabase.recipeTagDao().deleteRecipeTagsByRecipeId(id);
+    }
+
+    @Override
+    public void saveRecipeTag(@Nullable RecipeTag tag) {
+        roomDatabase.recipeTagDao().insertAll(tag);
     }
 
     @Override

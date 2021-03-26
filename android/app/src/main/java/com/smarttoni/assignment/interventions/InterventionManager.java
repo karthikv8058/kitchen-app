@@ -42,7 +42,6 @@ public class InterventionManager {
     private Map<Long, InterventionTimer> map = new HashMap<>();
 
     public void loop(DaoAdapter daoAdapter) {
-//        List<InterventionTimer> t = new ArrayList<>(interventionTimers);
         Iterator<InterventionTimer> timers = interventionTimers.iterator();
         while (timers.hasNext()) {
             InterventionTimer timer = timers.next();
@@ -52,9 +51,6 @@ public class InterventionManager {
             }
             timer.tick(daoAdapter);
         }
-//        for (InterventionTimer timers : t) {
-//            timers.tick(daoAdapter);
-//        }
         pushAllInterventions(daoAdapter);
         checkAllWaitingInterventions(daoAdapter);
     }
@@ -262,9 +258,6 @@ public class InterventionManager {
                 }
             }
         }
-
-
-        //Map<String, Long> userAndWorks = UserManager.getInstance().getUsersAndWorks(ServiceLocator.getInstance().getQueue());
 
         boolean isAssignedUserInOnline = false;
         if (!work.isMachineTask() && work.getStatus() == Work.STARTED && work.getUserId() != null) {

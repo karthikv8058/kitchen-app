@@ -135,6 +135,10 @@ public class Recipe{
     @SerializedName("recipe_tasks")
     private List<Task> tasks;
 
+
+    @Transient
+    public List<RecipeTag> tags;
+
     @Generated(hash = 146789254)
     public Recipe(String id, String name, String printerName, String description,
             float outputQuantity, String color, String outputUnitId, String roomId,

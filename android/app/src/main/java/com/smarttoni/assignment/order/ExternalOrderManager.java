@@ -26,11 +26,8 @@ import java.util.UUID;
 
 public class ExternalOrderManager {
 
-
-
     public class Quantity {
         float required;
-        //int numberOfUnits;
     }
 
     enum CreateExternalOrder {
@@ -38,8 +35,6 @@ public class ExternalOrderManager {
         INVENTORY_AVAILABLE,
         NO_EXTERNAL_ORDER
     }
-
-
 
     private static final ExternalOrderManager INSTANCE = new ExternalOrderManager();
 
@@ -61,10 +56,6 @@ public class ExternalOrderManager {
             Map<String, List<OrderLine>> supplierOrderMap = new HashMap<>();
             Map<String, String> orderUUIDs = new HashMap<>();
             //Group By Supplier & create Orders
-
-
-
-
             outLoop:
             for (String recipeId : qty.keySet()) {
 
@@ -131,19 +122,6 @@ public class ExternalOrderManager {
                 Order o = new Order();
                 o.setId(orderUUIDs.get(supplier));
 
-//                OrderBuilder orderBuilder = new OrderBuilder();
-
-
-//                orderBuilder
-//                        .createCourse()
-//                        .setDeliveryTime(1313L)
-//                        .createMeal()
-//                        .addOrderLine("123", 1)
-//                        .addOrderLine("qwe", 1)
-//                        .saveMeal()
-//                        .saveCourse()
-//                        .build();
-
                 List<OrderLine> orderLines = supplierOrderMap.get(supplier);
                 if (orderLines == null || orderLines.isEmpty()) {
                     continue;
@@ -196,12 +174,6 @@ public class ExternalOrderManager {
         }
 
         if (!isInventoryOrder && recipe.getInventoryType() == Recipe.INVENTORY_MANAGED) {
-//            if (!reserveInventory) { // Only When Tree building
-//                return  CreateExternalOrder.NO_EXTERNAL_ORDER;
-//            }
-//            if(!reserveInventory){
-//                return  CreateExternalOrder.INVENTORY_AVAILABLE;
-//            }
             Inventory inventory = InventoryManagement.checkInInventory(recipe.getId(), "", daoAdapter);
             if (inventory != null) {
                 float _required = requiredQuantity;
@@ -265,12 +237,6 @@ public class ExternalOrderManager {
                             qty.put(r.getId(), currentQty);
                         }
                         currentQty.required = (required * taskIngredient.getQuantity()) + currentQty.required;
-                        //currentQty.numberOfUnits =  actualQty ;//(required * actualQty) + currentQty.numberOfUnits;
-//                        if (currentQty != null) {
-//                            qty.put(r.getId(), (required * actualQty) + currentQty);
-//                        } else {
-//                            qty.put(r.getId(), (required * actualQty));
-//                        }
                     }
 
                 }

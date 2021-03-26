@@ -10,6 +10,7 @@ import {
     AsyncStorage,
     Dimensions,
     Image,
+    LayoutChangeEvent,
     PixelRatio,
     Text,
     ToastAndroid,
@@ -38,6 +39,7 @@ interface State {
     posAccess: boolean;
     inventoryAccess: boolean;
     viewOrder: boolean;
+    orientation: string;
 }
 export default class MenuPage extends AbstractComponent<Props, State> {
 
@@ -54,11 +56,12 @@ export default class MenuPage extends AbstractComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            height:  Dimensions.get('window').height,
+            height: Dimensions.get('window').height,
             width: Dimensions.get('window').width,
             posAccess: false,
             inventoryAccess: false,
-            viewOrder: false
+            viewOrder: false,
+            orientation: "row"
         };
     }
     componentDidMount() {
@@ -90,29 +93,9 @@ export default class MenuPage extends AbstractComponent<Props, State> {
     }
 
     navigate = (route: string, hasPermssion: boolean) => {
-
         if (hasPermssion) {
             this.navigationService.push(route);
         }
-
-        // if (title == 'Inventory') {
-        //     this.navigationService.push(route);
-        //     this.props.navigation.navigate(route)
-        //     // if (!!this.state.inventoryAccess) {
-        //     //     this.props.navigation.navigate(route)
-        //     // } else {
-        //     //     ToastAndroid.show(t('order-overview.view-inventory'), ToastAndroid.SHORT);
-        //     // }
-        // } else if (title == 'Orders') {
-        //     this.props.navigation.navigate(route)
-        //     // if (!!this.state.viewOrder) {
-        //     //     this.props.navigation.navigate(route)
-        //     // } else {
-        //     //     ToastAndroid.show(t('order-overview.view-order'), ToastAndroid.SHORT);
-        //     // }
-        // } else {
-        //     this.props.navigation.navigate(route)
-        // }
     }
 
     renderMenu(menu: Menu) {
@@ -120,11 +103,11 @@ export default class MenuPage extends AbstractComponent<Props, State> {
         return (<TouchableOpacity onPress={this.navigate.bind(this, menu.route, !disabled)}>
             <View style={{
                 justifyContent: 'center',
-                alignItems: 'center', flexDirection: 'column',  flex: 1, padding: 40,
+                alignItems: 'center', flexDirection: 'column', flex: 1, padding: 40,
             }} >
-                <Image style={{ alignSelf: 'center',width:45,height:50, resizeMode: 'center', tintColor: disabled ? "#888" : colors.white }}
+                <Image style={{ alignSelf: 'center', width: 45, height: 50, resizeMode: 'center', tintColor: disabled ? "#888" : colors.white }}
                     source={menu.icon} />
-                <Text style={{marginTop:10, color: disabled ? "#888" : colors.white, textAlign: 'center', fontSize: 16 * PixelRatio.getFontScale() }}>{menu.title}</Text>
+                <Text style={{ marginTop: 10, color: disabled ? "#888" : colors.white, textAlign: 'center', fontSize: 16 * PixelRatio.getFontScale() }}>{menu.title}</Text>
             </View>
         </TouchableOpacity>
         );
@@ -162,10 +145,13 @@ export default class MenuPage extends AbstractComponent<Props, State> {
         return (
             <View style={{ flex: 1, flexDirection: 'row', }}>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
-                    <View style={{ flex: .9, alignItems: 'center', }}>
+                    <View style={{ flex: 1, alignItems: 'center', }}>
                         {this.renderMenu(this.menuMyTasks)}
                     </View>
-                    <View style={{ flex: 1.1, alignItems: 'center', }}>
+                    <View style={{ flex: 1, alignItems: 'center', }}>
+                        {this.renderMenu(this.menuOrder)}
+                    </View>
+                    <View style={{ flex: 1, alignItems: 'center', }}>
                         {this.renderMenu(this.menuOrder)}
                     </View>
                 </View>
@@ -175,14 +161,67 @@ export default class MenuPage extends AbstractComponent<Props, State> {
     renderSecondRow() {
         return (
             <View style={{ flex: 1, flexDirection: 'row' }}>
-                <View style={{ flex: .9, alignItems: 'center', }}>
+                <View style={{ flex: 1, alignItems: 'center', }}>
                     {this.renderMenu(this.menuConcept)}
                 </View>
-                <View style={{ flex: 1.1, alignItems: 'center', }}>
+                <View style={{ flex: 1, alignItems: 'center', }}>
                     {this.renderMenu(this.menuInventory)}
                 </View>
+                <View style={{ flex: 1, alignItems: 'center', }} />
             </View>
         );
+    }
+
+
+    // buildRows = (rows: any) => {
+    //     return (
+    //         <View style={{ flex: 1, flexDirection: 'row' }}>
+    //             {rows}
+    //         </View>);
+
+    // }
+
+    renderRows() {
+        let menuItems : Menu[]= [
+            this.menuMyTasks,
+            this.menuOrder,
+            this.menuConcept,
+            this.menuInventory
+        ];
+        let rowCount = this.state.orientation == "row" ? 3 : 2;
+        let menu = [];
+        while (menuItems.length > 0) {
+            let row = [];
+            for (let i = 0; i < rowCount; i++) {
+                let menuItem = menuItems.shift();
+                if(menuItem == null){
+                    row.push(<View style={{ flex: 1, alignItems: 'center',height: 50 }}/>);
+                    continue;
+                   
+                }
+                row.push(
+                    <View style={{ flex: 1, alignItems: 'center', }}>
+                        {this.renderMenu(menuItem)}
+                    </View>);
+            }
+            menu.push(<View style={{ flex: 1, flexDirection: 'row' }}>
+                {row}
+            </View>);
+        }
+        // return <>{
+        //     menuItems.map(menu => {
+        //         let row = [];
+        //         for (let i = 0; i < rowCount; i++) {
+        //             row.push(
+        //                 <View style={{ flex: 1, alignItems: 'center', }}>
+        //                     {this.renderMenu(this.menuConcept)}
+        //                 </View>);
+        //         }
+        //         return this.buildRows(row)
+        //     })
+        // }
+        // </>
+        return (<>{menu}</>);
     }
     goToWeb(goToProfile: boolean) {
         this.props.navigation.push('SmarttoniWeb', {
@@ -190,7 +229,7 @@ export default class MenuPage extends AbstractComponent<Props, State> {
         });
     }
     renderThirdRow() {
-        let iconSize =25
+        let iconSize = 25
         return (
             <View style={{ flex: .45, flexDirection: 'row', marginRight: 5 }}>
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -251,40 +290,34 @@ export default class MenuPage extends AbstractComponent<Props, State> {
         return (
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1, flexDirection: 'column' }} >
-                    {this.renderFirstRow()}
-                    <View style={{
-                        zIndex: 999,
-                        flexDirection: 'row', flex: .01, height: 60,
-                        justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <View style={{ flex: 1, height: 1, backgroundColor: colors.white, }} />
-                        {this.permissionService.checkRoutePermission('PosPage') && <TouchableOpacity onPress={this.goToPos} >
-                            <View style={{ zIndex: 999, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
-                                <Image style={{ maxHeight: 30 * PixelRatio.getFontScale(), width: 30 * PixelRatio.getFontScale(), resizeMode: 'center', }}
-                                    source={require('@components/assets/neworder.png')} />
-                                <Text style={{
-                                    color: colors.white,
-                                    marginTop: 5,
-                                    fontSize: 16 * PixelRatio.getFontScale(),
-                                }}>New Order</Text>
-                            </View>
-                        </TouchableOpacity>}
-                        <View style={{ flex: .05, height: 1, backgroundColor: colors.white }} />
-                    </View>
-                    {this.renderSecondRow()}
+                    {this.renderRows()}
+                    {/* {this.renderFirstRow()}
+                    <View style={{ height: 1, backgroundColor: colors.white }} />
+                    {this.renderSecondRow()} */}
                     <View style={{ height: 1, backgroundColor: colors.white }} />
                     {this.renderThirdRow()}
                 </View>
             </View >
         );
     }
+
+    onLayout = (event: LayoutChangeEvent) => {
+        let { width, height } = event.nativeEvent.layout
+        let orientation: "row" | "column" = "column";
+        if (width > height) {
+            orientation = "row";
+        }
+        if (this.state.orientation == orientation) return
+        this.setState({ orientation })
+    }
+
     render() {
         return (
             <AppBackground
                 navigation={this.props.navigation}
                 hideBack={true}
                 doNaviagte={true}>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1 }} onLayout={this.onLayout}>
                     {this.renderMenuItems()}
                 </View>
             </AppBackground>

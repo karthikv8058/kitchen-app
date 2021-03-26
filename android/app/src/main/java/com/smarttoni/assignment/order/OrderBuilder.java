@@ -8,6 +8,9 @@ import com.smarttoni.entities.OrderLine;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Planning
+ */
 public class OrderBuilder {
 
     private Order order;

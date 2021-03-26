@@ -125,7 +125,7 @@ export default class OrderView extends AbstractComponent<Props, State> {
                 {this.renderDeleteOrderAlert()}
                 <SwipeView onSwipedRight={this.props.finishOrder!.bind(this, orderId)}
                     disableSwipeToLeft={true}
-                    disableSwipeToRight={this.props.order.status == 1}
+                    disableSwipeToRight={this.props.order.status == 1 || this.props.order.status == 2 }
                     enableScroll={this.props.enableScroll}
                 >
                     <TouchableOpacity

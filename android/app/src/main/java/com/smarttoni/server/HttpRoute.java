@@ -72,7 +72,6 @@ public class HttpRoute {
         mHttpServer.get("/play-video", new GetVideoFile(context));
         mHttpServer.get("/get-image", new GetImageFile(context));
         mHttpServer.post("/login", new Login(context));
-        mHttpServer.post("/new-pos-order", new NewPosOrder(context));
         mHttpServer.post("/get-task", new GetTask(context));
         mHttpServer.post("/update-task", new UpdateTask(context));
         mHttpServer.post("/get-stations", new GetStations(context));
@@ -81,23 +80,20 @@ public class HttpRoute {
         mHttpServer.post("/get-recipes", new GetRecipe(context));
         mHttpServer.get("/get-recipe-labels", new GetRecipesAndLabels(context));
         mHttpServer.post("/station-tasks", new GetStationTaskList(context));
-        mHttpServer.post("/check-order-started", new CheckOrderStarted(context));
         mHttpServer.post("/logout", new UserLogout(context));
         mHttpServer.post("/check-task-to-finish", new CheckTaskToFinish(context));
-        mHttpServer.post("/fetch-order-data", new FetchOrder(context));
-        mHttpServer.post("/finish-order", new FinishOrder(context));
+
         mHttpServer.post("/get-station-list", new StationList(context));
         mHttpServer.post("/unassign-task", new UnassignTask(context));
-        mHttpServer.post("/ping", new Ping(context));
-        mHttpServer.post("/delete-order", new DeleteOrder(context));
+        mHttpServer.get("/ping", new Ping(context));
+
         mHttpServer.post("/get-inventory-data", new GetInventoryList(context));
         mHttpServer.post("/update-inventory-quantity", new UpdateInventory(context));
         mHttpServer.post("/get-printer-data", new GetPrinterData(context));
         mHttpServer.post("/delete-printer-message", new DeletePrinterMessage(context));
         mHttpServer.post("/store-to-analyze", new StoreToAnalyze(context));
         mHttpServer.post("/on-call", new PostOnCall(context));
-        mHttpServer.post("/get-order-details", new GetOrderDetails(context));
-        mHttpServer.post("/overview-task", new getOrderItems(context));
+
         mHttpServer.post("/update-intervention", new UpdateIntervention(context));
         mHttpServer.post("/chat", new PostChat(context));
         mHttpServer.post("/recipe-Details", new RecipeDetails(context));
@@ -107,10 +103,7 @@ public class HttpRoute {
         mHttpServer.post("/image-upload", new ImageUpload(context));
         mHttpServer.post("/get-user-right", new GetUserRights(context));
         mHttpServer.get("/server/details", new ServerDetails());
-        mHttpServer.post("/place-external-order", new PlaceExternalOrder(context));
-        mHttpServer.post("/external-overview-orders", new getExternalOrders(context));
-        mHttpServer.post("/delete-external-order", new DeleteExternalOrder(context));
-        mHttpServer.post("/load-archived-order", new LoadArchivedOrder(context));
+
         mHttpServer.post("/get-all-recipes", new GetAllRecipes(context));
         mHttpServer.post("/add-new-ingredient", new AddNewIngredient(context));
         mHttpServer.post("/test-station-printer", new TestStationPrinter(context));
@@ -118,11 +111,23 @@ public class HttpRoute {
         mHttpServer.post("/get-printers", new getPrinters(context));
 
 
-
+        //Route For Orders
         mHttpServer.post("/orders", new GetOrders(context));
         mHttpServer.post("/archived-orders", new GetArchivedOrder(context));
+        mHttpServer.post("/place-external-order", new PlaceExternalOrder(context));
+        mHttpServer.post("/external-overview-orders", new getExternalOrders(context));
+        mHttpServer.post("/delete-external-order", new DeleteExternalOrder(context));
+        mHttpServer.post("/load-archived-order", new LoadArchivedOrder(context));
+        mHttpServer.post("/get-order-details", new GetOrderDetails(context));
+        mHttpServer.post("/overview-task", new getOrderItems(context));
+        mHttpServer.post("/delete-order", new DeleteOrder(context));
+        mHttpServer.post("/fetch-order-data", new FetchOrder(context));
+        mHttpServer.post("/finish-order", new FinishOrder(context));
+        mHttpServer.post("/new-pos-order", new NewPosOrder(context));
+        mHttpServer.post("/check-order-started", new CheckOrderStarted(context));
 
-        //Devv
+
+        //For Development purpose only
         mHttpServer.get("/dev-stations", new DevStationList(context));
         mHttpServer.get("/dev-users", new DevUserList(context));
         mHttpServer.get("/dev-db", new DownloadDatabase(context));

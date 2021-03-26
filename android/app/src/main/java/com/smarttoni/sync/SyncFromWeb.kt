@@ -50,6 +50,7 @@ class SyncFromWeb {
                     .concatMap { SyncObservable.sync(context, daoAdapter, restaurantId, InventorySyncAdapter()) }
                     .concatMap { SyncObservable.sync(context, daoAdapter, restaurantId, PrinterConfigSyncAdapter()) }
                     .concatMap { SyncObservable.sync(context, daoAdapter, restaurantId, SyncTranportSheet()) }
+                    .concatMap { SyncObservable.sync(context, daoAdapter, restaurantId, TagSyncAdapter()) }
 
                     .subscribe({
 

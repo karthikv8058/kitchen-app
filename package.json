@@ -6,7 +6,7 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "adb": "adb reverse tcp:8081 tcp:8081",
+    "adb": "node ./scripts/adb-reverse.js",
     "test": "jest",
     "lint": "./node_modules/.bin/tslint --project \"tsconfig.json\""
   },

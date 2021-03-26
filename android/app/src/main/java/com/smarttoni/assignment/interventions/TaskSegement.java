@@ -8,6 +8,9 @@ import com.smarttoni.entities.Work;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Planning
+ */
 public abstract class TaskSegement {
 
 

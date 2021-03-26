@@ -141,7 +141,9 @@ public class GetOrders extends RequestCallback {
                     courseWrapper.onCall = course.getIsOnCall();
 
                     List<SyncMeal> mealWrappers = new ArrayList<>();
-                    for (Meal meal : course.getMeals()) {
+
+                    Course c = daoAdapter.getCourseById(course.getId());
+                    for (Meal meal : c.getMeals()) {
                         SyncMeal mealWrapper = new SyncMeal();
                         mealWrapper.uuid = meal.getUuid();
                         List<SyncOrderLine> recipeWrappers = new ArrayList<>();
@@ -154,7 +156,7 @@ public class GetOrders extends RequestCallback {
                                 recipeWrapper.qty = UnitHelper.convertToString(orderLine.getRecipe().getOutputQuantity() * orderLine.getQty(),orderLine.getRecipe().getOutputUnit());
                                 recipeWrapper.image = r.getImageUrl();
                             }else{
-                                recipeWrapper.recipeName = "** Recipe Not Found ** ";
+                                recipeWrapper.recipeName = "** Recipe Not Found **";
                             }
                             recipeWrappers.add(recipeWrapper);
                         }

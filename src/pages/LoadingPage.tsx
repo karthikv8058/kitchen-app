@@ -44,7 +44,7 @@ class LoadingPage extends Component<Props> {
         this.storageService.get(Storage.AUTH_TOKEN).then(token => {
             this.storageService.get(Storage.CONNECTED_SERVER_IP).then(serverIP => {
                 if (token && serverIP) {
-                    this.httpClient.post(this.apiBuilder!.paths!.ping, {}).then(response => {
+                    this.httpClient.get(this.apiBuilder!.paths!.ping).then(response => {
                         this.navigationService.reset("MenuPage");
                     }).catch(error => {
                         this.navigationService.reset("DetectedRestuarants");

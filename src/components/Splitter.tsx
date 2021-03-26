@@ -76,7 +76,7 @@ class Splitter extends Component<Props, State> {
             splitterBarStyle = { width: SPLITER_BAR_THIKNES }
             icon = "drag-vertical"
         } else {
-            firstContainerStyle = { height: this.state.value }
+            firstContainerStyle = { height: this.state.value ,paddingBottom : 14 }
             splitterStyle = { height: SPLITER_THIKNES, flexDirection: "row" }
             splitterBarStyle = { height: SPLITER_BAR_THIKNES }
             secondContainerStyle = { height: ((this.state.dimensions?.height ? this.state.dimensions?.height : 0) - this.state.value - 30) }
