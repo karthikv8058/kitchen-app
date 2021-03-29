@@ -8,6 +8,9 @@ import com.google.gson.annotations.SerializedName
 import com.smarttoni.models.Locales
 
 @Entity
-data class Tag @JvmOverloads constructor(@SerializedName("uuid") @PrimaryKey var id: String, var name: String,@Ignore var locales: List<Locales>? = null) {
+data class Tag @JvmOverloads constructor(
+        @SerializedName("uuid") @PrimaryKey var id: String,
+        var name: String,
+        @Ignore var locales: List<Locales>? = null) {
 
 }

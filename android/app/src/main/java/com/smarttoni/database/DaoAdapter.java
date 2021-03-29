@@ -670,4 +670,8 @@ public interface DaoAdapter {
     void deleteRecipeTag(@Nullable String id);
 
     void saveRecipeTag(@Nullable RecipeTag tag);
+
+    List<RecipeTag> listTagsForRecipe(String id);
+
+    Tag listTagsById(String tagId);
 }

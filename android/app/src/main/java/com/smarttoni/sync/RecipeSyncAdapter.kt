@@ -331,7 +331,13 @@ private fun saveRecipesToDb(context: Context, recipes: List<Recipe>, daoAdapter:
         daoAdapter.deleteRecipeTag(recipe.id);
         if(recipe.tags != null){
             for (tag in recipe.tags) {
-                val t = RecipeTag(0,tag.tag,recipe.id)
+                var canOverride = false;
+                var value = "";
+                if(tag.meta != null){
+                    canOverride = tag.meta!!.canOverride
+                    value = if( tag.meta?.value != null) tag.meta!!.value else ""
+                }
+                val t = RecipeTag(0,tag.tag,recipe.id,canOverride,value)
                 daoAdapter.saveRecipeTag(t)
             }
         }

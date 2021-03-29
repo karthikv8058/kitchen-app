@@ -38,8 +38,6 @@ export const getDifferenceTime = (deliveryTime: Date): string => {
     }
     let currentTime = Date.now();
     let difference: number = deliveryTime.getTime() - currentTime;
-
-    console.log(deliveryTime,difference);
     let isDelayed = true;
     if (difference < 0) {
         isDelayed = false;

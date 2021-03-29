@@ -15,4 +15,7 @@ public interface TagDao {
 
     @Query("DELETE FROM tag WHERE id IN (:tagIds)")
     void deleteById(List<String> tagIds);
+
+    @Query("SELECT *  FROM tag WHERE id = :tagId")
+    Tag listTagById(String tagId);
 }

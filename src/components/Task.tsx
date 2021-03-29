@@ -39,21 +39,6 @@ interface State {
 }
 
 export default class Task extends Component<Props, State> {
-  private stationColor = "";
-  private textcolors = "";
-
-  private cookingWishes = [
-    {
-      cookingWishesId: 1,
-      cookingWishes:
-        "Wishes 1 Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.",
-    },
-    {
-      cookingWishesId: 2,
-      cookingWishes:
-        "Wishes 2 The passage is attributed to an unknown typesetter in the 15th century ",
-    },
-  ];
 
   constructor(props: Props) {
     super(props);
@@ -136,7 +121,7 @@ export default class Task extends Component<Props, State> {
       this.props.work.task.machine &&
       !this.props.work.task.chefInvolved;
     if (isAssigned && !isMachineTask && this.props.navigateToDetail) {
-      this.props.navigateToDetail(this.props.work, this.cookingWishes);
+      this.props.navigateToDetail(this.props.work);
     }
   }
 
@@ -265,18 +250,18 @@ export default class Task extends Component<Props, State> {
                 marginTop: 5,
               }}
             >
-              {this.cookingWishes.length > 0 &&
-                this.cookingWishes.map((item: any) => {
+              {this.props.work.wishes != null && this.props.work.wishes.length > 0 &&
+                this.props.work.wishes.map((item: any) => {
                   return (
                     <Text
                       numberOfLines={1}
-                      key={item.cookingWishesId}
+                      key={item}
                       style={{
-                        color: "red",
+                        color: textColor,
                         fontSize: 10,
                       }}
                     >
-                      {item.cookingWishes}
+                      {item}
                     </Text>
                   );
                 })}

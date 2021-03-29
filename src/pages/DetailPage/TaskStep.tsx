@@ -53,19 +53,6 @@ class TaskStep extends AbstractComponent<Props, State> {
   private offset = 0;
   private scrollBeginsFrom = 0;
 
-  private cookingWishes = [
-    {
-      cookingWishesId: 1,
-      cookingWishes:
-        "Wishes 1 Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.",
-    },
-    {
-      cookingWishesId: 2,
-      cookingWishes:
-        "Wishes 2 The passage is attributed to an unknown typesetter in the 15th century ",
-    },
-  ];
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -303,17 +290,17 @@ class TaskStep extends AbstractComponent<Props, State> {
                   paddingBottom: 10,
                 }}
               >
-                {this.cookingWishes.length > 0 &&
-                  this.cookingWishes.map((item: any) => {
+                {this.props.work != null && this.props.work.wishes != null && this.props.work.wishes.length > 0 &&
+                  this.props.work.wishes.map((item: any) => {
                     return (
                       <Text
-                        key={item.cookingWishesId}
+                        key={item}
                         style={{
                           color: "red",
                           fontSize: 10,
                         }}
                       >
-                        {`\u2022 ${item.cookingWishes}`}
+                        {`\u2022 ${item}`}
                       </Text>
                     );
                   })}

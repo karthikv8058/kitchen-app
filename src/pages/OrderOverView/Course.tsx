@@ -94,21 +94,6 @@ export default class Course extends AbstractComponent<Props, State> {
     renderTableContent = () => {
         let course = this.props.course;
 
-
-        // if(course.deliveryDate != null && course.expectedDate !=null){
-
-
-        //     let start = Date.parse(course.deliveryDate);
-        //     let end = Date.parse(course.expectedDate);
-
-        //     if(start < end){
-
-        //     }
-
-        //}
-
-
-
         let timing = "";
 
         let deliveryDate = null;

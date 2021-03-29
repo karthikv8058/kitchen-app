@@ -25,4 +25,5 @@ export default interface Work {
     timeLeft: number;
     output: String;
     readyToStart:boolean;
+    wishes: string[]
 }

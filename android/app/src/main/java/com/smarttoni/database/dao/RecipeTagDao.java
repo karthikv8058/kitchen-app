@@ -12,6 +12,9 @@ import java.util.List;
 @Dao
 public interface RecipeTagDao {
 
+    @Query("SELECT *  FROM recipeTag WHERE recipe = :recipeId")
+    List<RecipeTag> listTagsForRecipe(String recipeId);
+
     @Query("DELETE FROM recipeTag WHERE recipe = :recipeId")
     void deleteRecipeTagsByRecipeId(String recipeId);
 

@@ -2,12 +2,9 @@ package com.smarttoni.auth;
 
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.google.firebase.crashlytics.internal.common.CrashlyticsCore;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.koushikdutta.async.http.server.HttpServerRequestCallback;
-import com.smarttoni.database.RealmAdapter;
-import com.smarttoni.entities.NetworkLog;
 import com.smarttoni.entities.User;
 
 import org.json.JSONException;
@@ -24,7 +21,7 @@ public abstract class HttpSecurityRequest implements HttpServerRequestCallback {
     @Override
     public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
 
-        long time = new Date().getTime();
+        //long time = new Date().getTime();
         if (getUser(request) == null) {
             response.send("{\"error\":403,\"message\":\"unauthenticated\"}");
         } else {
@@ -36,9 +33,7 @@ public abstract class HttpSecurityRequest implements HttpServerRequestCallback {
                 FirebaseCrashlytics.getInstance().recordException(e);
             }
         }
-        long difference = new Date().getTime() - time;
-        RealmAdapter.getInstance().logNetwork(new NetworkLog(request.getPath(), difference));
-
+       //long difference = new Date().getTime() - time;
     }
 
     private User getUser(AsyncHttpServerRequest request) {

@@ -368,6 +368,16 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
+    public List<RecipeTag> listTagsForRecipe(String id) {
+        return roomDatabase.recipeTagDao().listTagsForRecipe(id);
+    }
+
+    @Override
+    public Tag listTagsById(String tagId) {
+        return roomDatabase.tagDao().listTagById(tagId);
+    }
+
+    @Override
     public void saveOrder(Order order) {
         saveOrder(order, false);
     }

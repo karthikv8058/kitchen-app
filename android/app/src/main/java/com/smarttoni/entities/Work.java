@@ -2,6 +2,7 @@ package com.smarttoni.entities;
 
 
 import com.smarttoni.assignment.service.ServiceLocator;
+import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.utils.UnitHelper;
 
 import org.greenrobot.greendao.DaoException;
@@ -253,9 +254,11 @@ public class Work {
     @Property
     private String extraQuantity;//For End Node Only, After Completion this will add to inventory
 
-
     @Transient
     private transient Work clonedWork;
+
+    @Transient
+    private List<String> wishes;
 
     public Course getCourseObject() {
         return courseObject;
@@ -643,6 +646,21 @@ public class Work {
 //        if (getAssignedStation() != null) {
 //            task.setStationName(getAssignedStation().getName());
 //        }
+
+
+        if(task != null){
+            Recipe r =task.getRecipe();
+            if(r != null){
+                DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
+                List<RecipeTag> tags = daoAdapter.listTagsForRecipe(r.getId());
+                List<String> wishes = new ArrayList();
+                for(RecipeTag _recipeTag : tags){
+                    Tag tag = daoAdapter.listTagsById(_recipeTag.getTag());
+                    wishes.add(tag.getName()+" : "+_recipeTag.getValue());
+                }
+                task.setWishes(wishes);
+            }
+        }
         task.setStationName(stationName);
         return task;
     }
@@ -1512,6 +1530,14 @@ public class Work {
 
     public void setExtraQuantity(String extraQuantity) {
         this.extraQuantity = extraQuantity;
+    }
+
+    public List<String> getWishes() {
+        return wishes;
+    }
+
+    public void setWishes(List<String> wishes) {
+        this.wishes = wishes;
     }
 
     /** called by internal mechanisms, do not call yourself. */
