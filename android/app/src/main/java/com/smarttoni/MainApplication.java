@@ -25,8 +25,6 @@ import org.greenrobot.greendao.database.Database;
 import java.util.List;
 
 import io.cobrowse.CobrowseIO;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -70,7 +68,6 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     public void onTerminate() {
-        Realm.getDefaultInstance().close();
         super.onTerminate();
     }
 
@@ -78,15 +75,6 @@ public class MainApplication extends Application implements ReactApplication {
     public void onCreate() {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
-        Realm.init(this);
-
-
-        final RealmConfiguration configuration = new RealmConfiguration
-                .Builder()
-                .name("smartTNOi.realm")
-                .deleteRealmIfMigrationNeeded()
-                .schemaVersion(BuildConfig.DB_VERSION).build();
-        Realm.setDefaultConfiguration(configuration);
 
         ServiceLocator.getInstance().initBasic(this);
 

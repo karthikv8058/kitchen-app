@@ -13,12 +13,9 @@ export default class RestrauntService {
 
     public checkRestrauntServer(ip: String): Promise<Boolean> {
         return new Promise((resolve, reject) => {
-            console.log(">>>>>><<");
             this.httpClient.get("http://" + ip + ":8888/ping").then(r => {
-                console.log(">>>>>>",r);
                 resolve(true);
             }).catch(e => {
-                console.log(">>>>>>",e);
                 resolve(false);
             })
         });

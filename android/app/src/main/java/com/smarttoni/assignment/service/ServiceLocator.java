@@ -26,7 +26,6 @@ public class ServiceLocator {
     public static final String ASSIGNMENT_SERVICE = "ASSIGNMENT_SERVICE";
     public static final String LOCAL_STORAGE_SERVICE = "LOCAL_STORAGE_SERVICE";
 
-
     public static final String SMARTTONI_CONTEXT = "SMARTTONI_CONTEXT";
     public static final String UDP_MANAGER = "UDP_MANAGER";
 

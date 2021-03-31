@@ -111,79 +111,10 @@ public class TaskTreeBuilder {
 
             daoAdapter.saveInventoryRequirement(order.getId(),recipe.getId(),quantity.actualQuantity);
 
-
             if (qty == quantity.numberOfItems) {
                 recipeCompleted = true;
             }
-
-            //TODO Why????
-//            if (qty == quantity.numberOfItems) {
-//                recipeCompleted = true;
-//            } else if (next == null) {
-//                // if its main recipe
-//                actualQty = orderLine.getQty() - qty;
-//                //orderLine.setQty(actualQty);
-//                //actualQty = recipe.getOutputQuantity() * orderLine.getQty();
-//            } else {
-//                actualQty = orderLine.getQty() - qty;
-//            }
         }
-
-        // Old Inventory Logic, Now Only for manged and no supplier recipe
-        /*boolean haveInfinityQty = recipe.getInventoryType() == Recipe.INVENTORY_INFINITY;
-        if (!order.getIsInventory() && (haveInfinityQty || (recipe.getInventoryType() == Recipe.INVENTORY_MANAGED && Strings.isEmpty(recipe.getSupplier())))) {
-            Inventory inventory = null;
-            if(!haveInfinityQty){
-                inventory = InventoryManagement.checkInInventory(recipe.getId(), orderLine.getModifiers(), daoAdapter);
-            }
-            if (haveInfinityQty || inventory != null) {
-                int inventoryQty = 0;
-                if(inventory != null){
-                    inventoryQty= (int) (inventory.getQuantity() / recipe.getOutputQuantity());
-                }
-
-                if (haveInfinityQty || inventoryQty > 0) {
-                    int qty =  0;
-                    float inventoryTakeQty = 0;
-                    if(!haveInfinityQty){
-                        qty = orderLine.getQty() <= inventoryQty ? (int) orderLine.getQty() : inventoryQty;
-                        inventoryTakeQty = qty * recipe.getOutputQuantity();
-                        InventoryManagement.takeFromInventory(inventory, inventoryTakeQty, daoAdapter);
-                    }else{
-                        qty = (int) orderLine.getQty();
-                        inventoryTakeQty = qty * recipe.getOutputQuantity();
-                    }
-                    //TODO SyncUpdater.Companion.getInstance().syncInventory(context);
-                    //TransportHelper.createInventoryTransportationTask(daoAdapter, Work.TRANSPORT_FROM_INVENTORY, recipe, orderLine, processedTasks, null);
-                    //Work t =TransportHelper.createTransportationTask(null,next,recipe,Work.TRANSPORT_TO_LOCATION,orderLine);
-                    Work t = null;
-                    if (next == null) {
-                        t = TransportHelper.createTransportationTask(null, null, recipe, Work.TRANSPORT_FROM_INVENTORY, orderLine, inventoryTakeQty);
-                        if (t != null) {
-                            t.setIsEndNode(true);
-                        }
-                    } else {
-                        t = TransportHelper.createTransportationTask(null, next, recipe, Work.TRANSPORT_TO_LOCATION, orderLine, inventoryTakeQty);
-                    }
-                    if (t != null) {
-                        daoAdapter.saveWork(t);
-                        works.add(t);
-                    }
-
-                    if (qty == orderLine.getQty()) {
-                        recipeCompleted = true;
-                    } else if (next == null) {
-                        // if its main recipe
-                        actualQty = orderLine.getQty() - qty;
-                        orderLine.setQty(actualQty);
-                        //actualQty = recipe.getOutputQuantity() * orderLine.getQty();
-                    } else {
-                        actualQty = orderLine.getQty() - qty;
-                    }
-                }
-
-            }
-        }*/
 
         if (!recipeCompleted) {
             // List<Work> works = recipeWorks.get(recipe.getId());

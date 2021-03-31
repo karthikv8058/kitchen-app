@@ -31,42 +31,6 @@ public class OrderProcessor {
 
     private boolean inited = false;
 
-    private ModifierAndWorks sameOrderSynergy(DaoAdapter daoAdapter, Recipe recipe, String modifierSeparated, Map<String, List<ModifierAndWorks>> modifierAndWorksMap) {
-        List<ModifierAndWorks> listModifierAndWorks = null;
-        if (recipe != null) {
-            listModifierAndWorks = modifierAndWorksMap.get(recipe.getId());
-        }
-        ModifierAndWorks modifierAndWorks = null;
-        if (listModifierAndWorks == null) {
-            listModifierAndWorks = new ArrayList<>();
-            modifierAndWorks = new ModifierAndWorks();
-            modifierAndWorks.setModifier(modifierSeparated);
-            listModifierAndWorks.add(modifierAndWorks);
-            if (recipe != null)
-                modifierAndWorksMap.put(recipe.getId(), listModifierAndWorks);
-        } else {
-            for (ModifierAndWorks works : listModifierAndWorks) {
-                if (works.getModifier() != null && works.getModifier().equals(modifierSeparated)) {
-
-                    List<Work> listWorks = works.getWorks();
-                    if (listWorks != null) {
-                        for (Work w : listWorks) {
-                            w.setQuantity(w.getQuantity() + 1);
-                            daoAdapter.updateWork(w);
-                        }
-                    }
-                    //TODO Skip Doing Rest
-                    //continue mainLoop;
-                    return null;
-                }
-            }
-            modifierAndWorks = new ModifierAndWorks();
-            modifierAndWorks.setModifier(modifierSeparated);
-            listModifierAndWorks.add(modifierAndWorks);
-        }
-        return modifierAndWorks;
-    }
-
     /**
      * @param context
      * @param mQueue  Assignment Queue
@@ -220,27 +184,6 @@ public class OrderProcessor {
             mQueue.add(work);
         }
         inited = true;
-    }
-
-    class ModifierAndWorks {
-        private String modifier;
-        private List<Work> works;
-
-        public String getModifier() {
-            return modifier;
-        }
-
-        public void setModifier(String modifier) {
-            this.modifier = modifier;
-        }
-
-        public List<Work> getWorks() {
-            return works;
-        }
-
-        public void setWorks(List<Work> works) {
-            this.works = works;
-        }
     }
 }
 

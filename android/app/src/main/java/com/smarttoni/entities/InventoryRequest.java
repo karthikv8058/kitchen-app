@@ -1,14 +1,27 @@
 package com.smarttoni.entities;
 
-import io.realm.RealmObject;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-public class InventoryRequest extends RealmObject {
+@Entity
+public class InventoryRequest {
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
 
     private String orderId;
 
     private String recipeId;
 
     private float qty;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getOrderId() {
         return orderId;

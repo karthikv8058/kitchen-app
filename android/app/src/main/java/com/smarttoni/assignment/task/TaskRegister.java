@@ -34,10 +34,6 @@ public class TaskRegister {
         }
     }
 
-//    public boolean hasIntervention(String userId) {
-//        return register.get(userId) != null && register.get(userId) > 0;
-//    }
-
     public String getUser(Long workId) {
         return reverseRegister.get(workId);
     }

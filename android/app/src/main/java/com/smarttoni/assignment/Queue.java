@@ -79,38 +79,6 @@ public class Queue {
         return list;
     }
 
-//    public List<Work> queryTaskQueue(DaoAdapter daoAdapter, String userId, boolean checkUser, int filter, int limit) {
-//
-//        List<Work> list = new ArrayList<>();
-//        List<Work> queue = new ArrayList<>(mQueue);
-//        Iterator<Work> iterator = queue.iterator();
-//        while (iterator.hasNext()) {
-//            Work t = iterator.next();
-//            //check user
-//            if (userId != null) {
-//                if (checkUser) {
-//                    if (!UserManager.getInstance().isUserAssignedInStation(daoAdapter, t, userId)) {
-//                        continue;
-//                    }
-//                } else {
-//                    if (t.getUser() == null || !t.getUser().getId().equals(userId)) {
-//                        continue;
-//                    }
-//                }
-//            }
-//            //check filter
-//            if (!((t.getStatus() & filter) > 0)) {
-//                continue;
-//            }
-//            t.canStart();
-//            list.add(t);
-//            if (list.size() > 0 && list.size() == limit) {
-//                break;
-//            }
-//        }
-//        return list;
-//    }
-
     public void clear(String orderUUID) {
         List<Work> works = getCloneQueue();
         for (Work work : works) {

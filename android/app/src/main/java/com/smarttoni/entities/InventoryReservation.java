@@ -3,7 +3,6 @@ package com.smarttoni.entities;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 
-import io.realm.RealmObject;
 import org.greenrobot.greendao.annotation.Generated;
 
 @Entity(nameInDb = "InventoryReservation")

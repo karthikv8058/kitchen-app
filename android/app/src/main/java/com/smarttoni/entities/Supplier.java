@@ -1,18 +1,21 @@
 package com.smarttoni.entities;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 import com.smarttoni.models.Locales;
 
 import java.util.List;
 
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
-
-public class Supplier  extends RealmObject {
+@Entity
+public class Supplier  {
 
     @SerializedName("uuid")
     @PrimaryKey
+    @NonNull
     private String id;
 
     private String name;

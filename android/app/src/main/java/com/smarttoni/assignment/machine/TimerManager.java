@@ -75,7 +75,6 @@ public class TimerManager {
             }
             machine.start();
         }
-
     }
 
     public void restart(Work work) {

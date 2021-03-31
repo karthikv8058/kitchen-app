@@ -4,7 +4,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'realm-android'
 
 import com.android.build.OutputFile
 

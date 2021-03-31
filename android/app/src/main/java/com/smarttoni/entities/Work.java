@@ -24,7 +24,6 @@ public class Work {
     public static final int QUEUED = 1;
     public static final int STARTED = 2;
     public static final int COMPLETED = 4;
-    // public static final int WAITING = 16;
     public static final int SCHEDULED = 32;
     public static final int SYNERGY = 64;
     public static final int REMOVED = 128;
@@ -41,6 +40,10 @@ public class Work {
 
     private static final String TEXT_TRANSPORT_FROM_INVENTORY = "Take Items from inventory";
     private static final String TEXT_TRANSPORT_TO_INVENTORY = "Put Items to inventory";
+    
+    @Id(autoincrement = true)
+    private Long id;
+
 
     @ToMany(referencedJoinProperty = "workId")
     public List<InterventionJob> interventionJobs;
@@ -80,13 +83,7 @@ public class Work {
     private long timeRemaining;
 
     @Transient
-    private Work parentTask;
-
-    @Transient
     private boolean sheduleSeparately;
-
-    @Transient
-    private String checkingTaskUserId;
 
     @Transient
     private boolean showingCheckingTask;
@@ -99,9 +96,6 @@ public class Work {
 
     @Transient
     private String timeLeft;
-
-    @Id(autoincrement = true)
-    private Long id;
 
     @Transient
     private Recipe recipe;
@@ -136,19 +130,8 @@ public class Work {
     @Property(nameInDb = "orderId")
     private String orderId;
 
-    @Property(nameInDb = "modifierId")
-    private long modifierId;
-
-    @ToOne(joinProperty = "modifierId")
-    private TaskModifierDuration taskModifierDuration;
-
     @Property(nameInDb = "isUpdated")
     private String isUpdated;
-    @Transient
-    private Order Orderobject;
-
-    @Transient
-    private User userObject;
 
     @Transient
     private Work synergyParent;
@@ -165,17 +148,11 @@ public class Work {
     @Property(nameInDb = "courseId")
     private String courseId;
 
-    @Property(nameInDb = "next_recipe_work_id")
-    private long nextRecipeWorkId;
-
     @ToOne(joinProperty = "courseId")
     private Course course;
 
     @Transient
     private float actualQty;
-
-    @Transient
-    private Course courseObject;
 
     @Property(nameInDb = "transportType")
     private int transportType;
@@ -242,14 +219,7 @@ public class Work {
      * currently for mapping transport task after restart
      */
     @Property
-    private long nextTaskIds;
-
-    /**
-     * currently for mapping transport task after restart
-     */
-    @Property
     private String previousTaskIds;
-
 
     @Property
     private String extraQuantity;//For End Node Only, After Completion this will add to inventory
@@ -259,41 +229,6 @@ public class Work {
 
     @Transient
     private List<String> wishes;
-
-    public Course getCourseObject() {
-        return courseObject;
-    }
-
-    public void setCourseObject(Course courseObject) {
-        this.courseObject = courseObject;
-    }
-
-    public User getUserObject() {
-        return userObject;
-    }
-
-    public void setUserObject(User userObject) {
-        this.userObject = userObject;
-    }
-
-//    @Transient
-//    private Recipe recipeObject;
-
-    public Order getOrderobject() {
-        return Orderobject;
-    }
-
-    public void setOrderobject(Order orderobject) {
-        Orderobject = orderobject;
-    }
-
-//    public Recipe getRecipeObject() {
-//        return recipeObject;
-//    }
-//
-//    public void setRecipeObject(Recipe recipeObject) {
-//        this.recipeObject = recipeObject;
-//    }
 
     @Property(nameInDb = "createdAt")
     long createdAt;
@@ -315,24 +250,22 @@ public class Work {
     public Work() {
     }
 
-    @Generated(hash = 1134780873)
-    public Work(float quantity, long timeRemaining, Long id, String recipeId, int status, String taskId, String userId, String machineId, String orderId,
-            long modifierId, String isUpdated, String courseId, long nextRecipeWorkId, int transportType, String title, Long mealsId, Long orderLineId,
-            boolean isEndNode, String subRecipes, boolean isUsed, int interventionsCompleted, long lastIntervention, boolean readyToStart, int transportMode,
-            String transportRoute, long nextTaskIds, String previousTaskIds, String extraQuantity, long createdAt, long updatedAt) {
+    @Generated(hash = 1191556702)
+    public Work(Long id, float quantity, long timeRemaining, String recipeId, int status, String taskId, String userId, String machineId, String orderId,
+            String isUpdated, String courseId, int transportType, String title, Long mealsId, Long orderLineId, boolean isEndNode, String subRecipes,
+            boolean isUsed, int interventionsCompleted, long lastIntervention, boolean readyToStart, int transportMode, String transportRoute,
+            String previousTaskIds, String extraQuantity, long createdAt, long updatedAt) {
+        this.id = id;
         this.quantity = quantity;
         this.timeRemaining = timeRemaining;
-        this.id = id;
         this.recipeId = recipeId;
         this.status = status;
         this.taskId = taskId;
         this.userId = userId;
         this.machineId = machineId;
         this.orderId = orderId;
-        this.modifierId = modifierId;
         this.isUpdated = isUpdated;
         this.courseId = courseId;
-        this.nextRecipeWorkId = nextRecipeWorkId;
         this.transportType = transportType;
         this.title = title;
         this.mealsId = mealsId;
@@ -345,7 +278,6 @@ public class Work {
         this.readyToStart = readyToStart;
         this.transportMode = transportMode;
         this.transportRoute = transportRoute;
-        this.nextTaskIds = nextTaskIds;
         this.previousTaskIds = previousTaskIds;
         this.extraQuantity = extraQuantity;
         this.createdAt = createdAt;
@@ -360,8 +292,6 @@ public class Work {
     private transient String machine__resolvedKey;
     @Generated(hash = 1063247591)
     private transient String order__resolvedKey;
-    @Generated(hash = 2102895705)
-    private transient Long taskModifierDuration__resolvedKey;
     @Generated(hash = 2048268504)
     private transient String course__resolvedKey;
     @Generated(hash = 1758754085)
@@ -383,20 +313,6 @@ public class Work {
         this.readyToStart = !hasDependentTask;
         return readyToStart;
     }
-
-//    public void checkToStart() {
-//        boolean hasDependentTask = false;
-//        if (prevTasks == null || prevTasks.size() == 0) {
-//            this.canStart = true;
-//            return;
-//        }
-//        for (Work task : prevTasks) {
-//            if (task.getStatus() != Work.COMPLETED) {
-//                hasDependentTask = true;
-//            }
-//        }
-//        this.canStart = !hasDependentTask;
-//    }
 
     public List<Work> getPrevTasks() {
         return prevTasks;
@@ -603,13 +519,7 @@ public class Work {
 
         task.setQuantity(getQuantity());
         task.setUserId(userId);
-        if (getUser() != null) {
-            task.setUserObject(getUser());
-        }
         task.setStatus(status);
-        if (taskModifierDuration != null) {
-            task.setTaskModifierDuration(taskModifierDuration);
-        }
         task.setTimeRemaining(timeRemaining);
         task.setStartTime(startTime);
         task.setDelayStatus(delayStatus);
@@ -628,25 +538,9 @@ public class Work {
         if (course != null) {
             task.setTimeLeft(String.valueOf((getCourse().getDeliveryTime() - System.currentTimeMillis())));
         }
-//        List<Work> sList = getSynergyList();
-//        long qty = 0;
-//        qty = getQuantity() * getTask().getOutputQuantity();
-//        if (sList != null) {
-//            for (Work q : sList) {
-//                qty += q.getQuantity() * q.getTask().getOutputQuantity();
-//                if (isBasic) {
-//                    task.addSynergyList(q.cloneWithoutNextTask(true));
-//                }
-//            }
-//        }
-//        task.setActualQty(qty);
-        //TODO set one time
+
         updateOutput();
         task.setOutput(output);
-//        if (getAssignedStation() != null) {
-//            task.setStationName(getAssignedStation().getName());
-//        }
-
 
         if(task != null){
             Recipe r =task.getRecipe();
@@ -733,14 +627,6 @@ public class Work {
 
     public void setStationName(String stationName) {
         this.stationName = stationName;
-    }
-
-    public Work getParentTask() {
-        return parentTask;
-    }
-
-    public void setParentTask(Work parentTask) {
-        this.parentTask = parentTask;
     }
 
     public void addPrevTask(Work task) {
@@ -864,23 +750,7 @@ public class Work {
         long remaining = timeRemaining - getTimePassed();
         this.timeRemaining = remaining > 0 ? remaining : 0;
     }
-
-    public String getCheckingTaskUserId() {
-        return checkingTaskUserId;
-    }
-
-    public void setCheckingTaskUserId(String checkingTaskUserId) {
-        this.checkingTaskUserId = checkingTaskUserId;
-    }
-
-    public long getModifierId() {
-        return this.modifierId;
-    }
-
-    public void setModifierId(long modifierId) {
-        this.modifierId = modifierId;
-    }
-
+    
     public boolean isShowingCheckingTask() {
         return showingCheckingTask;
     }
@@ -975,14 +845,6 @@ public class Work {
 
     public void setPreviousStation(Station previousStation) {
         this.previousStation = previousStation;
-    }
-
-    public long getNextRecipeWorkId() {
-        return this.nextRecipeWorkId;
-    }
-
-    public void setNextRecipeWorkId(long nextRecipeWorkId) {
-        this.nextRecipeWorkId = nextRecipeWorkId;
     }
 
     public Long getOrderLineId() {
@@ -1175,43 +1037,6 @@ public class Work {
             order__resolvedKey = orderId;
         }
     }
-
-    /**
-     * To-one relationship, resolved on first access.
-     */
-    @Generated(hash = 1754801534)
-    public TaskModifierDuration getTaskModifierDuration() {
-        long __key = this.modifierId;
-        if (taskModifierDuration__resolvedKey == null || !taskModifierDuration__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            TaskModifierDurationDao targetDao = daoSession.getTaskModifierDurationDao();
-            TaskModifierDuration taskModifierDurationNew = targetDao.load(__key);
-            synchronized (this) {
-                taskModifierDuration = taskModifierDurationNew;
-                taskModifierDuration__resolvedKey = __key;
-            }
-        }
-        return taskModifierDuration;
-    }
-
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
-    @Generated(hash = 846162885)
-    public void setTaskModifierDuration(@NotNull TaskModifierDuration taskModifierDuration) {
-        if (taskModifierDuration == null) {
-            throw new DaoException("To-one property 'modifierId' has not-null constraint; cannot set to-one to null");
-        }
-        synchronized (this) {
-            this.taskModifierDuration = taskModifierDuration;
-            modifierId = taskModifierDuration.getId();
-            taskModifierDuration__resolvedKey = modifierId;
-        }
-    }
-
 
     /**
      * To-one relationship, resolved on first access.
@@ -1432,14 +1257,6 @@ public class Work {
 
     public void setTransportRoute(String transportRoute) {
         this.transportRoute = transportRoute;
-    }
-
-    public long getNextTaskIds() {
-        return this.nextTaskIds;
-    }
-
-    public void setNextTaskIds(long nextTaskIds) {
-        this.nextTaskIds = nextTaskIds;
     }
 
     public String getPreviousTaskIds() {

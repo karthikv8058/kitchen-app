@@ -69,35 +69,12 @@ public class DelayHelper {
             String key = new StringBuilder().append(mealsId)
                     .append("*").append(recipeId).toString();
 
-            //No Need To Add Transport Task
-//            int workDuration = 0;
-//            if (!q.isTransportTask()) {
-//                workDuration = q.getTask().getAutoWorkDuration() != 0 ?
-//                        q.getTask().getAutoWorkDuration() : q.getTask().getWorkduration();
-//                if(q.getStatus() == Work.STARTED){
-//                    long time = (System.currentTimeMillis() - q.getStartTime())/(60*1000);
-//                    time = workDuration - time;
-//                    int a =10;
-//                    if(time>0){
-//                        workDuration = (int) time;
-//                    }else{
-//                        workDuration  = 0;
-//                    }
-//                }
-//            }
             RecipeList recipeList = times.get(key);
             if (recipeList == null) {
                 recipeList = new RecipeList();
                 times.put(key, recipeList);
             }
-            //Find Shortest duration
             recipeList.addTask(q);
-            //TodO remove
-//            recipeList.setDuration(recipeList.getDuration() + workDuration);
-//            if (recipeList.getDuration() > maxDuration) {
-//                maxDuration = recipeList.getDuration();
-//            }
-
         }
 
         //TodO new logic
@@ -165,10 +142,6 @@ public class DelayHelper {
                 long expectedWithBuffer = expected - (10 * 1000);
                 if (expectedWithBuffer <= cuurentTime) {
                     _scheduleTask(t, true);
-                    //TODO WHYYYYY??
-//                    if (scheduleCallback != null) {
-//                        scheduleCallback.onSchedule();
-//                    }
                 }
             }
         }
@@ -218,8 +191,6 @@ public class DelayHelper {
         }
         new DelayCalculationTask().doInBackground(queue);
     }
-
-
 
     class DelayCalculationTask extends AsyncTask<Queue, Void, Void> {
 

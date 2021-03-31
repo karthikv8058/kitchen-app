@@ -114,10 +114,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import io.realm.Realm;
-import io.realm.Sort;
-
-
 public class GreenDaoAdapter implements DaoAdapter {
 
 
@@ -142,27 +138,6 @@ public class GreenDaoAdapter implements DaoAdapter {
             abstractDao.deleteAll();
         }
 
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.deleteAll();
-        realm.commitTransaction();
-
-        //deleteAllRecipe();
-        // getDaoSession().getRecipeDao().deleteAll();
-//        getDaoSession().getStationDao().deleteAll();
-//        getDaoSession().getUserStationAssignmentDao().deleteAll();
-//        getDaoSession().getOrderDao().deleteAll();
-//        getDaoSession().getTaskDao().deleteAll();
-//        getDaoSession().getTaskStepDao().deleteAll();
-//        getDaoSession().getOrderLineDao().deleteAll();
-//        getDaoSession().getStepIngrediantDao().deleteAll();
-//        getDaoSession().getWorkDao().deleteAll();
-//        getDaoSession().getInterventionJobDao().deleteAll();
-//        getDaoSession().getUserDao().deleteAll();
-//        getDaoSession().getOptionsDao().deleteAll();
-//        getDaoSession().getLabelDao().deleteAll();
-//        getDaoSession().getOrderLineDao().deleteAll();
-//        getDaoSession().getInventoryDao().deleteAll();
     }
 
     @Override
@@ -493,43 +468,23 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public boolean hasWaitingInventoryRequest(String orderId) {
-        Realm realm = Realm.getDefaultInstance();
-        List<InventoryRequest> inventoryRequests = realm
-                .copyFromRealm(realm.where(InventoryRequest.class).equalTo("orderId", orderId).limit(1).findAll());
-
-        realm.close();
+        List<InventoryRequest> inventoryRequests = roomDatabase.inventoryRequestDao().listInventoryRequestByOrder(orderId);
         return !inventoryRequests.isEmpty();
     }
 
     @Override
     public void deleteInventoryRequests(InventoryRequest inventoryRequest) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.where(InventoryRequest.class)
-                .equalTo("orderId", inventoryRequest.getOrderId())
-                .equalTo("recipeId", inventoryRequest.getRecipeId())
-                .findAll()
-                .deleteAllFromRealm();
-        realm.commitTransaction();
-        realm.close();
+        roomDatabase.inventoryRequestDao().delete(inventoryRequest.getOrderId(),inventoryRequest.getRecipeId());
     }
 
     @Override
     public List<InventoryRequest> loadAllInventoryRequests() {
-        Realm realm = Realm.getDefaultInstance();
-        List<InventoryRequest> inventoryRequests = realm
-                .copyFromRealm(realm.where(InventoryRequest.class).findAll());
-        realm.close();
-        return inventoryRequests;
+        return roomDatabase.inventoryRequestDao().listInventoryRequests();
     }
 
     @Override
     public void saveInventoryRequest(InventoryRequest inventoryRequest) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealm(inventoryRequest);
-        realm.commitTransaction();
-        realm.close();
+        roomDatabase.inventoryRequestDao().insertAll(inventoryRequest);
     }
 
     @Override
@@ -1424,10 +1379,7 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public List<Supplier> loadSuppliers() {
-        Realm realm = Realm.getDefaultInstance();
-        List<Supplier> Supplier = realm.copyFromRealm(realm.where(Supplier.class).sort("name", Sort.ASCENDING).findAll());
-        realm.close();
-        return Supplier;
+        return roomDatabase.supplierDao().listSupplier();
     }
 
     @Override
@@ -2314,31 +2266,17 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void saveSuppliers(List<Supplier> suppliers) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealm(suppliers);
-        realm.commitTransaction();
-        realm.close();
+        roomDatabase.supplierDao().insertAll(suppliers);
     }
 
     @Override
     public Supplier getSupplierById(String id) {
-        Realm realm = Realm.getDefaultInstance();
-        Supplier supplier = realm.where(Supplier.class).equalTo("id", id).findFirst();
-        if (supplier != null) {
-            supplier =  realm.copyFromRealm(supplier);
-        }
-        realm.close();
-        return supplier;
+        return  roomDatabase.supplierDao().getSupplierById(id);
     }
 
     @Override
     public void deleteSupplier(List<String> ids) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.where(Supplier.class).in("id", ids.toArray(new String[0])).findAll().deleteAllFromRealm();
-        realm.commitTransaction();
-        realm.close();
+        roomDatabase.supplierDao().deleteById(ids);
     }
 
     public Printer getPrinterDataById(String printerUuid) {

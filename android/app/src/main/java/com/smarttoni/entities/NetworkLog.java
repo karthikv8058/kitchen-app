@@ -1,9 +1,6 @@
 package com.smarttoni.entities;
 
-
-import io.realm.RealmObject;
-
-public class NetworkLog extends RealmObject {
+public class NetworkLog  {
 
     private String name;
     private long time;

@@ -32,13 +32,11 @@ import java.util.Set;
 
 public class OrderManager {
 
-
     SmarttoniContext context;
 
     public OrderManager(SmarttoniContext context) {
         this.context = context;
     }
-
 
     public void removeExternalOrderRequests(String orderId) {
         DaoAdapter daoAdapter = ServiceLocator.getInstance().getDatabaseAdapter();
@@ -71,7 +69,6 @@ public class OrderManager {
             return;
         }
 
-
         //Complete all tasks
         List<Work> list = getQueue().getCloneQueue();
         for (Work t : list) {
@@ -82,15 +79,10 @@ public class OrderManager {
                 getQueue().remove(t);
                 daoAdapter.updateWork(t);
                 ActivityLogger.log(daoAdapter, t);
-//                if (t.getMachine() != null) {
-//                    t.getMachine().completeTask(t);
-//                    daoAdapter.updateMachine(t.getMachine());
-//                }
             }
         }
 
         _setOrderAsCompleted(order, false);
-
 
         if (order.getType() == Order.TYPE_EXTERNAL) {
 
@@ -127,7 +119,6 @@ public class OrderManager {
             }
         }
 
-
         AssignmentFactory assignmentFactory = (AssignmentFactory) ServiceLocator.getInstance().getService(ServiceLocator.ASSIGNMENT_SERVICE);
         assignmentFactory.assign();
 
@@ -154,18 +145,8 @@ public class OrderManager {
             return false;
         }
 
-
         if (order.getType() == Order.TYPE_INTERNAL) {
-//            List<Order> orders = daoAdapter.loadChildOrders(orderId);
-//            for (Order _order : orders) {
-//                List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(_order.getId());
-//                if (_order.getStatus() == Order.ORDER_OPEN) {
-//                    _order.setStatus(Order.ORDER_DELETED);
-//                    _order.setModification(Order.MODIFICATION_DELETED);
-//                    _order.setUpdatedAt(System.currentTimeMillis());
-//                    daoAdapter.updateOrder(_order);
-//                }
-//            }
+
         } else if (order.getType() == Order.TYPE_EXTERNAL) {
             List<OrderLine> orderLines = daoAdapter.getOrderLinesByOrder(orderId);
             for (OrderLine orderLine : orderLines) {
@@ -175,12 +156,10 @@ public class OrderManager {
             }
         }
 
-
         List<InventoryReservation> inventoryReservations = daoAdapter.listInventoryReservations(orderId);
         for (InventoryReservation ir : inventoryReservations) {
             InventoryManagement.moveToInventory(orderId, ir.getRecipeId(), ir.getQty());
         }
-        //daoAdapter.removeInventoryReservations(orderId);
 
         removeWorksForOrder(orderId);
 
@@ -189,15 +168,6 @@ public class OrderManager {
         if (order.getType() == Order.TYPE_INTERNAL) {
             removeExternalOrderRequests(orderId);
         }
-
-//        else if (order.getType() == Order.TYPE_EXTERNAL) {
-//            List<ExternalOrderRequest> eors = daoAdapter.listExternalOrderRequestForExternalOrder(order.getId());
-//
-//            //TODO create Inventory Reservation Request
-//
-//            daoAdapter.deleteExternalOrderRequestForExternalOrder(order.getId());
-//            daoAdapter.deleteExternalAvailableQuantityForExternalOrder(order.getId());
-//        }
 
         AssignmentFactory assignmentFactory = (AssignmentFactory) ServiceLocator.getInstance().getService(ServiceLocator.ASSIGNMENT_SERVICE);
         assignmentFactory.assign();

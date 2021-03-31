@@ -5,7 +5,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.smarttoni.entities.RecipeTag;
-import com.smarttoni.entities.Tag;
 
 import java.util.List;
 
