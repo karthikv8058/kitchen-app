@@ -2137,7 +2137,6 @@ public class GreenDaoAdapter implements DaoAdapter {
                         .list();
         if (works != null && works.size() > 0) {
             Work work = works.get(0);
-            work.setIsUsed(true);
             updateWork(work);
         }
     }

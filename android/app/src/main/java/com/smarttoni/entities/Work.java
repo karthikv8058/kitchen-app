@@ -44,10 +44,6 @@ public class Work {
     @Id(autoincrement = true)
     private Long id;
 
-
-    @ToMany(referencedJoinProperty = "workId")
-    public List<InterventionJob> interventionJobs;
-
     @Transient
     private List<Work> prevTasks;
 
@@ -70,20 +66,24 @@ public class Work {
     @Transient
     private long extraTimeSetDate;
 
-    @Property
-    private float quantity = 1;
-
     @Transient
     private long queueTime = 1;
 
     @Transient
     private long priority;
 
+    @Transient
+    private boolean sheduleSeparately;
+
+    @ToMany(referencedJoinProperty = "workId")
+    public List<InterventionJob> interventionJobs;
+
+    @Property
+    private float quantity = 1;
+
     @Property
     private long timeRemaining;
 
-    @Transient
-    private boolean sheduleSeparately;
 
     @Transient
     private boolean showingCheckingTask;
@@ -99,6 +99,43 @@ public class Work {
 
     @Transient
     private Recipe recipe;
+
+    @Transient
+    private Work synergyParent;
+
+    @Transient
+    private List<Work> synergyList;
+
+    @Transient
+    private List<Work> deliveryList;
+
+    @Transient
+    private String outputUnit;
+
+    @Transient
+    private float actualQty;
+
+    @Transient
+    private String name;
+
+    @Transient
+    private long timePassed;
+
+    @Transient
+    private List<RecipeTag> tags;
+
+    @Transient
+    private List<String> wishes;
+
+    //For  Transport Task Only
+    @Transient
+    private Station previousStation;
+
+    @Transient
+    private transient Work clonedWork;
+
+    @Transient
+    private int delayStatus;
 
     @Property(nameInDb = "recipeId")
     private String recipeId;
@@ -133,26 +170,11 @@ public class Work {
     @Property(nameInDb = "isUpdated")
     private String isUpdated;
 
-    @Transient
-    private Work synergyParent;
-
-    @Transient
-    private List<Work> synergyList;
-
-    @Transient
-    private List<Work> deliveryList;
-
-    @Transient
-    private String outputUnit;
-
     @Property(nameInDb = "courseId")
     private String courseId;
 
     @ToOne(joinProperty = "courseId")
     private Course course;
-
-    @Transient
-    private float actualQty;
 
     @Property(nameInDb = "transportType")
     private int transportType;
@@ -160,27 +182,17 @@ public class Work {
     @Property
     private String title;
 
-    @Transient
-    private String name;
-
     @ToOne(joinProperty = "mealsId")
     private Meal meal;
 
     @Property(nameInDb = "mealsId")
     private Long mealsId;
 
-    @Transient
-    private int delayStatus;
-
     @ToOne(joinProperty = "orderLineId")
     private OrderLine orderLine;
 
     @Property(nameInDb = "orderLineId")
     private Long orderLineId;
-
-    //For  Transport Task Only
-    @Transient
-    private Station previousStation;
 
     @Property(nameInDb = "isEndNode")
     private boolean isEndNode;
@@ -191,9 +203,6 @@ public class Work {
     @Property(nameInDb = "isUsed")
     private boolean isUsed;
 
-    @Transient
-    private long timePassed;
-
     @Property
     private int interventionsCompleted;
 
@@ -202,9 +211,6 @@ public class Work {
 
     @Property(nameInDb = "readyToStart")
     private boolean readyToStart;
-
-    @Transient
-    private List<RecipeTag> tags;
 
 
     //1 No transport, 2 immediate,3 with synergy
@@ -223,12 +229,6 @@ public class Work {
 
     @Property
     private String extraQuantity;//For End Node Only, After Completion this will add to inventory
-
-    @Transient
-    private transient Work clonedWork;
-
-    @Transient
-    private List<String> wishes;
 
     @Property(nameInDb = "createdAt")
     long createdAt;
