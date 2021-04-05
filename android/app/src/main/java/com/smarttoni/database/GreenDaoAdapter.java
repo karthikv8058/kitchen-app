@@ -979,6 +979,11 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
+    public List<Station> loadStations(String roomId) {
+        return getDaoSession().getStationDao().queryBuilder().where(StationDao.Properties.Room.eq(roomId)).list();
+    }
+
+    @Override
     public Machine getMachineById(String id) {
         return getDaoSession().getMachineDao().load(id);
     }

@@ -219,6 +219,8 @@ public interface DaoAdapter {
 
     List<Station> loadStations();
 
+    List<Station> loadStations(String roomId);
+
     //Machines
     Machine getMachineById(String id);
 

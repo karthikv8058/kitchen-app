@@ -7,6 +7,7 @@ import com.koushikdutta.async.http.server.AsyncHttpServer;
 import com.koushikdutta.async.http.socketio.ErrorCallback;
 import com.smarttoni.react.modules.server.Ping;
 import com.smarttoni.server.controlles.ListRooms;
+import com.smarttoni.server.controlles.ListStationsByRoom;
 import com.smarttoni.server.controlles.ServerDetails;
 import com.smarttoni.server.controlles.StoreToAnalyze;
 import com.smarttoni.server.controlles.assignment.AssignTaskToMe;
@@ -127,6 +128,7 @@ public class HttpRoute {
         mHttpServer.post("/new-pos-order", new NewPosOrder(context));
         mHttpServer.post("/check-order-started", new CheckOrderStarted(context));
         mHttpServer.get("/rooms", new ListRooms());
+        mHttpServer.post("/stations_by_room", new ListStationsByRoom());
 
         //For Development purpose only
         mHttpServer.get("/dev-stations", new DevStationList(context));
