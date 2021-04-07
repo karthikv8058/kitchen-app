@@ -49,6 +49,7 @@ import com.smarttoni.server.controlles.settings.GetWebCredentials;
 import com.smarttoni.server.controlles.settings.SyncRequest;
 import com.smarttoni.server.controlles.station.GetStationTaskList;
 import com.smarttoni.server.controlles.station.GetStations;
+import com.smarttoni.server.controlles.station.PostGenerateQR;
 import com.smarttoni.server.controlles.station.StationList;
 import com.smarttoni.server.controlles.station.TestStationPrinter;
 import com.smarttoni.server.controlles.task.CheckDetailsToOpen;
@@ -129,7 +130,7 @@ public class HttpRoute {
         mHttpServer.post("/check-order-started", new CheckOrderStarted(context));
         mHttpServer.get("/rooms", new ListRooms());
         mHttpServer.post("/stations_by_room", new ListStationsByRoom());
-
+        mHttpServer.post("/generate_qr", new PostGenerateQR(context));
         //For Development purpose only
         mHttpServer.get("/dev-stations", new DevStationList(context));
         mHttpServer.get("/dev-users", new DevUserList(context));

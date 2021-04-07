@@ -167,9 +167,6 @@ public class Work {
     @Property(nameInDb = "orderId")
     private String orderId;
 
-    @Property(nameInDb = "isUpdated")
-    private String isUpdated;
-
     @Property(nameInDb = "courseId")
     private String courseId;
 
@@ -212,7 +209,6 @@ public class Work {
     @Property(nameInDb = "readyToStart")
     private boolean readyToStart;
 
-
     //1 No transport, 2 immediate,3 with synergy
     @Property(nameInDb = "transportMode")
     private int transportMode;
@@ -250,11 +246,11 @@ public class Work {
     public Work() {
     }
 
-    @Generated(hash = 1191556702)
+    @Generated(hash = 1737818363)
     public Work(Long id, float quantity, long timeRemaining, String recipeId, int status, String taskId, String userId, String machineId, String orderId,
-            String isUpdated, String courseId, int transportType, String title, Long mealsId, Long orderLineId, boolean isEndNode, String subRecipes,
-            boolean isUsed, int interventionsCompleted, long lastIntervention, boolean readyToStart, int transportMode, String transportRoute,
-            String previousTaskIds, String extraQuantity, long createdAt, long updatedAt) {
+            String courseId, int transportType, String title, Long mealsId, Long orderLineId, boolean isEndNode, String subRecipes, boolean isUsed,
+            int interventionsCompleted, long lastIntervention, boolean readyToStart, int transportMode, String transportRoute, String previousTaskIds,
+            String extraQuantity, long createdAt, long updatedAt) {
         this.id = id;
         this.quantity = quantity;
         this.timeRemaining = timeRemaining;
@@ -264,7 +260,6 @@ public class Work {
         this.userId = userId;
         this.machineId = machineId;
         this.orderId = orderId;
-        this.isUpdated = isUpdated;
         this.courseId = courseId;
         this.transportType = transportType;
         this.title = title;
@@ -1332,14 +1327,6 @@ public class Work {
         return this.courseId;
     }
 
-    public String getIsUpdated() {
-        return this.isUpdated;
-    }
-
-    public void setIsUpdated(String isUpdated) {
-        this.isUpdated = isUpdated;
-    }
-    
 
     public String getExtraQuantity() {
         return this.extraQuantity;

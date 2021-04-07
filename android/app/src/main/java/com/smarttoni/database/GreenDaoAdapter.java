@@ -702,16 +702,6 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public List<Work> loadUnUpdatedWorks() {
-        return getDaoSession().
-                getWorkDao()
-                .queryBuilder()
-                .where(WorkDao.Properties.IsUpdated.notEq("1"))
-                .list();
-    }
-
-
-    @Override
     public List<Meal> loadMealById(String mealId) {
         return getDaoSession().getMealDao().queryBuilder()
                 .where(MealDao.Properties.Uuid.eq(mealId)).list();

@@ -101,18 +101,18 @@ public class SmartTONiService extends Service {
                 });
             }
         };
-        incrementalDbSync=new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(() -> {
-                    new IncrementalDbSync().onSync(getApplicationContext(),
-                            ServiceLocator.getInstance().getDatabaseAdapter(),
-                            new LocalStorage(getApplicationContext()).getRestaurantId(),
-                            null, null);
-                });
-            }
-        };
-        timer.schedule(incrementalDbSync, 0, 15 * INTERVAL_ONE_MINUTE);
+//        incrementalDbSync=new TimerTask() {
+//            @Override
+//            public void run() {
+//                handler.post(() -> {
+//                    new IncrementalDbSync().onSync(getApplicationContext(),
+//                            ServiceLocator.getInstance().getDatabaseAdapter(),
+//                            new LocalStorage(getApplicationContext()).getRestaurantId(),
+//                            null, null);
+//                });
+//            }
+//        };
+ //       timer.schedule(incrementalDbSync, 0, 15 * INTERVAL_ONE_MINUTE);
         timer.schedule(doOrderSync, 0, INTERVAL_ONE_MINUTE);
         timer.schedule(doAsynchronousTask, 30 * INTERVAL_ONE_MINUTE, 30 * INTERVAL_ONE_MINUTE);
 

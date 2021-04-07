@@ -17,6 +17,9 @@ import com.smarttoni.entities.Storage;
 import com.smarttoni.entities.StoreRequest;
 import com.smarttoni.entities.Supplier;
 import com.smarttoni.entities.Tag;
+import com.smarttoni.http.models.QRRequest;
+import com.smarttoni.http.models.QRResponse;
+import com.smarttoni.http.models.ServerResponse;
 import com.smarttoni.models.SyncData;
 import com.smarttoni.models.SyncWarpper;
 import com.smarttoni.entities.Task;
@@ -139,4 +142,7 @@ public interface HttpService {
 
     @POST("api/1.0/mobile/{restaurant_uuid}/sync/inventory-movement")
     Call<String> syncInventoryMovement(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Body List<InventoryMovement> inventoryMovements);
+
+    @POST("api/1.0/mobile/{restaurant_uuid}/generate-qr-code")
+    Call<ServerResponse<List<QRResponse>>> generateQR(@Path(value = "restaurant_uuid", encoded = true) String restaurantId, @Body QRRequest request);
 }

@@ -129,9 +129,6 @@ public interface DaoAdapter {
 
     List<UserStationAssignment> loadUnUpdatedUserStation();
 
-    List<Work> loadUnUpdatedWorks();
-
-
     void setOrderStarted(String orderId);
 
     List<Modifier> getModifierList();

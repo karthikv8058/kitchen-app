@@ -52,6 +52,7 @@ export default class MenuPage extends AbstractComponent<Props, State> {
     private menuOrder: Menu = { title: 'Orders', icon: require('@components/assets/order.png'), route: 'OrderOverview' };
     private menuInventory: Menu = { title: 'Inventory', icon: require('@components/assets/inventory.png'), route: 'InventoryPage' };
     private menuConcept: Menu = { title: 'Concept', icon: require('@components/assets/concept.png'), route: 'RecipeLookUp' };
+    private serviceApp: Menu = { title: 'Service', icon: require('@components/assets/serviceapp.png'), route: 'RecipeLookUp' };
 
     constructor(props: Props) {
         super(props);
@@ -186,7 +187,8 @@ export default class MenuPage extends AbstractComponent<Props, State> {
             this.menuMyTasks,
             this.menuOrder,
             this.menuConcept,
-            this.menuInventory
+            this.menuInventory,
+            this.serviceApp
         ];
         let rowCount = this.state.orientation == "row" ? 3 : 2;
         let menu = [];
