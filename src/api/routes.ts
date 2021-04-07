@@ -47,6 +47,7 @@ interface Paths {
     getAllRecipes: string
     addNewIngredient: string,
     testStationPrinter: string,
+    generateQr: string,
     pingIp: string,
     getPrinterList: string
 }
@@ -127,6 +128,7 @@ export default class ApiBuilder {
             getAllRecipes: this.baseURL + 'get-all-recipes',
             addNewIngredient: this.baseURL + 'add-new-ingredient',
             testStationPrinter: this.baseURL + 'test-station-printer',
+            generateQr: this.baseURL + 'generate_qr',
             pingIp: this.baseURL + 'ping-ip',
             getPrinterList: 'get-printers'
         };
