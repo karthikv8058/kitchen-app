@@ -79,6 +79,17 @@ export default class UserService {
                 });
         });
     }
+
+    generateStationQRcode(userId: String[]){
+        return new Promise((resolve, reject) => {
+            this.httpClient.post(this.apiBuilder!.paths!.generateQr,
+                {stationId:userId}).then(response => {
+                    resolve(response);
+                }).catch(error => {
+                    resolve(null);
+                });
+        });
+    }
     
     login(user: User, ip: string) {
         return new Promise((resolve, reject) => {
