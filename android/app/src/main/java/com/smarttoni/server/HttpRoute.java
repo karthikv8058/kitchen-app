@@ -5,6 +5,7 @@ import android.content.Context;
 import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.http.server.AsyncHttpServer;
 import com.koushikdutta.async.http.socketio.ErrorCallback;
+import com.smarttoni.guestgroup.GuestGroupServer;
 import com.smarttoni.react.modules.server.Ping;
 import com.smarttoni.server.controlles.ListRooms;
 import com.smarttoni.server.controlles.ListStationsByRoom;
@@ -114,6 +115,9 @@ public class HttpRoute {
         mHttpServer.post("/get-printers", new getPrinters(context));
 
 
+
+
+
         //Route For Orders
         mHttpServer.post("/orders", new GetOrders(context));
         mHttpServer.post("/archived-orders", new GetArchivedOrder(context));
@@ -131,6 +135,9 @@ public class HttpRoute {
         mHttpServer.get("/rooms", new ListRooms());
         mHttpServer.post("/stations_by_room", new ListStationsByRoom());
         mHttpServer.post("/generate_qr", new PostGenerateQR(context));
+
+        GuestGroupServer.INSTANCE.addControllers(mHttpServer,context);
+
         //For Development purpose only
         mHttpServer.get("/dev-stations", new DevStationList(context));
         mHttpServer.get("/dev-users", new DevUserList(context));
