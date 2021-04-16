@@ -545,7 +545,14 @@ public class Work {
                 List<String> wishes = new ArrayList();
                 for(RecipeTag _recipeTag : tags){
                     Tag tag = daoAdapter.listTagsById(_recipeTag.getTag());
-                    wishes.add(tag.getName()+" : "+_recipeTag.getValue());
+
+                    String tagValue= "";
+                    switch (_recipeTag.getValue()){
+                        case "true": tagValue = "Yes";break;
+                        case "false": tagValue = "No";break;
+                        default:tagValue=_recipeTag.getValue();
+                    }
+                    wishes.add(tag.getName()+" : "+tagValue);
                 }
                 task.setWishes(wishes);
             }
