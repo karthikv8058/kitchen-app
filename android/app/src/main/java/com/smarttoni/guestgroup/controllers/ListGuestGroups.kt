@@ -14,9 +14,10 @@ class ListGuestGroups : HttpSecurityRequest() {
     @Throws(JSONException::class)
     override fun processRequest(request: AsyncHttpServerRequest, response: AsyncHttpServerResponse) {
 
-        val guests = arrayOf(GuestGroup(1),GuestGroup(8),GuestGroup(9))
+        val guests = arrayOf(GuestGroup(1),GuestGroup(8),GuestGroup(9)).toList();
         val gson = GSONBuilder.createGSON()
         val type = object : TypeToken<List<GuestGroup?>?>() {}.type
+        val a = gson.toJson(guests, type);
         response.send(gson.toJson(guests, type))
 
     }

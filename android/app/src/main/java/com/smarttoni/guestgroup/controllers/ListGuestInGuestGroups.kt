@@ -14,7 +14,7 @@ class ListGuestInGuestGroups : HttpSecurityRequest() {
     @Throws(JSONException::class)
     override fun processRequest(request: AsyncHttpServerRequest, response: AsyncHttpServerResponse) {
 
-        val guests = arrayOf(Guest("1"), Guest("2"), Guest("3"))
+        val guests = arrayOf(Guest("1"), Guest("2"), Guest("3")).toList()
         val gson = GSONBuilder.createGSON()
         val type = object : TypeToken<List<Guest?>?>() {}.type
         response.send(gson.toJson(guests, type))

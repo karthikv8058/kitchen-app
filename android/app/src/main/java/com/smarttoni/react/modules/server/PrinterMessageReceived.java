@@ -15,9 +15,6 @@ public class PrinterMessageReceived implements HttpServerRequestCallback {
 
     @Override
     public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
-//        context
-//                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-//                .emit(Events.PRINTER_MESSAGE_RECEIVED, true);
         response.send("true");
 
     }

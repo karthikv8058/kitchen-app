@@ -9,7 +9,7 @@ import com.smarttoni.react.modules.server.PrinterMessageReceived;
 
 public class ClientHttpRoute {
     public static void setRoutes(AsyncHttpServer mHttpServer, Context context) {
-        mHttpServer.post("/push", new OrderReceive(context));
+        mHttpServer.post("/push", new OrderReceive());
         mHttpServer.get("/ping", new Ping(context));
         mHttpServer.post("/printer-message-received", new PrinterMessageReceived(context));
     }
