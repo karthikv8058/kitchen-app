@@ -20,6 +20,7 @@ export enum Permissions {
     DELETE_ORDER = "app_delete_orders",
     MANAGE_ORDER = "app_manage_orders",
     MANAGE_INVENTORY = "app_manage_inventory",
+    MANAGE_SERVICE = "manage_service",
 }
 
 const pagePermissions: any = {
