@@ -1,5 +1,5 @@
 
-enum PaymnetType {
+enum PaymentType {
     NOT_PAYED = 0,
     CARD = 1,
     CASH = 2
@@ -11,7 +11,7 @@ export interface PaymentMeal {
     amount: number,
     guest: string,
     guestName: string,
-    paymnet: PaymnetType
+    payment: PaymentType
 }
 
 export interface GustPaymentDescription {
@@ -26,7 +26,7 @@ export interface PaymentDescription {
     guests: GustPaymentDescription[]
 }
 
-export const fillDate = (meals: PaymentMeal[]): PaymentDescription => {
+export const fillData = (meals: PaymentMeal[]): PaymentDescription => {
     let paymentDescription = { amount: 0, guests: [] as GustPaymentDescription[] };
     let paymentByGuest: any = {}
     let paymentAmountByGuest: any = {}
