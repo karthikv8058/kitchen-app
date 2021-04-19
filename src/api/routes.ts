@@ -49,7 +49,7 @@ interface Paths {
     testStationPrinter: string,
     generateQr: string,
     pingIp: string,
-    getPrinterList: string
+    getPrinterList: string,
 }
 
 
@@ -130,11 +130,11 @@ export default class ApiBuilder {
             testStationPrinter: this.baseURL + 'test-station-printer',
             generateQr: this.baseURL + 'generate_qr',
             pingIp: this.baseURL + 'ping-ip',
-            getPrinterList: 'get-printers'
+            getPrinterList: 'get-printers',
         };
     }
 
-    getRounte = (route: string) => {
+    getRoute = (route: string) => {
         return this.baseURL + route;
     }
 }
