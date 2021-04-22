@@ -37,7 +37,7 @@ export default class BillingPaymentPage extends Component<Props, State> {
   render() {
     return (
       <>
-        <AppBackground>
+        <AppBackground navigation={this.props.navigation}>
           <PageWrapper>
             <BillingPageHeader id="20" guestName="Guest 1" />
             <TitleAmountList title="Invoice" amount="138.40" />

@@ -126,7 +126,7 @@ export default class BillingPage extends Component<Props, State> {
   render() {
     return (
       <>
-        <AppBackground>
+        <AppBackground navigation={this.props.navigation}>
           <PageWrapper>
             <BillingPageHeader id="20" />
             {!this.state.isGuestTotalButtonPressed && this.renderAllGuestBill()}

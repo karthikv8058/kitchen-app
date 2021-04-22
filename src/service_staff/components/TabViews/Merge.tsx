@@ -1,7 +1,10 @@
 import React, { Component } from "react";
-import { View, Text } from "react-native";
+import { View, Text, ToastAndroid } from "react-native";
 import HeaderButton from "../Buttons/HeaderButton";
 import { NavigationActions, StackActions } from "react-navigation";
+import { GuestgroupContext } from "../assets/contexts/headerContext";
+import StationService from "@services/StationService";
+import { Bind } from "../../../ioc/ServiceContainer";
 
 interface State {
   isQREnabled: boolean;
@@ -14,6 +17,9 @@ interface Props {
 }
 
 export default class Merge extends Component<Props, State> {
+  private stationService: StationService = Bind("stationService");
+  static contextType = GuestgroupContext;
+  private guest: any = null;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -21,6 +27,34 @@ export default class Merge extends Component<Props, State> {
       isEditManuallyPressed: false,
     };
   }
+
+  componentDidMount() {
+    this.guest = this.context;
+
+    this.guest.setCurrentPage("mergePage");
+    setTimeout(() => {
+      this.guest?.guestIdTo !== undefined && this.guest.setToolBarState(true);
+    }, 1000);
+  }
+
+  mergeGuestgroup = (guestId: any, guestIdTo: any) => {
+    this.stationService.mergeGuestgroup(guestId, guestIdTo).then((res: any) => {
+      console.log("handleMergeGroup IDs :::", res);
+      if (res) {
+        this.guest.setToolBarState(false);
+        ToastAndroid.show("Successfully merged", ToastAndroid.SHORT);
+      }
+    });
+  };
+
+  mergeGuestgroupAPIcall = () => {
+    console.log(
+      "mergeGuestgroupAPIcall",
+      this.guest.guestId,
+      this.guest.guestIdTo
+    );
+    this.mergeGuestgroup(this.guest.guestId, this.guest.guestIdTo);
+  };
   render() {
     return (
       <>
@@ -33,8 +67,8 @@ export default class Merge extends Component<Props, State> {
             }}
           >
             <Text style={{ color: "#FFF" }}>Merge with guest group</Text>
-            {this.state.isQREnabled && (
-              <Text style={{ color: "#FFF" }}>21</Text>
+            {this.guest?.guestIdTo && (
+              <Text style={{ color: "#FFF" }}>{this.guest?.guestIdTo}</Text>
             )}
           </View>
 

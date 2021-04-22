@@ -5,10 +5,12 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
+  ToastAndroid,
 } from "react-native";
 import BorderedButton from "../Buttons/BorderButton";
 import StationService from "@services/StationService";
 import { Bind } from "../../../ioc/ServiceContainer";
+import { GuestgroupContext } from "../assets/contexts/headerContext";
 
 interface State {
   isRoomButtonPressed: boolean;
@@ -17,6 +19,7 @@ interface State {
   stationList: any;
   selectedStation: any;
   selectedRoom: any;
+  tableID: any;
 }
 
 interface Props {
@@ -26,6 +29,8 @@ interface Props {
 
 export default class AssignLocation extends Component<Props, State> {
   private stationService: StationService = Bind("stationService");
+  static contextType = GuestgroupContext;
+  private guest: any = null;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -35,11 +40,22 @@ export default class AssignLocation extends Component<Props, State> {
       selectedRoom: {},
       isRoomButtonPressed: false,
       isStationButtonPressed: false,
+      tableID: null,
     };
   }
 
   componentDidMount() {
     this.LoadRoomList();
+    this.guest = this.context;
+    console.log(
+      "Assignlocation Context valueeeeeeeeesss :::",
+      this.guest.guestId,
+      this.guest.guestIdTo,
+      this.guest.state.isToolbarVisible,
+      this.guest.setToolBarState
+    );
+    this.guest.setCurrentPage("assignLocationPage");
+    this.guest.setToolBarState(false);
   }
 
   LoadRoomList() {
@@ -60,6 +76,42 @@ export default class AssignLocation extends Component<Props, State> {
       });
     });
   }
+
+  handleOnchangeTableID = (val: any) => {
+    console.log(
+      "handleOnchangeTableID :::",
+      val,
+      this.state.selectedStation.uuid
+    );
+    this.setState({ tableID: val });
+    this.guest.setToolBarState(true);
+  };
+
+  updateGuestgroup = (guestId: any, stationId: any, tableNumber: any) => {
+    this.stationService
+      .updateGuestgroup(guestId, stationId, tableNumber)
+      .then((res: any) => {
+        console.log("updateGuestgroup :::", res);
+        if (res) {
+          this.guest.setToolBarState(false);
+          ToastAndroid.show("Successfully updated", ToastAndroid.SHORT);
+        }
+      });
+  };
+
+  updateGuestgroupAPIcall = () => {
+    console.log(
+      "updateGuestgroupAPIcall",
+      this.guest.guestId,
+      this.state.selectedStation.uuid,
+      this.state.tableID
+    );
+    this.updateGuestgroup(
+      this.guest.guestId,
+      this.state.selectedStation.uuid,
+      this.state.tableID
+    );
+  };
 
   render() {
     return (
@@ -168,7 +220,10 @@ export default class AssignLocation extends Component<Props, State> {
                   }}
                 >
                   <Text style={{ color: "#FFF" }}>Table :</Text>
-                  <TextInput style={styles.textInputStyle} />
+                  <TextInput
+                    onChangeText={(val: any) => this.handleOnchangeTableID(val)}
+                    style={styles.textInputStyle}
+                  />
                 </View>
               </View>
             )}
@@ -184,6 +239,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginTop: 15,
     width: 150,
-    height: 30,
+    height: 35,
   },
 });

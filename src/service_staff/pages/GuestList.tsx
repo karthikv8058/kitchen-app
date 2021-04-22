@@ -51,17 +51,32 @@ export default class GuestList extends Component<Props, State> {
       });
     }
 
-    this.stationService
-      .mergeGuestgroup(this.guestgroupId, id)
-      .then((res: any) => {
-        console.log(
-          "handleMergeGroup IDs :::",
-          this.guestgroupId,
-          id,
-          res,
-          this.pageNameState
-        );
+    if (this.pageNameState === "guestGroupManagementPage") {
+      this.props.navigation.navigate("GuestGroupManagement", {
+        fromID: id,
+        pageName: this.pageNameState,
       });
+    }
+
+    if (this.pageNameState === "MergeGuestgroup") {
+      this.props.navigation.navigate("GuestGroupManagement", {
+        fromID: this.guestgroupId,
+        toID: id,
+        pageName: this.pageNameState,
+      });
+    }
+
+    // this.stationService
+    //   .mergeGuestgroup(this.guestgroupId, id)
+    //   .then((res: any) => {
+    //     console.log(
+    //       "handleMergeGroup IDs :::",
+    //       this.guestgroupId,
+    //       id,
+    //       res,
+    //       this.pageNameState
+    //     );
+    //   });
   };
 
   render() {

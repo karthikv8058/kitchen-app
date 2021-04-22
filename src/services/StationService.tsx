@@ -142,4 +142,36 @@ export default class StationService {
         });
     });
   }
+
+  updateGuestgroup(guestgroupId: any, stationId: any, tableNumber: any) {
+    return new Promise((resolve, reject) => {
+      this.httpClient
+        .post(this.apiBuilder.getRoute("guestGroup/update"), {
+          guestgroup: guestgroupId,
+          station: stationId,
+          table: tableNumber,
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          resolve(null);
+        });
+    });
+  }
+
+  passQRcodeData(qr: any) {
+    return new Promise((resolve, reject) => {
+      this.httpClient
+        .post(this.apiBuilder.getRoute("guestGroup/qr"), {
+          qr: qr,
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          resolve(null);
+        });
+    });
+  }
 }

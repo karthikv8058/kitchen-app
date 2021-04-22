@@ -20,6 +20,8 @@ import {
   GuestgroupContext,
 } from "../components/assets/contexts/headerContext";
 import AssignLocationFromScanQR from "../components/TabViews/AssignLocationFromScanQR";
+import StationService from "@services/StationService";
+import { Bind } from "../../ioc/ServiceContainer";
 
 interface State {
   tabValue: number;
@@ -27,6 +29,9 @@ interface State {
   isEditManuallyPressed: boolean;
   showScannedQRTab: boolean;
   isToolbarVisible: boolean;
+  currentPage: any;
+  scannedQRData: any;
+  qrCodeDataResponse: any;
 }
 
 interface Props {
@@ -35,6 +40,10 @@ interface Props {
 }
 
 export default class GuestGroupManagement extends Component<Props, State> {
+  private stationService: StationService = Bind("stationService");
+  SplitRef: any;
+  MergeRef: any;
+  AssignLocationRef: any;
   private tooblarList: any[] = [];
   private guestId: any =
     this.props.route.params?.guestId || this.props.route.params?.fromID;
@@ -47,7 +56,13 @@ export default class GuestGroupManagement extends Component<Props, State> {
       isEditManuallyPressed: false,
       showScannedQRTab: false,
       isToolbarVisible: false,
+      currentPage: null,
+      scannedQRData: null,
+      qrCodeDataResponse: null,
     };
+    this.SplitRef = React.createRef();
+    this.MergeRef = React.createRef();
+    this.AssignLocationRef = React.createRef();
   }
 
   componentDidMount() {
@@ -55,15 +70,31 @@ export default class GuestGroupManagement extends Component<Props, State> {
     console.log("TAB ADDED");
   }
 
+  componentDidUpdate() {
+    console.log("this.state.isToolbarVisible", this.state.isToolbarVisible);
+  }
+
   UNSAFE_componentWillMount() {
     console.log("UNSAFE_componentWillMount PROPS:::", this.props.route.params);
     if (this.props.route?.params.pageName === "SplitGuestgroup") {
       this.setState({ tabValue: 3 });
     }
+    if (this.props.route?.params.pageName === "MergeGuestgroup") {
+      this.setState({ tabValue: 2 });
+    }
+    if (this.props.route?.params.pageName === "guestGroupManagementPage") {
+      this.setState({ tabValue: 1 });
+      this.setState({ isEditManuallyPressed: true });
+      this.setState({ showScannedQRTab: false });
+    }
   }
 
   setToolBarState = (value: any) => {
     this.setState({ isToolbarVisible: value });
+  };
+
+  setCurrentPage = (value: any) => {
+    this.setState({ currentPage: value });
   };
 
   loadToolbarSecondColoumnItems = () => {
@@ -81,7 +112,14 @@ export default class GuestGroupManagement extends Component<Props, State> {
           <Icon name="x" size={40} color={colors.white} />
         </TouchableOpacity>
         <TouchableOpacity
-          nPress={() => {}}
+          onPress={() => {
+            this.state.currentPage === "splitPage" &&
+              this.SplitRef.current.SplitGuestgroupAPIcall();
+            this.state.currentPage === "mergePage" &&
+              this.MergeRef.current.mergeGuestgroupAPIcall();
+            this.state.currentPage === "assignLocationPage" &&
+              this.AssignLocationRef.current.updateGuestgroupAPIcall();
+          }}
           activeOpacity={0.8}
           style={{ height: 40, width: 40 }}
         >
@@ -92,24 +130,48 @@ export default class GuestGroupManagement extends Component<Props, State> {
   };
 
   onSuccess = (e: any) => {
-    console.log("e.data :::", e.data);
-    Linking.openURL(e.data).catch((err) =>
-      console.error("An error occured", err)
-    );
+    var json = JSON.parse(e.data);
+    console.log("e.data QR JSON :::", json.name);
+
+    console.log("DATATATATATATA");
+
+    this.passQRcodeData(json);
+    this.setState({ scannedQRData: json });
+    this.setState({ isQREnabled: false, showScannedQRTab: true });
   };
+  // Linking.openURL(e.data).catch((err) =>
+  //   console.error("An error occured", err)
+  // );
+
+  passQRcodeData(qr: any) {
+    console.log("passQRcodeData :::");
+    this.stationService.passQRcodeData(qr).then((data: any) => {
+      console.log("passQRcodeData :::", data);
+      this.setState({
+        qrCodeDataResponse: data,
+      });
+    });
+  }
 
   renderQRscanner = () => {
     this.setState({ isQREnabled: true });
     this.setState({ isEditManuallyPressed: false });
   };
   renderTabArea = () => {
-    this.setState({ isEditManuallyPressed: true });
-    this.setState({ showScannedQRTab: false });
+    this.props.navigation.navigate("GuestList", {
+      pageName: "guestGroupManagementPage",
+    });
+    // this.setState({ isEditManuallyPressed: true });
+    // this.setState({ showScannedQRTab: false });
   };
 
   render() {
     console.log("props.navigation:::", this.props.route.params);
     console.log("guestIdTo", this.guestIdTo);
+    console.log(
+      "this.state.scannedQRData.name",
+      this.state.scannedQRData?.name
+    );
 
     const {
       renderQRscanner,
@@ -118,6 +180,7 @@ export default class GuestGroupManagement extends Component<Props, State> {
       guestIdTo,
       state,
       setToolBarState,
+      setCurrentPage,
     } = this;
     return (
       <>
@@ -157,8 +220,10 @@ export default class GuestGroupManagement extends Component<Props, State> {
               >
                 <Header
                   id={
-                    this.props.route.params?.guestId ||
-                    this.props.route.params?.fromID
+                    this.state.scannedQRData !== null
+                      ? this.state.scannedQRData?.name
+                      : this.props.route.params?.guestId ||
+                        this.props.route.params?.fromID
                   }
                 />
               </HeaderContext.Provider>
@@ -178,7 +243,9 @@ export default class GuestGroupManagement extends Component<Props, State> {
                       borderBottomColor:
                         this.state.tabValue === 1 ? "white" : "#6ec2c6",
                     }}
-                    handleOnTabPress={() => this.setState({ tabValue: 1 })}
+                    handleOnTabPress={() =>
+                      this.setState({ tabValue: 1, isToolbarVisible: false })
+                    }
                   />
                   <TabButton
                     tabValue={this.state.tabValue}
@@ -187,7 +254,9 @@ export default class GuestGroupManagement extends Component<Props, State> {
                       borderBottomColor:
                         this.state.tabValue === 2 ? "white" : "#6ec2c6",
                     }}
-                    handleOnTabPress={() => this.setState({ tabValue: 2 })}
+                    handleOnTabPress={() =>
+                      this.setState({ tabValue: 2, isToolbarVisible: false })
+                    }
                   />
                   <TabButton
                     tabValue={this.state.tabValue}
@@ -196,25 +265,39 @@ export default class GuestGroupManagement extends Component<Props, State> {
                       borderBottomColor:
                         this.state.tabValue === 3 ? "white" : "#6ec2c6",
                     }}
-                    handleOnTabPress={() => this.setState({ tabValue: 3 })}
+                    handleOnTabPress={() =>
+                      this.setState({ tabValue: 3, isToolbarVisible: false })
+                    }
                   />
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                   <View style={{ paddingBottom: 150 }}>
                     <GuestgroupContext.Provider
-                      value={{ guestId, guestIdTo, state, setToolBarState }}
+                      value={{
+                        guestId,
+                        guestIdTo,
+                        state,
+                        setToolBarState,
+                        setCurrentPage,
+                      }}
                     >
                       {this.state.tabValue === 1 &&
-                        this.state.isEditManuallyPressed && <AssignLocation />}
+                        this.state.isEditManuallyPressed && (
+                          <AssignLocation ref={this.AssignLocationRef} />
+                        )}
                       {this.state.tabValue === 1 &&
                         this.state.showScannedQRTab && (
                           <AssignLocationFromScanQR />
                         )}
                       {this.state.tabValue === 2 && (
-                        <Merge navigation={this.props.navigation} />
+                        <Merge
+                          ref={this.MergeRef}
+                          navigation={this.props.navigation}
+                        />
                       )}
                       {this.state.tabValue === 3 && (
                         <Split
+                          ref={this.SplitRef}
                           // guestId={this.props.route?.params?.toID || ""}
                           navigation={this.props.navigation}
                         />

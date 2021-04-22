@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ToastAndroid,
+} from "react-native";
 import GuestMoveButton from "../Buttons/GuestMoveButton";
 import HeaderButton from "../Buttons/HeaderButton";
 import { GuestgroupContext } from "../assets/contexts/headerContext";
@@ -9,6 +15,7 @@ interface State {
   isQREnabled: boolean;
   isEditManuallyPressed: boolean;
   listGuests: any;
+  selectedItem: any;
 }
 
 interface Props {
@@ -27,22 +34,16 @@ export default class Split extends Component<Props, State> {
       isQREnabled: false,
       isEditManuallyPressed: false,
       listGuests: [],
+      selectedItem: null,
     };
   }
 
   componentDidMount() {
     this.guest = this.context;
-    console.log(
-      "Assignlocation Context valueeeeeeeeesss :::",
-      this.guest.guestId,
-      this.guest.guestIdTo,
-      this.guest.state.isToolbarVisible,
-      this.guest.setToolBarState
-    );
     this.guest?.guestIdTo !== undefined &&
       this.setState({ isEditManuallyPressed: true });
-
     this.listGuests(this.guest.guestId);
+    this.guest.setCurrentPage("splitPage");
   }
 
   listGuests(roomId: any) {
@@ -54,12 +55,34 @@ export default class Split extends Component<Props, State> {
     });
   }
 
-  handleOnPress = (guest: any) => {
-    if (!this.guestArray.includes(guest)) {
-      this.guestArray.push(guest);
-      this.guest.setToolBarState(true);
-      console.log("handleOnPress guestArray:::", this.guestArray);
-    }
+  splitGuestgroup(fromId: any, toId: any, guests: any) {
+    this.stationService
+      .splitGuestgroup(fromId, toId, guests)
+      .then((response: any) => {
+        console.log("splitGuestgroup :::", response);
+        if (response) {
+          this.guest.setToolBarState(false);
+          ToastAndroid.show("Successfully splitted", ToastAndroid.SHORT);
+        }
+      });
+  }
+
+  SplitGuestgroupAPIcall = () => {
+    let filteredArray: any = this.state.listGuests.filter((item: any) => {
+      return item.isSelected === true;
+    });
+
+    console.log(
+      "SplitGuestgroupAPIcall",
+      this.state.listGuests,
+      this.guest.guestId,
+      this.guest.guestIdTo
+    );
+    this.splitGuestgroup(
+      this.guest.guestId,
+      this.guest.guestIdTo,
+      filteredArray
+    );
   };
 
   render() {
@@ -74,9 +97,9 @@ export default class Split extends Component<Props, State> {
             }}
           >
             <Text style={{ color: "#FFF" }}>Move guest to guest group</Text>
-            {/* {this.props.guestId && (
-              <Text style={{ color: "#FFF" }}>{this.props.guestId}</Text>
-            )} */}
+            {this.guest?.guestIdTo && (
+              <Text style={{ color: "#FFF" }}>{this.guest?.guestIdTo}</Text>
+            )}
           </View>
 
           <View
@@ -117,16 +140,13 @@ export default class Split extends Component<Props, State> {
                 {this.state.listGuests &&
                   this.state.listGuests.length > 0 &&
                   this.state.listGuests.map((guest: any) => {
-                    this.count++;
-                    console.log("C::", this.count);
                     return (
                       <GuestMoveButton
-                        handleOnPress={() => this.handleOnPress(guest.name)}
-                        style={
-                          this.count % 2 === 0 && { backgroundColor: "#006267" }
-                        }
-                        title={guest.name}
-                        textColor={this.count % 2 === 0 && "#FFF"}
+                        handleOnPress={() => {
+                          this.setState({ listGuests: this.state.listGuests });
+                          this.guest.setToolBarState(true);
+                        }}
+                        guest={guest}
                       />
                     );
                   })}

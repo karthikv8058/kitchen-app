@@ -2,19 +2,26 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
 export default function GuestMoveButton(props: any) {
+  const handleOnPressButton = () => {
+    props.guest.isSelected = !props.guest.isSelected;
+    props.handleOnPress();
+  };
   return (
     <>
       <TouchableOpacity
-        onPress={props.handleOnPress}
-        style={[styles.guestMoveBtnStyle, { ...props.style }]}
+        onPress={handleOnPressButton}
+        style={[
+          styles.guestMoveBtnStyle,
+          { backgroundColor: props.guest.isSelected ? "#FFF" : "#006267" },
+        ]}
       >
         <Text
           style={{
             textAlign: "center",
-            color: props.textColor ? props.textColor : "#006267",
+            color: props.guest.isSelected ? "#006267" : "#FFF",
           }}
         >
-          {props.title}
+          {props.guest.name}
         </Text>
       </TouchableOpacity>
     </>

@@ -50,8 +50,6 @@ export default class AssignLocationFromScanQR extends Component<Props, State> {
 
   LoadRoomList() {
     this.stationService.loadRooms().then((rooms: any) => {
-      console.log("LoadRoomList :::", rooms);
-
       this.setState({
         roomList: rooms,
       });
