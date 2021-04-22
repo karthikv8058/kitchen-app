@@ -142,9 +142,6 @@ public class NewPosOrder extends HttpSecurityRequest {
             }
         }
 
-
-
-
         for (Map.Entry<String, List<String>> entry : labelWithRecipe.entrySet()) {
             String recipeName = "";
             for (String a : entry.getValue()) {
@@ -209,7 +206,7 @@ public class NewPosOrder extends HttpSecurityRequest {
         Meal meal = this.createNewMeal(course, orderMeal);
         for (PosRecipe recipe : orderMeal.getRecipes()) {
             OrderLine orderLine = new OrderLine();
-            orderLine.setUuid(UUID.randomUUID().toString());
+            orderLine.setId(UUID.randomUUID().toString());
             orderLine.setMealId(meal.getId());
             orderLine.setRecipeId(recipe.getId());
             orderLine.setModifiers("");
@@ -245,7 +242,7 @@ public class NewPosOrder extends HttpSecurityRequest {
 
     private Meal createNewMeal(Course course, PosOrderMeal orderMeal) {
         Meal meal = new Meal();
-        meal.setUuid(UUID.randomUUID().toString());
+        meal.setId(UUID.randomUUID().toString());
         meal.setCourseId(course.getId());
         meal.setCourseName(course.getCourseName());
         meal.setName(orderMeal.getRecipes().get(0).getName());

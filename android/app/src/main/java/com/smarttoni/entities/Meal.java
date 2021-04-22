@@ -1,9 +1,13 @@
 package com.smarttoni.entities;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.ToMany;
 
@@ -14,11 +18,8 @@ import java.util.List;
 
 public class Meal {
 
-    @Id(autoincrement = true)
-    private Long id;
-
-    @Property(nameInDb = "uuid")
-    private String uuid;
+    @Id
+    private String id;
 
     @Property(nameInDb = "tableNo")
     private String tableNo;
@@ -50,29 +51,18 @@ public class Meal {
     @Property(nameInDb = "chefId")
     private String chefId;
 
-    /**
-     * Used to resolve relations
-     */
+    /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
-    /**
-     * Used for active entity operations.
-     */
+    /** Used for active entity operations. */
     @Generated(hash = 1947976862)
     private transient MealDao myDao;
 
-
-    @Generated(hash = 167100247)
-    public Meal() {
-    }
-
-    @Generated(hash = 1713865031)
-    public Meal(Long id, String uuid, String tableNo, String courseName, String courseId,
-            String modifier, String name, int status, long createdAt, long updatedAt,
-            String chefId) {
+    @Generated(hash = 178737780)
+    public Meal(String id, String tableNo, String courseName, String courseId, String modifier,
+            String name, int status, long createdAt, long updatedAt, String chefId) {
         this.id = id;
-        this.uuid = uuid;
         this.tableNo = tableNo;
         this.courseName = courseName;
         this.courseId = courseId;
@@ -84,12 +74,8 @@ public class Meal {
         this.chefId = chefId;
     }
 
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    @Generated(hash = 167100247)
+    public Meal() {
     }
 
     public String getTableNo() {
@@ -133,11 +119,6 @@ public class Meal {
         this.modifier = modifier;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-
     public long getCreatedAt() {
         return this.createdAt;
     }
@@ -153,13 +134,29 @@ public class Meal {
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    public String getUuid() {
-        return this.uuid;
+    
+    public String getCourseId() {
+        return this.courseId;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
+    }
+
+    public String getChefId() {
+        return this.chefId;
+    }
+
+    public void setChefId(String chefId) {
+        this.chefId = chefId;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -184,9 +181,7 @@ public class Meal {
         return orderLine;
     }
 
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated(hash = 1816500150)
     public synchronized void resetOrderLine() {
         orderLine = null;
@@ -228,27 +223,10 @@ public class Meal {
         myDao.update(this);
     }
 
-    public String getCourseId() {
-        return this.courseId;
-    }
-
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getChefId() {
-        return this.chefId;
-    }
-
-    public void setChefId(String chefId) {
-        this.chefId = chefId;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 644317336)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getMealDao() : null;
     }
-
 }

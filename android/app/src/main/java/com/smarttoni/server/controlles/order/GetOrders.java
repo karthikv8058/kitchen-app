@@ -145,7 +145,7 @@ public class GetOrders extends RequestCallback {
                     Course c = daoAdapter.getCourseById(course.getId());
                     for (Meal meal : c.getMeals()) {
                         SyncMeal mealWrapper = new SyncMeal();
-                        mealWrapper.uuid = meal.getUuid();
+                        mealWrapper.uuid = meal.getId();
                         List<SyncOrderLine> recipeWrappers = new ArrayList<>();
                         for (OrderLine orderLine : meal.getOrderLine()) {
                             SyncOrderLine recipeWrapper = new SyncOrderLine();

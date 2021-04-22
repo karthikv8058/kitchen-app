@@ -5,12 +5,11 @@ import com.koushikdutta.async.http.server.AsyncHttpServerRequest
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse
 import com.smarttoni.assignment.service.ServiceLocator
 import com.smarttoni.auth.HttpSecurityRequest
-import com.smarttoni.entities.Room
 import com.smarttoni.guestgroup.entities.GuestGroup
 import com.smarttoni.server.GSONBuilder
 import org.json.JSONException
 
-class ListGuestGroups : HttpSecurityRequest() {
+class PostFetchQRCode : HttpSecurityRequest() {
 
     @Throws(JSONException::class)
     override fun processRequest(request: AsyncHttpServerRequest, response: AsyncHttpServerResponse) {
@@ -20,11 +19,10 @@ class ListGuestGroups : HttpSecurityRequest() {
         if(station != null){
             room = station.room;
         }
-        val guests = arrayOf(GuestGroup(1,room,station.name,"1"),GuestGroup(8,room,station.name,"8"),GuestGroup(9,room,station.name,"9")).toList();
+
         val gson = GSONBuilder.createGSON()
-        val type = object : TypeToken<List<GuestGroup?>?>() {}.type
-        val a = gson.toJson(guests, type);
-        response.send(gson.toJson(guests, type))
+        val type = object : TypeToken<GuestGroup?>() {}.type
+        response.send(gson.toJson(GuestGroup(1,room,station.name,"1"), type))
 
     }
 

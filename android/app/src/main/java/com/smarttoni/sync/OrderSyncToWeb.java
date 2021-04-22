@@ -4,24 +4,29 @@ import android.content.Context;
 
 import com.smarttoni.assignment.AssignmentFactory;
 import com.smarttoni.assignment.order.OrderManager;
+import com.smarttoni.assignment.order.OrderProcessor;
 import com.smarttoni.assignment.service.ServiceLocator;
 import com.smarttoni.core.SmarttoniContext;
 import com.smarttoni.database.DaoAdapter;
 import com.smarttoni.entities.Course;
 import com.smarttoni.entities.ExternalAvailableQuantity;
 import com.smarttoni.entities.ExternalOrderRequest;
+import com.smarttoni.entities.InterventionJob;
 import com.smarttoni.entities.Label;
 import com.smarttoni.entities.Meal;
 import com.smarttoni.entities.Order;
 import com.smarttoni.entities.OrderLine;
 import com.smarttoni.entities.Recipe;
+import com.smarttoni.entities.Work;
 import com.smarttoni.http.HttpClient;
 import com.smarttoni.sync.orders.SyncCourse;
+import com.smarttoni.sync.orders.SyncIntervention;
 import com.smarttoni.sync.orders.SyncMeal;
 import com.smarttoni.sync.orders.SyncOrder;
 import com.smarttoni.sync.orders.SyncOrderLine;
 import com.smarttoni.sync.orders.SyncOrderWrapper;
 import com.smarttoni.sync.orders.SyncOrders;
+import com.smarttoni.sync.orders.SyncWork;
 import com.smarttoni.utils.AppState;
 import com.smarttoni.utils.LocalStorage;
 import com.smarttoni.utils.DateUtil;
@@ -50,8 +55,6 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
         SyncOrderWrapper wrapper = new SyncOrderWrapper();
 
 
-
-
         SyncOrders s = new SyncOrders();
         List<SyncOrder> os = s.sync(daoAdapter, daoAdapter.loadOrders());
 
@@ -60,6 +63,20 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
         wrapper.setAvailableQuantity(daoAdapter.listExternalAvailableQuantity());
         wrapper.setRequestedQuantity(daoAdapter.listExternalOrderRequest());
 
+        List<SyncWork> works = new ArrayList<>();
+        List<Work> _works = daoAdapter.loadWorks();
+        for(Work work :_works){
+            works.add(SyncWork.clone(work));
+        }
+        wrapper.setWork(works);
+
+
+        List<SyncIntervention> interventions = new ArrayList<>();
+        List<InterventionJob> _interventions = daoAdapter.loadInterventionsJobs();
+        for(InterventionJob interventionJob :_interventions){
+            interventions.add(SyncIntervention.clone(interventionJob));
+        }
+        wrapper.setIntervention(interventions);
 
         LocalStorage ls = (LocalStorage) ServiceLocator.getInstance().getService(ServiceLocator.LOCAL_STORAGE_SERVICE);
 
@@ -71,15 +88,20 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
 
                     SyncOrderWrapper orderWrapper = response.body();
 
-                    if(!AppState.initialOrderSyncCompleted){
+                    if(!AppState.initialOrderSyncCompleted) {
                         List<ExternalAvailableQuantity> eaqs = orderWrapper.getAvailableQuantity();
                         daoAdapter.insertAllExternalAvailableQuantity(eaqs);
 
                         List<ExternalOrderRequest> eoqs = orderWrapper.getRequestedQuantity();
                         daoAdapter.insertAllExternalOrderRequest(eoqs);
-                    }
 
-                    AppState.initialOrderSyncCompleted = true;
+                        List<SyncWork> works = orderWrapper.getWork();
+                        daoAdapter.insertAllWorks(works);
+
+
+                        List<SyncIntervention> interventions = orderWrapper.getIntervention();
+                        daoAdapter.insertAllInterventions(interventions);
+                    }
 
                     List<SyncOrder> orders = orderWrapper.getOrders();
 
@@ -153,7 +175,7 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                             for (SyncMeal m : c.meals) {
                                 Meal meal = new Meal();
                                 meal.setCourseId(course.getId());
-                                meal.setUuid(m.uuid);
+                                meal.setId(m.uuid);
                                 meal.setName(m.name);
                                 meal.setTableNo("");
                                 meal.setCourseName("");
@@ -168,7 +190,7 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                                 for (SyncOrderLine ol : m.orderLines) {
                                     OrderLine orderLine = new OrderLine();
                                     orderLine.setMealId(meal.getId());
-                                    orderLine.setUuid(ol.uuid);
+                                    orderLine.setId(ol.uuid);
 
                                     orderLine.setRecipeId(ol.recipeUuid);
                                     orderLine.setQty(ol.quantity);
@@ -191,6 +213,17 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                             AssignmentFactory.getInstance().processOrder(context, order);
                         }
                     }
+
+
+                    if(!AppState.initialOrderSyncCompleted){
+
+                        OrderProcessor.getInstance().init(daoAdapter,ServiceLocator.getInstance().getQueue());
+//                        List<ExternalOrderRequest> interventions = orderWrapper.getRequestedQuantity();
+//                        daoAdapter.insertAllExternalOrderRequest(eoqs);
+
+                        AppState.initialOrderSyncCompleted = true;
+                    }
+
                 }
                 if (orders.size() > 0) {
                     for (Order order : orders) {
@@ -198,6 +231,7 @@ public class OrderSyncToWeb implements AbstractSyncAdapter {
                         daoAdapter.updateOrder(order);
                     }
                 }
+
                 if (successListener != null) {
                     successListener.onSuccess();
                 }

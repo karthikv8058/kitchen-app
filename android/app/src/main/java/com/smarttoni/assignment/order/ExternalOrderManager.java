@@ -94,7 +94,7 @@ public class ExternalOrderManager {
                 }
 
                 OrderLine orderLine = new OrderLine();
-                orderLine.setUuid(UUID.randomUUID().toString());
+                orderLine.setId(UUID.randomUUID().toString());
                 orderLine.setRecipeId(recipeId);
                 orderLine.setQty(quantity);
                 daoAdapter.saveOrderLine(orderLine);
@@ -146,7 +146,7 @@ public class ExternalOrderManager {
 
                 Meal m = new Meal();
                 m.setCourseId(c.getId());
-                m.setUuid(UUID.randomUUID().toString());
+                m.setId(UUID.randomUUID().toString());
                 daoAdapter.saveMeal(m);
 
                 for (OrderLine orderLine : orderLines) {

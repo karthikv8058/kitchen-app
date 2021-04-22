@@ -64,7 +64,7 @@ public class DelayHelper {
         Map<String, RecipeList> times = new HashMap<String, RecipeList>();
         long maxDuration = 0;
         for (Work q : queue) {
-            long mealsId = q.getMealsId();
+            String mealsId = q.getMealsId();
             String recipeId = q.getRecipeId();
             String key = new StringBuilder().append(mealsId)
                     .append("*").append(recipeId).toString();
