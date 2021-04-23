@@ -9,6 +9,7 @@ import {
 import BorderedButton from "../Buttons/BorderButton";
 import StationService from "@services/StationService";
 import { Bind } from "../../../ioc/ServiceContainer";
+import { GuestgroupContext } from "../assets/contexts/headerContext";
 
 interface State {
   isRoomButtonPressed: boolean;
@@ -26,6 +27,8 @@ interface Props {
 
 export default class AssignLocationFromScanQR extends Component<Props, State> {
   private stationService: StationService = Bind("stationService");
+  static contextType = GuestgroupContext;
+  private guest: any = null;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -39,6 +42,9 @@ export default class AssignLocationFromScanQR extends Component<Props, State> {
   }
 
   componentDidMount() {
+    this.guest = this.context;
+    console.log("this.guest", this.guest);
+
     // if (this.props.route.params.backNavigation) {
     //   setTimeout(() => {
     //     this.LoadRoomList();

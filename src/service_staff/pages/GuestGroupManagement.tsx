@@ -32,6 +32,8 @@ interface State {
   currentPage: any;
   scannedQRData: any;
   qrCodeDataResponse: any;
+  roomIDfromQRResponse: any;
+  roomList: any;
 }
 
 interface Props {
@@ -48,6 +50,7 @@ export default class GuestGroupManagement extends Component<Props, State> {
   private guestId: any =
     this.props.route.params?.guestId || this.props.route.params?.fromID;
   private guestIdTo: any = this.props.route.params?.toID;
+  private filteredData = null;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -59,6 +62,8 @@ export default class GuestGroupManagement extends Component<Props, State> {
       currentPage: null,
       scannedQRData: null,
       qrCodeDataResponse: null,
+      roomIDfromQRResponse: null,
+      roomList: [],
     };
     this.SplitRef = React.createRef();
     this.MergeRef = React.createRef();
@@ -66,6 +71,7 @@ export default class GuestGroupManagement extends Component<Props, State> {
   }
 
   componentDidMount() {
+    this.LoadRoomList();
     this.loadToolbarSecondColoumnItems();
     console.log("TAB ADDED");
   }
@@ -147,9 +153,22 @@ export default class GuestGroupManagement extends Component<Props, State> {
     console.log("passQRcodeData :::");
     this.stationService.passQRcodeData(qr).then((data: any) => {
       console.log("passQRcodeData :::", data);
+
+      this.filteredData = this.state.roomList.filter((item: any) => {
+        return item.uuid === data.room;
+      });
+
       this.setState({
         qrCodeDataResponse: data,
+        roomIDfromQRResponse: data.room,
       });
+    });
+  }
+
+  LoadRoomList() {
+    this.stationService.loadRooms().then((rooms: any) => {
+      console.log("LoadRoomList :::", rooms);
+      this.setState({ roomList: rooms });
     });
   }
 
@@ -166,12 +185,7 @@ export default class GuestGroupManagement extends Component<Props, State> {
   };
 
   render() {
-    console.log("props.navigation:::", this.props.route.params);
-    console.log("guestIdTo", this.guestIdTo);
-    console.log(
-      "this.state.scannedQRData.name",
-      this.state.scannedQRData?.name
-    );
+    console.log("filteredData ======>", this.filteredData);
 
     const {
       renderQRscanner,
@@ -181,6 +195,7 @@ export default class GuestGroupManagement extends Component<Props, State> {
       state,
       setToolBarState,
       setCurrentPage,
+      filteredData,
     } = this;
     return (
       <>
@@ -279,6 +294,7 @@ export default class GuestGroupManagement extends Component<Props, State> {
                         state,
                         setToolBarState,
                         setCurrentPage,
+                        filteredData,
                       }}
                     >
                       {this.state.tabValue === 1 &&
