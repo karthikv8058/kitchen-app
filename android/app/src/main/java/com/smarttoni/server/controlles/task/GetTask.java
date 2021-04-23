@@ -14,8 +14,10 @@ import com.smarttoni.entities.DaoSession;
 import com.smarttoni.entities.Intervention;
 import com.smarttoni.entities.InterventionJob;
 import com.smarttoni.entities.Recipe;
+import com.smarttoni.entities.RecipeTag;
 import com.smarttoni.entities.Station;
 import com.smarttoni.entities.StepIngrediant;
+import com.smarttoni.entities.Tag;
 import com.smarttoni.entities.Task;
 import com.smarttoni.entities.TaskDao;
 import com.smarttoni.entities.TaskIngredient;
@@ -28,6 +30,7 @@ import com.smarttoni.server.wrappers.IngredientWithQuantity;
 import com.smarttoni.server.wrappers.InterventionMeta;
 import com.smarttoni.server.wrappers.TaskWithQuantity;
 import com.smarttoni.utils.HttpHelper;
+import com.smarttoni.utils.Strings;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +65,6 @@ public class GetTask extends HttpSecurityRequest {
             daoSession = DbOpenHelper.Companion.getDaoSession(context);
             DetailPage page = new DetailPage();
 
-
             if (isIntervention) {
                 InterventionJob interventionJob = ServiceLocator
                         .getInstance()
@@ -79,6 +81,9 @@ public class GetTask extends HttpSecurityRequest {
                     interventionJob.setIntervention(intervention);
                     interventionJob.setInterventionId(intervention.getId());
                 }
+                if(interventionJob.getWorkId() > 0){
+                    page.setWork(interventionJob.getWork().cloneWithoutNextTask());
+                }
                 generateInterventionPage(page, interventionJob);
 
             } else {
@@ -92,6 +97,7 @@ public class GetTask extends HttpSecurityRequest {
                 }
                 generateDetailPage(page, taskId, w);
             }
+
             Gson gson = GSONBuilder.createGSON();
             Type type = new TypeToken<DetailPage>() {
             }.getType();

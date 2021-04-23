@@ -1,10 +1,13 @@
 package com.smarttoni.entities;
 
+import com.google.gson.annotations.SerializedName;
 import com.smarttoni.assignment.service.ServiceLocator;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.annotation.Transient;
@@ -12,17 +15,14 @@ import org.greenrobot.greendao.annotation.Transient;
 @Entity(nameInDb = "order_line")
 public class OrderLine {
 
-    @Id(autoincrement = true)
-    private Long id;
-
-    @Property(nameInDb = "uuid")
-    private String uuid;
+    @Id
+    private String id;
 
     @ToOne(joinProperty = "mealId")
     private transient Meal meal;
 
     @Property(nameInDb = "mealId")
-    private Long mealId;
+    private String mealId;
 
     @Transient
     private Recipe recipe;
@@ -42,16 +42,10 @@ public class OrderLine {
     @Property(nameInDb = "qty")
     private float qty;
 
-
-    @Generated(hash = 1925626461)
-    public OrderLine() {
-    }
-
-    @Generated(hash = 1309278082)
-    public OrderLine(Long id, String uuid, Long mealId, String recipeId, String modifiers,
-            String orderId, String courseId, float qty) {
+    @Generated(hash = 628505749)
+    public OrderLine(String id, String mealId, String recipeId, String modifiers, String orderId,
+            String courseId, float qty) {
         this.id = id;
-        this.uuid = uuid;
         this.mealId = mealId;
         this.recipeId = recipeId;
         this.modifiers = modifiers;
@@ -60,20 +54,8 @@ public class OrderLine {
         this.qty = qty;
     }
 
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getMealId() {
-        return this.mealId;
-    }
-
-    public void setMealId(Long mealId) {
-        this.mealId = mealId;
+    @Generated(hash = 1925626461)
+    public OrderLine() {
     }
 
     public String getModifiers() {
@@ -101,13 +83,6 @@ public class OrderLine {
         this.recipeId = recipeId;
     }
 
-    public String getUuid() {
-        return this.uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 
     public Recipe getRecipe() {
         if (recipe == null) {
@@ -135,5 +110,21 @@ public class OrderLine {
 
     public void setCourseId(String courseId) {
         this.courseId = courseId;
+    }
+
+    public String getMealId() {
+        return this.mealId;
+    }
+
+    public void setMealId(String mealId) {
+        this.mealId = mealId;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

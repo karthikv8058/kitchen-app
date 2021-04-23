@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
     View,
     Dimensions,
+    RefreshControl,
 } from 'react-native';
 import ioc, { Bind } from '../../ioc/ServiceContainer';
 import { menuCategory, OPEN_ORDER } from '../../utils/constants';
@@ -283,8 +284,7 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
     }
 
 
-    loadOrders() {
-
+    loadOrders = () => {
         this.setState({
             isLoading: true
         })
@@ -399,6 +399,12 @@ export default class OrderOverview extends AbstractComponent<Props, State> {
                             extraData={this.state}
                             data={orders}
                             contentContainerStyle={{ flexGrow: 1 }}
+                            refreshControl={
+                                <RefreshControl
+                                  refreshing={false}
+                                  onRefresh={this.loadOrders}
+                                />
+                              }
                             ListFooterComponent={<View style={styles.bottomView}>
                                 {!!this.state.isLoading ? <LoaderWithText text='Loading order' /> : null}
                             </View>}

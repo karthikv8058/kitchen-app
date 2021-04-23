@@ -25,14 +25,12 @@ import java.util.Date;
 
 public class PrinterManager {
 
-
     private Context context;
 
     private static PrinterManager instance = null;
 
     private PrinterManager() {
     }
-
 
     public static PrinterManager getInstance() {
 
@@ -44,11 +42,9 @@ public class PrinterManager {
         return instance;
     }
 
-
     public void init(Context context) {
         this.context = context;
     }
-
 
     public void printTask(String userId, Work t, String interventionName, Task task) throws Exception {
         if (context == null) {

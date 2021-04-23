@@ -7,4 +7,7 @@ class SyncOrderWrapper {
     var orders: List<SyncOrder>? = null
     var availableQuantity: List<ExternalAvailableQuantity>? = null
     var requestedQuantity: List<ExternalOrderRequest>? = null
+    var work: List<SyncWork>? = null
+    var intervention: List<SyncIntervention>? = emptyList()
+
 }

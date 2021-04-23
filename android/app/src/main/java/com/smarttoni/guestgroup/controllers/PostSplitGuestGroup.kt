@@ -14,7 +14,6 @@ class PostSplitGuestGroup : HttpSecurityRequest() {
         val gson = GSONBuilder.createGSON()
         val type = object : TypeToken<Boolean?>() {}.type
         response.send(gson.toJson(true, type))
-
     }
 
 }

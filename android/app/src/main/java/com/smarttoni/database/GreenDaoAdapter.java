@@ -99,9 +99,11 @@ import com.smarttoni.entities.WebAppDataDao;
 import com.smarttoni.entities.Work;
 import com.smarttoni.entities.WorkDao;
 import com.smarttoni.sync.orders.SyncCourse;
+import com.smarttoni.sync.orders.SyncIntervention;
 import com.smarttoni.sync.orders.SyncMeal;
 import com.smarttoni.sync.orders.SyncOrder;
 import com.smarttoni.sync.orders.SyncOrderLine;
+import com.smarttoni.sync.orders.SyncWork;
 import com.smarttoni.utils.Strings;
 
 import org.greenrobot.greendao.AbstractDao;
@@ -353,6 +355,31 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
+    public void insertAllWorks(List<SyncWork> works) {
+        getDaoSession().getWorkDao().deleteAll();
+        List<Work> _works = new ArrayList<>();
+        for(SyncWork w:works){
+            _works.add(SyncWork.clone(w));
+        }
+        getDaoSession().getWorkDao().insertInTx(_works);
+    }
+
+    @Override
+    public List<InterventionJob> loadInterventionsJobs() {
+        return  getDaoSession().getInterventionJobDao().loadAll();
+    }
+
+    @Override
+    public void insertAllInterventions(List<SyncIntervention> interventions) {
+        getDaoSession().getInterventionJobDao().deleteAll();
+        List<InterventionJob> _interventions = new ArrayList<>();
+        for(SyncIntervention i:interventions){
+            _interventions.add(SyncIntervention.clone(i));
+        }
+        getDaoSession().getInterventionJobDao().insertInTx(_interventions);
+    }
+
+    @Override
     public void saveOrder(Order order) {
         saveOrder(order, false);
     }
@@ -564,7 +591,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                     Meal m = getDaoSession()
                             .getMealDao()
                             .queryBuilder()
-                            .where(MealDao.Properties.Uuid.eq(meal.uuid)).unique();
+                            .where(MealDao.Properties.Id.eq(meal.uuid)).unique();
                     if (m == null) {
                         continue;
                     }
@@ -574,7 +601,7 @@ public class GreenDaoAdapter implements DaoAdapter {
                         OrderLine ol = getDaoSession()
                                 .getOrderLineDao()
                                 .queryBuilder()
-                                .where(OrderLineDao.Properties.Uuid.eq(orderLine.uuid)).unique();
+                                .where(OrderLineDao.Properties.Id.eq(orderLine.uuid)).unique();
                         if (ol == null) {
                             continue;
                         }
@@ -704,7 +731,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     @Override
     public List<Meal> loadMealById(String mealId) {
         return getDaoSession().getMealDao().queryBuilder()
-                .where(MealDao.Properties.Uuid.eq(mealId)).list();
+                .where(MealDao.Properties.Id.eq(mealId)).list();
     }
 
     @Override
@@ -716,7 +743,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     @Override
     public List<OrderLine> loadOrderLineListById(String id) {
         return getDaoSession().getOrderLineDao().queryBuilder()
-                .where(OrderLineDao.Properties.Uuid.eq(id)).list();
+                .where(OrderLineDao.Properties.Id.eq(id)).list();
     }
 
     @Override
@@ -732,7 +759,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public Meal getMealById(Long id) {
+    public Meal getMealById(String id) {
         return getDaoSession().getMealDao().load(id);
     }
 
@@ -745,7 +772,7 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void saveMeal(Meal meal) {
-        getDaoSession().getMealDao().save(meal);
+        getDaoSession().getMealDao().insert(meal);
     }
 
     @Override
@@ -933,7 +960,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public List<Work> getworkByorderLine(Long id) {
+    public List<Work> getworkByorderLine(String id) {
         return getDaoSession().getWorkDao().queryBuilder()
                 .where(WorkDao.Properties.OrderLineId.eq(id))
                 .list();
@@ -1343,22 +1370,38 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void deleteTasks(List<String> ids) {
-        getDaoSession()
-                .getTaskDao()
-                .queryBuilder()
-                .where(TaskDao.Properties.Id.in(ids))
-                .buildDelete()
-                .executeDeleteWithoutDetachingEntities();
+        List<String> temp = new ArrayList<>();
+        for(String id:ids){
+            temp.add(id);
+            if(temp.size() >= 100){
+                getDaoSession()
+                        .getTaskDao()
+                        .queryBuilder()
+                        .where(TaskDao.Properties.Id.in(temp))
+                        .buildDelete()
+                        .executeDeleteWithoutDetachingEntities();
+                temp.clear();
+            }
+        }
+
     }
 
     @Override
     public void deleteSegments(List<String> ids) {
-        getDaoSession()
-                .getSegmentDao()
-                .queryBuilder()
-                .where(SegmentDao.Properties.Id.in(ids))
-                .buildDelete()
-                .executeDeleteWithoutDetachingEntities();
+
+        List<String> temp = new ArrayList<>();
+        for(String id:ids){
+            temp.add(id);
+            if(temp.size() >= 100){
+                getDaoSession()
+                        .getSegmentDao()
+                        .queryBuilder()
+                        .where(SegmentDao.Properties.Id.in(temp))
+                        .buildDelete()
+                        .executeDeleteWithoutDetachingEntities();
+                temp.clear();
+            }
+        }
     }
 
 
@@ -1658,7 +1701,7 @@ public class GreenDaoAdapter implements DaoAdapter {
 
     @Override
     public void saveOrderLine(OrderLine orderLine) {
-        getDaoSession().getOrderLineDao().saveInTx(orderLine);
+        getDaoSession().getOrderLineDao().insert(orderLine);
     }
 
     @Override
@@ -2120,7 +2163,7 @@ public class GreenDaoAdapter implements DaoAdapter {
     }
 
     @Override
-    public void setAsUsed(long orderLineId, String recipeId) {
+    public void setAsUsed(String orderLineId, String recipeId) {
         List<Work> works =
                 getDaoSession()
                         .getWorkDao()
