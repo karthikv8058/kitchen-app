@@ -50,7 +50,9 @@ import com.smarttoni.entities.UserRights;
 import com.smarttoni.entities.UserStationAssignment;
 import com.smarttoni.entities.WebAppData;
 import com.smarttoni.entities.Work;
+import com.smarttoni.sync.orders.SyncIntervention;
 import com.smarttoni.sync.orders.SyncOrder;
+import com.smarttoni.sync.orders.SyncWork;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -135,7 +137,7 @@ public interface DaoAdapter {
 
     List<Storage> loadStorageById(String id);
 
-    List<Work> getworkByorderLine(Long id);
+    List<Work> getworkByorderLine(String id);
 
     List<ChefActivityLog> getChefActivityByOrderId(String id);
 
@@ -173,7 +175,7 @@ public interface DaoAdapter {
     Intervention getInterventionByUuid(String id);
 
     //Meal
-    Meal getMealById(Long id);
+    Meal getMealById(String id);
 
     void saveMeal(Meal meal);
 
@@ -501,7 +503,7 @@ public interface DaoAdapter {
 
     void deleteAllSteps();
 
-    void setAsUsed(long orderLineId, String recipeId);
+    void setAsUsed(String orderLineId, String recipeId);
 
     List<Work> getAllUnusedWorkEndNodes(String orderId);
 
@@ -673,4 +675,10 @@ public interface DaoAdapter {
     List<RecipeTag> listTagsForRecipe(String id);
 
     Tag listTagsById(String tagId);
+
+    void insertAllWorks(List<SyncWork> works);
+
+    List<InterventionJob> loadInterventionsJobs();
+
+    void insertAllInterventions(List<SyncIntervention> interventions);
 }

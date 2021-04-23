@@ -3,21 +3,26 @@ package com.smarttoni.guestgroup.controllers
 import com.google.gson.reflect.TypeToken
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse
+import com.smarttoni.assignment.service.ServiceLocator
 import com.smarttoni.auth.HttpSecurityRequest
-import com.smarttoni.entities.Room
-import com.smarttoni.guestgroup.entities.Guest
+import com.smarttoni.guestgroup.entities.GuestGroup
 import com.smarttoni.server.GSONBuilder
 import org.json.JSONException
 
-class ListGuestInGuestGroups : HttpSecurityRequest() {
+class PostFetchQRCode : HttpSecurityRequest() {
 
     @Throws(JSONException::class)
     override fun processRequest(request: AsyncHttpServerRequest, response: AsyncHttpServerResponse) {
 
-        val guests = arrayOf(Guest("1","Tom"), Guest("2","Jose"), Guest("3","David")).toList()
+        val station = ServiceLocator.getInstance().databaseAdapter.stationByName()[0];
+        var room : String= "";
+        if(station != null){
+            room = station.room;
+        }
+
         val gson = GSONBuilder.createGSON()
-        val type = object : TypeToken<List<Guest?>?>() {}.type
-        response.send(gson.toJson(guests, type))
+        val type = object : TypeToken<GuestGroup?>() {}.type
+        response.send(gson.toJson(GuestGroup(1,room,station.name,"1"), type))
 
     }
 

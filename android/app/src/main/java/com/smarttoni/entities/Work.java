@@ -183,13 +183,13 @@ public class Work {
     private Meal meal;
 
     @Property(nameInDb = "mealsId")
-    private Long mealsId;
+    private String mealsId;
 
     @ToOne(joinProperty = "orderLineId")
     private OrderLine orderLine;
 
     @Property(nameInDb = "orderLineId")
-    private Long orderLineId;
+    private String orderLineId;
 
     @Property(nameInDb = "isEndNode")
     private boolean isEndNode;
@@ -246,9 +246,9 @@ public class Work {
     public Work() {
     }
 
-    @Generated(hash = 1737818363)
+    @Generated(hash = 850250238)
     public Work(Long id, float quantity, long timeRemaining, String recipeId, int status, String taskId, String userId, String machineId, String orderId,
-            String courseId, int transportType, String title, Long mealsId, Long orderLineId, boolean isEndNode, String subRecipes, boolean isUsed,
+            String courseId, int transportType, String title, String mealsId, String orderLineId, boolean isEndNode, String subRecipes, boolean isUsed,
             int interventionsCompleted, long lastIntervention, boolean readyToStart, int transportMode, String transportRoute, String previousTaskIds,
             String extraQuantity, long createdAt, long updatedAt) {
         this.id = id;
@@ -289,10 +289,10 @@ public class Work {
     private transient String order__resolvedKey;
     @Generated(hash = 2048268504)
     private transient String course__resolvedKey;
-    @Generated(hash = 1758754085)
-    private transient Long meal__resolvedKey;
-    @Generated(hash = 264325403)
-    private transient Long orderLine__resolvedKey;
+    @Generated(hash = 1661191700)
+    private transient String meal__resolvedKey;
+    @Generated(hash = 2135920025)
+    private transient String orderLine__resolvedKey;
 
     public boolean canStart() {
         boolean hasDependentTask = false;
@@ -672,14 +672,6 @@ public class Work {
         updateOutput();
     }
 
-    public Long getMealsId() {
-        return this.mealsId;
-    }
-
-    public void setMealsId(Long mealsId) {
-        this.mealsId = mealsId;
-    }
-
     public String getMachineId() {
         return this.machineId;
     }
@@ -847,14 +839,6 @@ public class Work {
 
     public void setPreviousStation(Station previousStation) {
         this.previousStation = previousStation;
-    }
-
-    public Long getOrderLineId() {
-        return this.orderLineId;
-    }
-
-    public void setOrderLineId(Long orderLineId) {
-        this.orderLineId = orderLineId;
     }
 
     public boolean isInventoryTransport() {
@@ -1037,72 +1021,6 @@ public class Work {
             this.order = order;
             orderId = order == null ? null : order.getId();
             order__resolvedKey = orderId;
-        }
-    }
-
-    /**
-     * To-one relationship, resolved on first access.
-     */
-    @Generated(hash = 2072920069)
-    public Meal getMeal() {
-        Long __key = this.mealsId;
-        if (meal__resolvedKey == null || !meal__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            MealDao targetDao = daoSession.getMealDao();
-            Meal mealNew = targetDao.load(__key);
-            synchronized (this) {
-                meal = mealNew;
-                meal__resolvedKey = __key;
-            }
-        }
-        return meal;
-    }
-
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
-    @Generated(hash = 1048215057)
-    public void setMeal(Meal meal) {
-        synchronized (this) {
-            this.meal = meal;
-            mealsId = meal == null ? null : meal.getId();
-            meal__resolvedKey = mealsId;
-        }
-    }
-
-    /**
-     * To-one relationship, resolved on first access.
-     */
-    @Generated(hash = 1648006058)
-    public OrderLine getOrderLine() {
-        Long __key = this.orderLineId;
-        if (orderLine__resolvedKey == null || !orderLine__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            OrderLineDao targetDao = daoSession.getOrderLineDao();
-            OrderLine orderLineNew = targetDao.load(__key);
-            synchronized (this) {
-                orderLine = orderLineNew;
-                orderLine__resolvedKey = __key;
-            }
-        }
-        return orderLine;
-    }
-
-    /**
-     * called by internal mechanisms, do not call yourself.
-     */
-    @Generated(hash = 1946645347)
-    public void setOrderLine(OrderLine orderLine) {
-        synchronized (this) {
-            this.orderLine = orderLine;
-            orderLineId = orderLine == null ? null : orderLine.getId();
-            orderLine__resolvedKey = orderLineId;
         }
     }
 
@@ -1349,6 +1267,80 @@ public class Work {
 
     public void setWishes(List<String> wishes) {
         this.wishes = wishes;
+    }
+
+    public void setMealsId(String mealsId) {
+        this.mealsId = mealsId;
+    }
+
+    public String getMealsId() {
+        return this.mealsId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 286316545)
+    public Meal getMeal() {
+        String __key = this.mealsId;
+        if (meal__resolvedKey == null || meal__resolvedKey != __key) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            MealDao targetDao = daoSession.getMealDao();
+            Meal mealNew = targetDao.load(__key);
+            synchronized (this) {
+                meal = mealNew;
+                meal__resolvedKey = __key;
+            }
+        }
+        return meal;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 1048215057)
+    public void setMeal(Meal meal) {
+        synchronized (this) {
+            this.meal = meal;
+            mealsId = meal == null ? null : meal.getId();
+            meal__resolvedKey = mealsId;
+        }
+    }
+
+    public void setOrderLineId(String orderLineId) {
+        this.orderLineId = orderLineId;
+    }
+
+    public String getOrderLineId() {
+        return this.orderLineId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 1369878535)
+    public OrderLine getOrderLine() {
+        String __key = this.orderLineId;
+        if (orderLine__resolvedKey == null || orderLine__resolvedKey != __key) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            OrderLineDao targetDao = daoSession.getOrderLineDao();
+            OrderLine orderLineNew = targetDao.load(__key);
+            synchronized (this) {
+                orderLine = orderLineNew;
+                orderLine__resolvedKey = __key;
+            }
+        }
+        return orderLine;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 1946645347)
+    public void setOrderLine(OrderLine orderLine) {
+        synchronized (this) {
+            this.orderLine = orderLine;
+            orderLineId = orderLine == null ? null : orderLine.getId();
+            orderLine__resolvedKey = orderLineId;
+        }
     }
 
     /** called by internal mechanisms, do not call yourself. */

@@ -43,12 +43,12 @@ public class SyncOrders {
                     c.meals = new ArrayList<>();
                     for (Meal meal : course.getMeals()) {
                         SyncMeal m = new SyncMeal();
-                        m.uuid = meal.getUuid();
+                        m.uuid = meal.getId();
                         m.name = meal.getName();
                         m.orderLines = new ArrayList<>();
                         for (OrderLine orderLine : meal.getOrderLine()) {
                             SyncOrderLine ol = new SyncOrderLine();
-                            ol.uuid = orderLine.getUuid();
+                            ol.uuid = orderLine.getId();
                             ol.recipeUuid = orderLine.getRecipeId();
                             ol.quantity = orderLine.getQty();
                             m.orderLines.add(ol);

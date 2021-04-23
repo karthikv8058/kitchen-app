@@ -212,7 +212,7 @@ public class getOrderItems extends HttpSecurityRequest {
                                 List<MealWrapper> mealWrappers = new ArrayList<>();
                                 for (Meal meal : course.getMeals()) {
                                     MealWrapper mealWrapper = new MealWrapper();
-                                    mealWrapper.setMealId(meal.getUuid());
+                                    mealWrapper.setMealId(meal.getId());
                                     List<RecipeWrapper> recipeWrappers = new ArrayList<>();
                                     for (OrderLine orderLine : meal.getOrderLine()) {
                                         RecipeWrapper recipeWrapper = new RecipeWrapper();

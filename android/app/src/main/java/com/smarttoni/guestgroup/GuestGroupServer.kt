@@ -2,10 +2,7 @@ package com.smarttoni.guestgroup
 
 import android.content.Context
 import com.koushikdutta.async.http.server.AsyncHttpServer
-import com.smarttoni.guestgroup.controllers.ListGuestGroups
-import com.smarttoni.guestgroup.controllers.ListGuestInGuestGroups
-import com.smarttoni.guestgroup.controllers.ListMealsForPayment
-import com.smarttoni.guestgroup.controllers.PostPaymentRecord
+import com.smarttoni.guestgroup.controllers.*
 
 object GuestGroupServer {
     fun addControllers(mHttpServer: AsyncHttpServer, context: Context?) {
@@ -13,6 +10,7 @@ object GuestGroupServer {
         mHttpServer.post("/guestGroup/guests", ListGuestInGuestGroups())
         mHttpServer.post("/guestGroup/split", ListGuestInGuestGroups())
         mHttpServer.post("/guestGroup/merge", ListGuestInGuestGroups())
+        mHttpServer.post("/guestGroup/qr", PostFetchQRCode())
 
         mHttpServer.post("/guestGroup/payment/meals", ListMealsForPayment())
         mHttpServer.post("/guestGroup/payment/record", PostPaymentRecord())

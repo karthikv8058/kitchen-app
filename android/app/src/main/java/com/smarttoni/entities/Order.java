@@ -33,6 +33,7 @@ public class Order {
     public static final int EXTERNAL_ORDER_NOT_CREATED = 0;
     public static final int EXTERNAL_ORDER_CREATED = 1;
     public static final int EXTERNAL_ORDER_COMPLETED = 2;
+    public static final int TREE_BUILD_COMPLETED = 3;
 
     @ToOne(joinProperty = "printerDataId")
     private PrinterData printerData;

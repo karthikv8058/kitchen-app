@@ -49,7 +49,7 @@ public class AssignmentFactory {
         }
         daoAdapter = new GreenDaoAdapter(context);
         DelayHelper.getInstance().init(daoAdapter);
-        OrderProcessor.getInstance().init(daoAdapter, ServiceLocator.getInstance().getQueue());
+
         assign();
 
 

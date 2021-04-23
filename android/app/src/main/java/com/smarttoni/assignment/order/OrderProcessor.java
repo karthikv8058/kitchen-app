@@ -90,7 +90,8 @@ public class OrderProcessor {
                 }
                 recipeQty.put(orderLine.getRecipe().getId(), null);
             }
-
+            order.setChildOrderStatus(Order.TREE_BUILD_COMPLETED);
+            daoAdapter.updateOrder(order);
             //Remove All Reservations
             daoAdapter.removeInventoryReservations(order.getId());
 
@@ -138,9 +139,12 @@ public class OrderProcessor {
         if (inited) {
             return;
         }
-        List<Work> queue = daoAdapter.loadNotCompletedWorks();
+        List<Work> queue = daoAdapter.loadWorks();
         Map<Long, Work> workMap = new HashMap<>();
         for (Work work : queue) {
+            if(work.getStatus() == Work.COMPLETED){
+                continue;
+            }
             if (work.getOrder() == null) {
                 daoAdapter.deleteWork(work);
                 continue;
